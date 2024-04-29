@@ -1,47 +1,76 @@
 #!/bin/bash
+#================================================================
+## Description: Script to run FastQC on all .fastq.gz files in a
+#               specified directory. It sets up an output directory
+#               within the specified working directory, processes
+#               each file in parallel, and waits for tasks to finish.
+## Author: Ryan D. Najac
+#================================================================
 
-#***********************************************************************#
-#                           multi_fastqc.sh                             #
-#                   written by [Your Name Here]                         #
-#                      [Date Last Modified]                             #
-#                                                                       #
-#       This script runs FastQC on all FASTQ files in the current       #
-#       directory and outputs the results to a specified directory.     #
-#***********************************************************************#
+# strict enforcement of error handling
+set -euxo pipefail
 
-# Exit codes
-E_BADDIR=85  # No such directory
+# get the script name from filename
+SCRIPT_NAME=$(basename "$BASH_SOURCE" .sh)
 
-# Run FastQC on multiple FASTQ files
-# Globals:
-#   None
-# Arguments:
-#   None
-# Outputs:
-#   Creates files in the fastqc_results directory
-# Returns:
-#   E_BADDIR if output directory cannot be created
-multi_fastqc() {
-    local output_dir="./fastqc_results"
-    mkdir -p "$output_dir" || return $E_BADDIR
+# exit with an error message and status code
+bail() { echo -ne "$1" >&2; exit ${2:-1}; }
 
-    local fastqs=(./*.fastq.gz)
-    echo "Running FastQC on files in the current directory..."
+# usage message and exit
+HELP_MSG="Usage: $SCRIPT_NAME <directory> [file_extension]
+Options:
+  -h    display this help and exit
+"
 
-    # Iterate over each FASTQ file and process it with FastQC
-    for fastq in "${fastqs[@]}"; do
-        echo "Processing $fastq..."
-        fastqc -o "$output_dir" --noextract --memory 1024 "$fastq" &
-    done
-
-    wait # Wait for all background jobs to finish
-    echo "FastQC processing complete."
+usage() {
+    local status=2
+    if [ "$1" -eq "$1" ] 2>/dev/null; then
+        status=$1
+        shift
+    fi
+    bail "${1}${HELP_MSG}" $status
 }
 
-# Check if script is being run directly and if so, call multi_fastqc
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    multi_fastqc
+# Option parsing
+while getopts "h" opt; do
+    case $opt in
+        h) usage 0 ;;
+        ?) usage "Invalid option: -$OPTARG \n" ;;
+    esac
+done
+
+# Check for minimum required arguments
+shift $((OPTIND - 1))
+if [[ $# -lt 1 ]]; then
+    usage "Too few arguments\n"
 fi
 
-exit 0
+#==========MAIN CODE BELOW==========
 
+function multifastqc {
+    local working_dir="$1"
+    # default to 'fastq.gz' if no extension is provided
+    local file_extension="${2:-fastq.gz}"
+    local output_dir=""
+    if [[ $file_extension == "bam" ]]; then
+        output_dir="${working_dir}/bamqc"
+    else
+        output_dir="${working_dir}/fastqc"
+    fi
+    local files=("${working_dir}"/*.$file_extension)
+
+    # create output directory if it doesn't exist
+    mkdir -p "$output_dir" || return 1
+
+    # check if any files were found
+    [[ ${#files[@]} -eq 0 ]] && echo "no .$file_extension files found" && return 2
+
+    # run FastQC on each file in parallel
+    for file in "${files[@]}"; do
+        fastqc -o "$output_dir" --noextract --memory 1024 "$file" &
+    done
+    wait # for all background jobs to finish
+}
+
+# run the multifastqc function with the provided arguments
+multifastqc "$@"
