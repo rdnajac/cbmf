@@ -31,7 +31,7 @@ usage() {
     bail "${1}${HELP_MSG}" $status
 }
 
-# Option parsing
+# option parsing
 while getopts "h" opt; do
     case $opt in
         h) usage 0 ;;
@@ -39,7 +39,7 @@ while getopts "h" opt; do
     esac
 done
 
-# Check for minimum required arguments
+# check for minimum required arguments
 shift $((OPTIND - 1))
 if [[ $# -lt 1 ]]; then
     usage "Too few arguments\n"
