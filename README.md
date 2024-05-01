@@ -1,6 +1,8 @@
 # cbmf 🧬
 > computational biology mad flow
-
+# TODO github gitmodules for srcs
+# TODO citations list
+# TODO
 Useful things go here.
 
 ## Table of Contents
@@ -16,7 +18,7 @@ Useful things go here.
   * [FastQC](#fastqc)
     - [Automation](#automation)
   * [Reference genomes](#reference-genomes)
-    - [Human](#human)
+    - [Human](#human) w
     - [Mouse](#mouse)
   * [Bowtie2](#bowtie2)
     - [Building Bowtie2](#building-bowtie2)
@@ -471,4 +473,13 @@ sudo apt install python3-pandas
 - Unique Reads
 - % Unique Reads (of all reads)
 - % Unique (of mapped)
+-
+
+## `import re`
+- [regex101](https://regex101.com/)
+- Python's `re` module is used for regular expressions
+example to match sample IDs from a list of files
+``` python
+re_fcontent = re.compile('Anc-(?P<sample>\d+)-(?P<rep>[AB])_(?P<GE>S\d+)_(?P<lane>L\d\d\d)_(?P<direction>R\d)_fastqc')
+```
 

@@ -5,21 +5,24 @@
 #               within the specified working directory, processes
 #               each file in parallel, and waits for tasks to finish.
 ## Author: Ryan D. Najac
+## Last modified: $(date +"%Y-%m-%d")
 #================================================================
 
-# strict enforcement of error handling
+# enforce strict error handling and print each command
 set -euxo pipefail
 
 # get the script name from filename
 SCRIPT_NAME=$(basename "$BASH_SOURCE" .sh)
 
-# exit with an error message and status code
+# exit and print error message with status code
 bail() { echo -ne "$1" >&2; exit ${2:-1}; }
 
-# usage message and exit
-HELP_MSG="Usage: $SCRIPT_NAME <directory> [file_extension]
+HELP_MSG="Usage: $SCRIPT_NAME <directory> [file_extension]\n
 Options:
-  -h    display this help and exit
+  -h    Display this help and exit
+Example:
+  $SCRIPT_NAME /path/to/data fastq.gz   # Process all fastq.gz files in /path/to/data
+  $SCRIPT_NAME /path/to/data bam        # Process all bam files in /path/to/data
 "
 
 usage() {
@@ -31,7 +34,7 @@ usage() {
     bail "${1}${HELP_MSG}" $status
 }
 
-# option parsing
+# parse command-line options
 while getopts "h" opt; do
     case $opt in
         h) usage 0 ;;
@@ -39,7 +42,7 @@ while getopts "h" opt; do
     esac
 done
 
-# check for minimum required arguments
+# validate argument count
 shift $((OPTIND - 1))
 if [[ $# -lt 1 ]]; then
     usage "Too few arguments\n"
@@ -51,7 +54,7 @@ function multifastqc {
     local working_dir="$1"
     # default to 'fastq.gz' if no extension is provided
     local file_extension="${2:-fastq.gz}"
-    local output_dir=""
+
     if [[ $file_extension == "bam" ]]; then
         output_dir="${working_dir}/bamqc"
     else
