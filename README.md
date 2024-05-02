@@ -8,9 +8,6 @@ Useful things go here.
 ## Table of Contents
 - [Prerequisites](#prerequisites)
 - [Shell scripting](#shell-scripting)
-  * [Shells](#shells) - [`bash`](#bash) - [`sh`](#sh) - [`zsh`](#zsh)
-  * [Template](#template)
-  * [Functions](#functions)
 - [Remote access](#remote-access)
   * [Command Line Tools](#command-line-tools) - [`aws`](#aws) - [`ssh`](#ssh) - [`scp`](#scp) - [`rsync`](#rsync) - [`tmux`](#tmux) - [`vim`](#vim)
   * [BaseSpace CLI (`bs`)](#basespace-cli-bs)
@@ -37,18 +34,31 @@ In addition to the software listed in [`src/README.md`](src/README.md), you will
 sudo apt install stuff
 ```
 ## Shell scripting
+
+- [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
+- [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
+- [Bash Best Practices](https://bertvv.github.io/cheat-sheets/Bash.html)
+
+| shell | summary | note |
+| ----- | ------- | ---- |
+| `bash`| the default shell on most systems | |
+| `sh`  | oldest and most basic shell | lead with `#!/bin/sh` for portability|
+| `zsh` | is a more modern shell found on macOS | [Zsh Reference Manual](https://zsh.sourceforge.io/Doc/Release/zsh_toc.html)|
+
+
+### Useful one-liners
 ``` sh
 # update and upgrade everything
 sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y
 
-# run last command
+# run the last command
 !!
 
 # run last arguments of last command
 # eg last command was `ls -l /path/to/file`
 !$   # /path/to/file
 ```
-
+### Multi-threading
 Many programs have a flag that allows them to be run in parallel, across multiple threads.
 ``` sh
 THREADS=$(nproc)  # use the maximum number of cores
@@ -57,6 +67,7 @@ THREADS=$(nproc)  # use the maximum number of cores
 samtools view -@ $THREADS -bSu | samtools sort -@ $THREADS > eg2.bam
 ```
 
+### Safety first
 When writing long scripts, it's a good idea to include the following at the top of the script:
 ``` sh
 # strict enforcement of error handling
@@ -70,7 +81,7 @@ set -euo pipefail # equivalent
 set -x            # print each command before executing it
 ```
 
-- environment variables:
+### Environment Variables:
 ``` sh
 # run in current shell
 export MOUSEREF=~/genomes/GCA_000001635.9_GRCm39_full_analysis_set.fna.bowtie_index
@@ -80,41 +91,32 @@ export HUMANREF=~/genomes/GCA_000001405.15_GRCh38_full_analysis_set.fna.bowtie_i
 echo 'export MOUSEREF=~/genomes/GCA_000001635.9_GRCm39_full_analysis_set.fna.bowtie_index' >> ~/.bashrc
 echo 'export HUMANREF=~/genomes/GCA_000001405.15_GRCh38_full_analysis_set.fna.bowtie_index' >> ~/.bashrc
 ```
----
-### shells
-- `bash` is the default shell on most systems
-- `sh` is the Bourne shell, which is the oldest and most basic shell
-- `zsh` is a more modern shell found on macOS
 
-#### `bash`
-- [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
-- [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
-- [Bash Best Practices](https://bertvv.github.io/cheat-sheets/Bash.html)
-#### `sh`
-- lead with `#!/bin/sh` to use `sh` instead of `bash` for portability
-
-#### `zsh`
-- [Zsh Reference Manual](https://zsh.sourceforge.io/Doc/Release/zsh_toc.html)
-
-### Template
+### Template for script files
 Inspiration taken from posts on the thread [Shell script templates](https://stackoverflow.com/questions/430078/shell-script-templates)
 ``` sh
 #!/bin/bash
-# Description:
-# Author: Ryan D. Najac
+## Description:
+## Author: Ryan D. Najac
+## Last modified: $(date +"%Y-%m-%d")
 
-# strict enforcement of error handling
+# Enforce strict error handling and print each command
 set -euxo pipefail
 
-# get the script name from filename
+# Get the script's filename for usage and debugging
 SCRIPT_NAME=$(basename "$BASH_SOURCE" .sh)
 
-# exit with an error message and status code
-bail() { echo -ne "$1" >&2; exit ${2:-1}; }
+# Exit function with error message and status code
+bail() {
+    echo -ne "$1" >&2
+    exit ${2:-1}
+}
 
-# usage message and exit
-HELP_MSG="usage: $SCRIPT_NAME [OPTION]... [ARG]...
-  -h    display this help and exit
+HELP_MSG="Usage: $SCRIPT_NAME <working_directory>\n
+Options:
+  -h    Display this help and exit
+Example:
+  $SCRIPT_NAME /path/to/data   # Run summary and cleaning scripts in /path/to/data
 "
 
 usage() {
@@ -126,15 +128,15 @@ usage() {
     bail "${1}${HELP_MSG}" $status
 }
 
-# option parsing
+# Parse command-line options
 while getopts "h" opt; do
     case $opt in
         h) usage 0 ;;
-        ?) usage "invalid option: -$OPTARG \n" ;;
+        ?) usage "Invalid option: -$OPTARG \n" ;;
     esac
 done
 
-# check for minimum required arguments
+# Validate the number of arguments
 shift $((OPTIND - 1)) && [[ $# -lt 1 ]] && usage "too few arguments\n"
 
 #==========MAIN CODE BELOW==========
@@ -156,9 +158,10 @@ function cp2ec2() { scp "${1}" aws:~/${2:-.} }
 
 ## Remote access
 - Connect to and interact the ec2 instance using `ssh` and `scp`
-
-### Command Line Tools
 - Bonus points if you `netrw` to edit files remotely with `vim`
+- TODO `tmux` for persistent sessions
+- TODO `rsync` for keeping directories in sync
+- TODO add section on ftp and downloading from Azenta
 ---
 #### `aws`
 - [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/index.html)
@@ -483,3 +486,24 @@ example to match sample IDs from a list of files
 re_fcontent = re.compile('Anc-(?P<sample>\d+)-(?P<rep>[AB])_(?P<GE>S\d+)_(?P<lane>L\d\d\d)_(?P<direction>R\d)_fastqc')
 ```
 
+## Extra
+- [Bioinformatics Stack Exchange](https://bioinformatics.stackexchange.com/)
+- [Biostars](https://www.biostars.org/)
+- [Biopython](https://biopython.org/)
+
+### md5
+
+### building indexin samtools
+when downloading the indexes for pipelines, see the compatibility issue below 
+```
+
+ubuntu@ip-172-31-32-180:~/rnaseq/bam2cram$ samtools !!
+samtools faidx download/GCA_000001635.9_GRCm39_full_analysis_set.fna.gz
+[E::fai_build_core] File truncated at line 1
+[E::fai_build3_core] Cannot index files compressed with gzip, please use bgzip
+[faidx] Could not build fai index download/GCA_000001635.9_GRCm39_full_analysis_set.fna.gz.fai
+```
+
+decompress with gzip and recompress with bgzip
+```
+gunzip GCA_000001635.9_GRCm39_full_analysis_set.fna.gz && bgzip download/GCA_000001635.9_GRCm39_full_analysis_set.fna
