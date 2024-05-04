@@ -52,17 +52,6 @@ class QCReport:
         except Exception as e:
             print(f"Failed to write performance metrics to CSV: {e}")
 
-        # TODO
-        # self.mean_qscore = None
-        # self.p_bases_ge_30 = None
-        # self.mapped_reads = None
-        # self.percent_mapped_reads = None
-        # self.duplicate_reads = None
-        # self.percent_duplicate_reads = None
-        # self.unique_reads = None
-        # self.percent_unique_reads = None
-        # self.percent_unique_mapped = None
-
     def formatted_string(self):
         """Return a formatted string representation of the QC report."""
         formatted_string = f"Report for {self.filename}\n"
@@ -156,7 +145,9 @@ class QCManager:
                             report.performance_metrics.get(h, "N/A")
                             for h in headers[1:]
                         ]
-                        sample_id = filename.split("_001_fastqc.zip")[0]
+                        sample_id = filename.split("fastqc.zip")[0]
+                        if sample_id.endswith("_001"):
+                            sample_id = sample_id[:-4]
                         writer.writerow([sample_id] + metrics)
         except Exception as e:
             print(f"Failed to write performance metrics to CSV: {e}")

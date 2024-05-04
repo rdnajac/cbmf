@@ -494,7 +494,7 @@ re_fcontent = re.compile('Anc-(?P<sample>\d+)-(?P<rep>[AB])_(?P<GE>S\d+)_(?P<lan
 ### md5
 
 ### building indexin samtools
-when downloading the indexes for pipelines, see the compatibility issue below 
+when downloading the indexes for pipelines, see the compatibility issue below
 ```
 
 ubuntu@ip-172-31-32-180:~/rnaseq/bam2cram$ samtools !!

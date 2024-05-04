@@ -19,7 +19,6 @@ bail() {
     exit ${2:-1}
 }
 
-# Help message and usage function
 HELP_MSG="Usage: $SCRIPT_NAME <working_directory>\n
 Options:
   -h    Display this help and exit
@@ -69,7 +68,6 @@ ADDITIONAL_CLEANING_PY="$(dirname "$0")/additional_cleaning.py"
 [[ -x $ADDITIONAL_CLEANING_PY ]] || chmod +x $ADDITIONAL_CLEANING_PY
 
 # Run the additional_cleaning.py script
-./$ADDITIONAL_CLEANING_PY "$PERFORMANCE_METRICS_CSV" final_report.csv
+$ADDITIONAL_CLEANING_PY "$PERFORMANCE_METRICS_CSV" "./flagstat.csv"
 
-printf "All done!\n"
 

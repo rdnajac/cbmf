@@ -11,56 +11,22 @@
 # enforce strict error handling and print each command
 set -euxo pipefail
 
-# get the script name from filename
-SCRIPT_NAME=$(basename "$BASH_SOURCE" .sh)
-
-# exit and print error message with status code
-bail() { echo -ne "$1" >&2; exit ${2:-1}; }
-
-HELP_MSG="Usage: $SCRIPT_NAME <directory> [file_extension]\n
-Options:
-  -h    Display this help and exit
-Example:
-  $SCRIPT_NAME /path/to/data fastq.gz   # Process all fastq.gz files in /path/to/data
-  $SCRIPT_NAME /path/to/data bam        # Process all bam files in /path/to/data
-"
-
-usage() {
-    local status=2
-    if [ "$1" -eq "$1" ] 2>/dev/null; then
-        status=$1
-        shift
-    fi
-    bail "${1}${HELP_MSG}" $status
-}
-
-# parse command-line options
-while getopts "h" opt; do
-    case $opt in
-        h) usage 0 ;;
-        ?) usage "Invalid option: -$OPTARG \n" ;;
-    esac
-done
-
-# validate argument count
-shift $((OPTIND - 1))
-if [[ $# -lt 1 ]]; then
-    usage "Too few arguments\n"
-fi
-
-#==========MAIN CODE BELOW==========
-
 function multifastqc {
-    local working_dir="$1"
-    # default to 'fastq.gz' if no extension is provided
-    local file_extension="${2:-fastq.gz}"
+  local working_dir="$1"
+  # default to 'fastq.gz' if no extension is provided
+  local file_extension="${2:-fastq.gz}"
+  local files=("${working_dir}"/*.$file_extension)
+  local output_dir=""
+  local zipfile=""
 
-    if [[ $file_extension == "bam" ]]; then
-        output_dir="${working_dir}/bamqc"
-    else
-        output_dir="${working_dir}/fastqc"
-    fi
-    local files=("${working_dir}"/*.$file_extension)
+  if [[ $file_extension == "bam" ]]; then
+    output_dir="${working_dir}/bamqc"
+    zipfile="bamqc_html.zip"
+
+  else
+    output_dir="${working_dir}/fastqc"
+    zipfile="fastqc_html.zip"
+  fi
 
     # create output directory if it doesn't exist
     mkdir -p "$output_dir" || return 1
@@ -69,11 +35,11 @@ function multifastqc {
     [[ ${#files[@]} -eq 0 ]] && echo "no .$file_extension files found" && return 2
 
     # run FastQC on each file in parallel
-    for file in "${files[@]}"; do
-        fastqc -o "$output_dir" --noextract --memory 1024 "$file" &
-    done
-    wait # for all background jobs to finish
+    fastqc -o "$output_dir" --noextract --memory 1024 -t 32 "${files[@]}"
+
+    # compress all html files into a single zip archive
+    (cd "$output_dir" && zip -r ../$zipfile *.html && rm -f *.html)
 }
 
-# run the multifastqc function with the provided arguments
 multifastqc "$@"
+

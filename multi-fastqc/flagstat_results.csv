@@ -1,0 +1,3 @@
+ile,Total Reads,Mapped Reads,% Mapped Reads,Duplicate Reads,% Duplicate Reads,Unique Reads,% Unique Reads,% Unique of Mapped
+CBP-2-H3K27ac2_S15_L001.bam,"{'qc_passed': 16797580, 'qc_failed': 0}",16488735,98.16137205478408,0,0.0,16488735,98.16137205478408,100.0
+CBP-2-H3K27ac2_S15_L001.tmp.bam,"{'qc_passed': 16797580, 'qc_failed': 0}",16488735,98.16137205478408,0,0.0,16488735,98.16137205478408,100.0

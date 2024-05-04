@@ -1,18 +1,26 @@
-#!/bin/bash
 #================================================================
-## Description: This script wraps other scripts
+## Description: fastq to aligned and bam or cram alignment pipeline
 ## Author: Ryan D. Najac
-## Last modified: $(date +"%Y-%m-%d")
+## Last modified: 2024-05-03
 #================================================================
 
-# enforce strict error handling and print each command
-set -euxo pipefail
+#!/bin/bash
 
-# get the script name from filename
-SCRIPT_NAME=$(basename "$BASH_SOURCE" .sh)
+#======================= SET UP =================================
+
+# TODO toggle this with a flag
+set -euo pipefai        # enforce strict error handling
+set -x                   # print each command before execution
+
+# over-engineered way to get the script directory...
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+SCRIPT_NAME=$(basename "$0")
 
 # exit and print error message with status code
 bail() { echo -ne "$1" >&2; exit ${2:-1}; }
+
+
+#======================= HELP ===================================
 
 HELP_MSG="Usage: $SCRIPT_NAME <directory> [file_extension]\n
 Options:
@@ -23,14 +31,13 @@ Example:
 
 usage() {
     local status=2
-    if [ "$1" -eq "$1" ] 2>/dev/null; then
-        status=$1
-        shift
-    fi
+    [ "$1" -eq "$1" ] 2>/dev/null && status=$1 && shift
     bail "${1}${HELP_MSG}" $status
 }
 
-# parse command-line options
+
+#======================= COMMAND LINE PARSING ===================
+
 while getopts "h" opt; do
     case $opt in
         h) usage 0 ;;
@@ -38,11 +45,7 @@ while getopts "h" opt; do
     esac
 done
 
-# validate argument count
-shift $((OPTIND - 1))
-if [[ $# -lt 1 ]]; then
-    usage "Too few arguments\n"
-fi
+shift $((OPTIND - 1)) && [[ $# -lt 1 ]] && usage "Too few arguments\n"
 
 #==========MAIN CODE BELOW==========
 
