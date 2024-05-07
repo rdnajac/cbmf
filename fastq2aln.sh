@@ -1,163 +1,116 @@
+#!/bin/bash
 #================================================================
-## Description: fastq to aligned and bam or cram alignment pipeline
+## Description: Fastq to aligned and BAM or CRAM alignment pipeline
 ## Author: Ryan D. Najac
 ## Last modified: 2024-05-03
 #================================================================
-
-#!/bin/bash
-
-#======================= SET UP =================================
-SCRIPT_NAME=$(basename "$0")
-SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-MAX_THREADS=$(nproc)
-
 set -euo pipefail   # enforce strict error handling
-# set -x              # print each command before execution
-                    # TODO toggle these options with a flag
 
-# exit and print error message with status code
-bail() { echo -ne "$1" >&2; exit ${2:-1}; }
+readonly SCRIPT_NAME=$(basename "$0")
+readonly SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+readonly MAX_THREADS=$(nproc)
 
-#======================= DEFAULTS ===============================
-FNA="download/GCA_000001635.9_GRCm39_full_analysis_set.fna.gz"
-# MOUSEREF="download/GCA_000001635.9_GRCm39_genomic.fna.gz"
-# HUMANREF="download/GRCh38_latest_genomic.fna.gz"
-#
-#======================= HELP ===================================
-readonly OPTIONS=":hxm"
-# TODO long options?
-readonly USAGE="Usage: ${SCRIPT_NAME} [${OPTIONS}] <directory>
-options:
-  -h    display this help and exit
-  -x    print each command before execution
+readonly FNA="download/GCA_000001635.9_GRCm39_full_analysis_set.fna.gz"
+readonly MOUSEREF="download/GCA_000001635.9_GRCm39_genomic.fna.gz"
+readonly HUMANREF="download/GRCh38_latest_genomic.fna.gz"
 
-  --mouse    use the mouse reference genome
-  --human    use the human reference genome
+#======================= HELP AND OPTIONS =======================
+readonly OPTIONS="hxg:"
+readonly USAGE="Usage: ${SCRIPT_NAME} [-hxg] <directory>
+Options:
+  -h    Display this help and exit
+  -x    Print each command before execution
+  -g    Specify reference genome ('mouse' or 'human', default: 'human')
 "
 
-usage_and_exit()
-{
-    local status=2
-    [ "$1" -eq "$1" ] 2>/dev/null && status=$1 && shift
-    bail "${1}${USAGE}" $status
-}
+# Helper functions to print colored messages
+okay() { printf "\033[92m%s\033[0m\n" "${1}" >&2; }
+info() { printf "\033[94m%s\033[0m\n" "${1}" >&2; }
+warn() { printf "\033[91m%s\033[0m\n" "${1}" >&2; }
+
+# Quit with an error message
+bail () { warn "${1}"; exit ${2:-1}; }
+
+# Print usage and exit
+usage(){ printf "%s\n"; "$USAGE"; exit ${1:-0} >&2; }
 
 #======================= COMMAND LINE PARSING ===================
-# see `man getopts`
-while getopts "h" opt; do
+declare REF_GENOME="human"  # Default to human genome
+while getopts ":hxg:" opt; do
     case $opt in
-        h) usage_and_exit 0 ;;
-        ?) usage_and_exit "Invalid option: -$OPTARG \n" ;;
+        h) usage 0 ;;
+        x) set -x ;;
+        g) REF_GENOME=${OPTARG} ;;
+        \?) printf "Invalid option: -%s\n" "$OPTARG" >&2; usage 1 ;;
     esac
 done
-# make sure the script has at least one argument
-# TODO is there a better way to do this?
-shift $((OPTIND - 1)) && [[ $# -lt 1 ]] && usage "Too few arguments\n"
 
-#======================= MD5 ====================================
+shift $((OPTIND - 1))
+if [[ $# -lt 1 ]]; then
+    warn "Error: Too few arguments"
+    usage 1
+fi
 
-# Generate checksums for all files in the current directory
-generate_checksums()
-{
-    local extension=${1:-"fastq.gz"}
-    local checksum_file="md5sums.txt"
-    echo "Generating checksums for *.$extension files in the current directory..."
-    for file in *.$extension; do
-        echo "$(md5sum "$file" | cut -d ' ' -f 1)\t$file" >> $checksum_file
+# Select reference genome based on the option
+case "$REF_GENOME" in
+    mouse) REF="$MOUSEREF" ;;
+    human) REF="$HUMANREF" ;;
+    *)     warn "Error: Unsupported reference genome '$REF_GENOME'."; exit 1 ;;
+esac
+
+#======================= MAIN FUNCTIONALITY =====================
+get_fastq_pairs() {
+    local suffix="_001.fastq.gz"
+    local r1suffix="_R1${suffix}"
+    local r2suffix="_R2${suffix}"
+    declare -a files=()
+    local dir=${1:-$(pwd)}
+
+    for r1 in "${dir}/"*"${r1suffix}"; do
+        local sample
+        sample=$(basename "$r1" | sed -e "s/${r1suffix}//")
+        if [[ -f "${dir}/${sample}${r2suffix}" ]]; then
+            files+=("$sample")
+        fi
     done
-    echo "Checksums stored in $checksum_file"
+    printf "%s\n" "${files[@]}"
 }
 
-# Verify checksums for all files in the current directory
-verify_checksums()
-{
-    local md5sums_txt="${1:-md5sums.txt}"
-    echo "Verifying checksums..."
-    while read -r expected_checksum file; do
-        local status="[ OK ]"
-        [[ "$(md5sum "$file" | cut -d ' ' -f 1)" != "$expected_checksum" ]] && status="[FAIL]"
-        echo "${status} ${file}"
-    done < $md5sums_txt
+fastq2bam() {
+    local id="$1"
+    local r1="${id}_R1_001.fastq.gz"
+    local r2="${id}_R2_001.fastq.gz"
+
+    bowtie2 --time --threads "$MAX_THREADS" --mm -x "$REF" -1 "$r1" -2 "$r2" \
+        2>> "${id}.log" | samtools sort -@ "$MAX_THREADS" 2>> "${id}.log" > "${id}.bam"
+    okay "Alignment completed for $id"
 }
-
-#======================= UTILITY ===============================
-
-# Function: get_fastq_pairs
-# Usage: get_fastq_pairs <directory>
-#
-# Description:
-# get a newline-delimited list of fastq R1/R2 pairs as
-# sanitized IDs that correspond to the original sample ID
-get_fastq_pairs ()
-{
-  local suffix="_001.fastq.gz"
-  local r1suffix="_R1${suffix}"
-  local r2suffix="_R2${suffix}"
-  declare -a files=()
-  local dir=${1:-$(pwd)}
-  [[ "${dir}" == */ ]] && dir="${dir%/}"  # remove trailing `/`
-
-  for r1 in "${dir}/"*"${r1suffix}"; do
-    # check if we have a matching pair and add to array
-    sample=$(basename "$r1" | sed -e "s/${r1suffix}//")
-    [[ -f "${dir}/${sample}${r2suffix}" ]]; && files+=("$sample")
-  done
-  printf "%s\n" "${files[@]}"
-}
-
-#======================= ALIGNMENT ==============================
-readonly REF="$MOUSEREF"  # TODO make this an option
-
-# Run bowtie2 with the specified reference genome using the
-# specified number of threads and log the time taken
-readonly BT2="bowtie2 --time --threads ${THREADS} --mm -x ${REF}"
-
-##
-# Function: fastq2bam
-# Description: Align paired-end reads to the reference genome
-#
-# Details:
-# Align reads with bowtie2 and convert to BAM format
-# Declaring this as a function lets us use it in a loop
-fastq2bam()
-{
-  local r1="${1}_R1_001.fastq.gz" && [[ ! -f "${r1}" ]] && bail "error: ${r1} not found" 2
-  local r2="${1}_R2_001.fastq.gz" && [[ ! -f "${r2}" ]] && echo "error: ${r2} not found" 2
-  # TODO do I need the bail function and all this error checking if I'm using `set -e`?
-  $BT2 -1 "${r1}" -2 "${r2}" 2>> "${id}.log" | samtools sort -@ "${THREADS}" 2>> "${id}.log" > "${id}.bam"
-}
-
 
 #======================= COMPRESSION =============================
-# CRAM is a compressed BAM format that is more efficient.
-
-readonly CONVERT="samtools view -@ $THREADS"
-
-# Helper functions with automatic filetype detection
-embiggen () { ${CONVERT} -b         -o ${1%.cram}.bam $1; }
-unbiggen () { ${CONVERT} -C -T $FNA -o ${1%.bam}.cram $1; }
-
-# Function: convert
-# Usage: convert <file>
-# Description: Convert a BAM file to CRAM or vice versa
-convert()
-{
-  case "${1##*.}" in
-    bam) unbiggen "$1" ;;
-    cram) embiggen "$1" ;;
-    *) echo "error: Unsupported file type."; exit 1 ;;
-  esac
+convert() {
+    local file="$1"
+    case "${file##*.}" in
+        bam)
+            samtools view -@ "$MAX_THREADS" -C -T "$FNA" -o "${file%.bam}.cram" "$file"
+            okay "Converted $file to CRAM format"
+            ;;
+        cram)
+            samtools view -@ "$MAX_THREADS" -b -o "${file%.cram}.bam" "$file"
+            okay "Converted $file to BAM format"
+            ;;
+        *)
+            warn "Error: Unsupported file type."
+            exit 1
+            ;;
+    esac
 }
 
-#======================= MAIN ==================================
-
-#================================================================
+#======================= MAIN ====================================
 # Example usage:
 # declare -a RA=$(get_fastq_pairs ra/)
 # main() {
 #   for sample in ${RA[@]}; do
-#     fastq2bam "${REFERENCE_GENOME}" "${sample}"
+#     fastq2bam "${sample}"
 #   done
-# }
-# main
+#
 
