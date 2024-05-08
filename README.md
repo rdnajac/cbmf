@@ -1,11 +1,13 @@
 # cbmf 🧬
-> computational biology mad flow
-# TODO github gitmodules for srcs
-# TODO citations list
-# TODO
-Useful things go here.
+
+All the code I don't want to write twice.
+
+> ~~computational biology mad flow~~
+>
+> combinatorial bioinformatic meta-framework
 
 ## Table of Contents
+
 - [Prerequisites](#prerequisites)
 - [Shell scripting](#shell-scripting)
 - [Remote access](#remote-access)
@@ -26,13 +28,14 @@ Useful things go here.
     - [eigen](#eigen)
 
 ## Prerequisites
-In addition to the software listed in [`src/README.md`](src/README.md), you will need to install the following software if you want to build from source.
 
-- TODO: dockerfile
-- TODO: add index of prerequisites as shell script
+In addition to the software listed in [`src/README.md`](src/README.md),
+you will need to install the following software if you want to build from source.
+
 ``` sh
 sudo apt install stuff
 ```
+
 ## Shell scripting
 
 - [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
@@ -41,12 +44,13 @@ sudo apt install stuff
 
 | shell | summary | note |
 | ----- | ------- | ---- |
-| `bash`| the default shell on most systems | |
-| `sh`  | oldest and most basic shell | lead with `#!/bin/sh` for portability|
-| `zsh` | is a more modern shell found on macOS | [Zsh Reference Manual](https://zsh.sourceforge.io/Doc/Release/zsh_toc.html)|
+| `bash`| default on most systems | has assosciative arrays |
+| `sh`  | OG | lead with `#!/bin/sh` for portability |
+| `zsh` | macOS | better tab completion [Zsh Reference Manual](https://zsh.sourceforge.io/Doc/Release/zsh_toc.html)|
 
 
 ### Useful one-liners
+
 ``` sh
 # update and upgrade everything
 sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y
@@ -58,8 +62,11 @@ sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt a
 # eg last command was `ls -l /path/to/file`
 !$   # /path/to/file
 ```
+
 ### Multi-threading
-Many programs have a flag that allows them to be run in parallel, across multiple threads.
+
+Many programs have a flag that allows them to be run across multiple threads.
+
 ``` sh
 THREADS=$(nproc)  # use the maximum number of cores
 
@@ -68,10 +75,12 @@ samtools view -@ $THREADS -bSu | samtools sort -@ $THREADS > eg2.bam
 ```
 
 ### Safety first
-When writing long scripts, it's a good idea to include the following at the top of the script:
+
+Include the following at the top of the script:
+
 ``` sh
 # strict enforcement of error handling
-set -o errexit    # abort on nonzero exitstatus
+set -o errexit    # abort on nonzero exit status
 set -o nounset    # abort on unbound variable
 set -o pipefail   # don't hide errors within pipes
 
@@ -82,6 +91,7 @@ set -x            # print each command before executing it
 ```
 
 ### Environment Variables:
+
 ``` sh
 # run in current shell
 export MOUSEREF=~/genomes/GCA_000001635.9_GRCm39_full_analysis_set.fna.bowtie_index
@@ -93,7 +103,9 @@ echo 'export HUMANREF=~/genomes/GCA_000001405.15_GRCh38_full_analysis_set.fna.bo
 ```
 
 ### Template for script files
-Inspiration taken from posts on the thread [Shell script templates](https://stackoverflow.com/questions/430078/shell-script-templates)
+
+Inspiration taken from posts here: [Shell script templates](https://stackoverflow.com/questions/430078/shell-script-templates)
+
 ``` sh
 #!/bin/bash
 ## Description:
@@ -138,32 +150,28 @@ done
 
 # Validate the number of arguments
 shift $((OPTIND - 1)) && [[ $# -lt 1 ]] && usage "too few arguments\n"
-
-#==========MAIN CODE BELOW==========
 ```
 
 ### Functions
+
+Use '\$' to refer to positional arguments
+
 ``` sh
-# copy a file to an ec2 instance
-# usage: cp2ec2 /local/path/to/file [/remote/path/to/file]
-function cp2ec2() {
-    scp "${1}" aws:~/${2:-.}
-}
-
-function cp1ec2() { scp aws:~/${1} ~/Downloads/ }
-function sync-from-ec2() { rsync -avz --progress aws:~/path/to/dir/ . }
-function cp2ec2() { scp "${1}" aws:~/${2:-.} }
-
+cp1ec2() { scp aws:~/${1} ~/Downloads/ }
+cp2ec2() { scp "${1}" aws:~/${2:-.} }
+sync-from-ec2() { rsync -avz --progress aws:~/path/to/dir/ . }
 ```
 
 ## Remote access
+
 - Connect to and interact the ec2 instance using `ssh` and `scp`
 - Bonus points if you `netrw` to edit files remotely with `vim`
 - TODO `tmux` for persistent sessions
 - TODO `rsync` for keeping directories in sync
 - TODO add section on ftp and downloading from Azenta
+
 ---
-#### `aws`
+### `aws`
 - [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/index.html)
 - [AWS S3 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html)
 - s3 uri format `s3://bucketname/uri`
@@ -175,7 +183,7 @@ aws s3 sync <source> <destination>
 aws s3 cp s3://bucketname/uri/*.fastq.gz .
 ```
 ---
-#### `ssh`
+### `ssh`
 edit `~/.ssh/config`
 - add the location of the private key file so you don't have to specify it with `-i` each time you connect
 - add the `User` and `Hostname` fields so you don't have to specify them each time
@@ -187,7 +195,7 @@ Host aws
     IdentityFile ~/.ssh/aws.pem
 ```
 ---
-#### `scp`
+### `scp`
 - "secure copy" files between computers using `ssh`
 - this means the config from `~/.ssh/config` is used
 ``` sh
@@ -199,14 +207,14 @@ scp aws:~/remotefile.txt .
 ```
 ---
 
-#### `rsync`
+### `rsync`
 - useful for keeping all files in a directory up-to-date
 ``` sh
 # copy all files in a directory to a remote server
 rsync -avz --progress /path/to/local/dir/ aws:/path/to/remote/dir/
 ```
 
-#### `tmux`
+### `tmux`
 Weird stuff can happen with "nested" sessions over `ssh`. If you want to attach to a tmux session on a remote server, you need to use the `-t` flag since `tmux` is not a login shell.
 ``` sh
 ssh aws             # works
@@ -215,10 +223,10 @@ ssh aws -t tmux a   # ok
 ```
 
 #### `vim`
+
 Once you have ssh configured, you can use vim to edit files remotely thanks to the `netrw` plugin that comes shipped with `vim`.
 ``` sh
 vim scp://aws/remote/path/to/file
-```
 Copy current vim buffer to remote server
 ``` vim
 :!scp % aws:~/path/to/remote/file

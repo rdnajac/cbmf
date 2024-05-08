@@ -1,0 +1,137 @@
+\documentclass[unnumsec,webpdf,contemporary,large]{oup-authoring-template}%
+
+\graphicspath{{Fig/}}
+
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%
+
+\begin{document}
+
+\journaltitle{Journal Title Here}
+\DOI{DOI HERE}
+\copyrightyear{2022}
+\pubyear{2019}
+\access{Advance Access Publication Date: Day Month Year}
+\appnotes{Paper}
+
+\firstpage{1}
+
+\title[Efficient Bioinformatics Workflows]{Efficient Bioinformatics Workflows for High-Throughput Sequence Analysis}
+
+\author[1,$\ast$]{Ryan D. Najac}
+
+\authormark{Najac et al.}
+
+\address[1]{\orgdiv{Department of Bioinformatics}, \orgname{Genome Research Institute}, \orgaddress{\state{California}, \country{USA}}}
+
+\corresp[$\ast$]{Corresponding author. \href{email:ryan.najac@genome-research.org}{ryan.najac@genome-research.org}}
+
+\received{Day Month Year}
+\revised{Day Month Year}
+\accepted{Day Month Year}
+
+\abstract{
+This paper discusses the development of a suite of automated scripts designed to streamline the process of quality control, alignment, and report generation for next-generation sequencing data. The scripts are designed to work efficiently across various data scales, leveraging the power of UNIX shell scripting for robust and scalable bioinformatics analysis.
+}
+
+\keywords{Bioinformatics, Next-Generation Sequencing, Data Analysis, Shell Scripting}
+
+\maketitle
+
+\section{Introduction}
+The rise of high-throughput sequencing technologies has necessitated the development of equally rapid and reliable data processing workflows. In bioinformatics, efficient data processing and quality control are paramount to ensure the accuracy of final results. This paper presents a set of UNIX-based scripts designed to facilitate these processes in a scalable and reproducible manner.
+
+\section{Methods}
+\subsection{Quality Control}
+We developed a script, \texttt{multifastqc.sh}, which automates the running of FastQC across multiple \texttt{.fastq.gz} files, collecting and zipping the results for easy storage and access. This script ensures that all sequence files undergo thorough quality checks before any further analysis.
+
+\subsection{Sequence Alignment}
+The \texttt{fastq2aln.sh} script automates the alignment of FASTQ files to reference genomes (either mouse or human). This script utilizes Bowtie2 for alignment, followed by SAMtools for sorting and indexing the resultant BAM files, thus preparing the aligned sequences for downstream analysis.
+
+\subsection{Report Generation}
+Post-alignment, \texttt{generate\_report.sh} is used to compile alignment metrics and perform additional data cleaning steps. This script links several smaller Python scripts that summarize data quality and alignment statistics, providing a comprehensive overview of the dataset in a concise report.
+
+\section{Results}
+Using these scripts, the time required to process sequencing data from FASTQ to final report stages is significantly reduced, without sacrificing accuracy or detail in the reporting of sequence quality and alignment metrics.
+
+\section{Discussion}
+The integration of these scripts into daily bioinformatics workflows can significantly streamline the processing of large-scale sequencing data. Future improvements may include enhanced error handling and the incorporation of machine learning models to predict data quality.
+
+\section{Conclusion}
+This suite of scripts represents a significant step forward in the automation of bioinformatics workflows, offering robust, scalable solutions that can adapt to the evolving demands of genomic research.
+
+\begin{appendices}
+
+\section{Source Code}
+The source code for the scripts discussed in this paper is available upon request from the corresponding author.
+
+\end{appendices}
+
+\section{Competing interests}
+No competing interest is declared.
+
+\section{Author contributions statement}
+R.D.N. conceived the experiments, conducted the software development, analyzed the results, and wrote the manuscript.
+
+\section{Acknowledgments}
+The author thanks the Genome Research Institute for support and funding.
+
+\begin{thebibliography}{1}
+
+\bibitem{bioinformatics2015}
+Author, Article title, Journal, Year.
+
+\end{thebibliography}
+
+\end{document}
+
+
+\documentclass[unnumsec,webpdf,contemporary,large]{oup-authoring-template}%
+
+\graphicspath{{Fig/}}
+
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%
+
+\begin{document}
+
+\title[Streamlined NGS Data Processing]{Streamlined Next-Generation Sequencing Data Processing Using a Suite of Shell Scripts}
+
+\author[1,$\ast$]{First Author}
+
+\authormark{Author Name et al.}
+
+\address[1]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\street{Street}, \postcode{Postcode}, \state{State}, \country{Country}}}
+
+\corresp[$\ast$]{Corresponding author. \href{email:email-id.com}{email-id.com}}
+
+\abstract{
+We describe a suite of shell scripts designed to streamline the processing of next-generation sequencing data. This suite, which includes tools for quality control, alignment, and report generation, improves the efficiency and automation of bioinformatics pipelines. Availability and implementation details are provided to ensure accessibility to non-commercial users.
+}
+
+\keywords{NGS, bioinformatics, shell scripting, data processing}
+
+\maketitle
+
+\section{Introduction}
+The increasing volume of data produced by next-generation sequencing technologies demands efficient and automated tools for data processing. Our suite of shell scripts addresses this need by providing a comprehensive solution for managing the entire workflow, from raw data quality control to alignment and summarization.
+
+\section{Software Description}
+The software suite comprises several components, each designed for a specific task in the NGS data processing pipeline:
+\begin{itemize}
+    \item \texttt{fastq2aln.sh}: Automates the alignment of FASTQ files using popular tools like BWA and SAMtools.
+    \item \texttt{qcsummary.py}: Summarizes quality control metrics from FastQC reports into a single table.
+    \item \texttt{multifastqc.sh}: Facilitates the batch processing of multiple FASTQ files for quality control analysis.
+    \item \texttt{generate\_report.sh}: Generates a comprehensive report integrating all the QC and alignment metrics.
+    \item \texttt{flagstat2csv.py}: Converts SAMtools flagstat output into a CSV format for easier analysis and visualization.
+    \item \texttt{clean\_data.py}: Provides functions for cleaning and preparing datasets for downstream analysis.
+\end{itemize}
+
+\section{Availability and Implementation}
+The scripts are implemented in Bash and Python, ensuring compatibility with most Unix-like operating systems. All software is freely available to non-commercial users under the [License Name] license. The tools do not require any mandatory user registration, and are designed to perform efficiently across a broad range of computing environments. The software can be accessed at \url{https://github.com/YourGitHubRepo}.
+
+\section{Conclusion}
+This suite of scripts simplifies and automates the processing of NGS data, making it accessible to researchers with varying levels of computational expertise. By streamlining critical steps in the bioinformatics workflow, our tools help users to focus more on analysis and less on data management.
+
+\end{document}
+

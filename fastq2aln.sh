@@ -60,19 +60,18 @@ esac
 
 #======================= MAIN FUNCTIONALITY =====================
 get_fastq_pairs() {
-    local suffix="_001.fastq.gz"
-    local r1suffix="_R1${suffix}"
-    local r2suffix="_R2${suffix}"
-    declare -a files=()
     local dir=${1:-$(pwd)}
+    local suffix="_001.fastq.gz"
+    declare -a files=()
 
-    for r1 in "${dir}/"*"${r1suffix}"; do
-        local sample
-        sample=$(basename "$r1" | sed -e "s/${r1suffix}//")
-        if [[ -f "${dir}/${sample}${r2suffix}" ]]; then
-            files+=("$sample")
+    # Use find to avoid globbing issues and directly process each matching file
+    while IFS= read -r r1; do
+        local r2="${r1%_R1$suffix}_R2$suffix"
+        if [[ -f "$r2" ]]; then
+            files+=("$(basename "${r1%_R1$suffix}")")
         fi
-    done
+    done < <(find "$dir" -maxdepth 1 -type f -name "*_R1$suffix")
+
     printf "%s\n" "${files[@]}"
 }
 
@@ -81,8 +80,10 @@ fastq2bam() {
     local r1="${id}_R1_001.fastq.gz"
     local r2="${id}_R2_001.fastq.gz"
 
+    # Heavy lifting: align the reads and sort the resulting BAM file
     bowtie2 --time --threads "$MAX_THREADS" --mm -x "$REF" -1 "$r1" -2 "$r2" \
         2>> "${id}.log" | samtools sort -@ "$MAX_THREADS" 2>> "${id}.log" > "${id}.bam"
+
     okay "Alignment completed for $id"
 }
 
@@ -106,11 +107,13 @@ convert() {
 }
 
 #======================= MAIN ====================================
-# Example usage:
-# declare -a RA=$(get_fastq_pairs ra/)
-# main() {
-#   for sample in ${RA[@]}; do
-#     fastq2bam "${sample}"
-#   done
-#
+# make it so that I can call functions from the command line
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] || warn "Error: Script must be sourced."
+[[ s -d "$1" ]] && bail "Error: Directory '$1' not found."
 
+declare -a fastq_files=()
+fastq_files=($(get_fastq_pairs "$1"))
+
+for id in "${fastq_files[@]}"; do
+   echo fastq2bam "$id"
+done
