@@ -81,8 +81,8 @@ get_fastq_pairs() {
     local r2="${id}_R2_001.fastq.gz"
 
     # Heavy lifting: align the reads and sort the resulting BAM file
-    bowtie2 --time --threads "$MAX_THREADS" --mm -x "$REF" -1 "$r1" -2 "$r2" \
-      2>> "${id}.log" | samtools sort -@ "$MAX_THREADS" 2>> "${id}.log" > "${id}.bam"
+    bowtie2 --time --threads "$MAX_THREADS" --mm -x "$REF" -1 "$r1" -2 "$r2" 2>> "${id}.log" \
+      | samtools sort -@ "$MAX_THREADS" 2>> "${id}.log" > "${id}.bam"
 
     okay "Alignment completed for $id"
   }
@@ -107,9 +107,7 @@ convert() {
 }
 
 #======================= MAIN ====================================
-# make it so that I can call functions from the command line
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] || warn "Error: Script must be sourced."
-[[ s -d "$1" ]] && bail "Error: Directory '$1' not found."
+#[[ s -d "$1" ]] && bail "Error: Directory '$1' not found."
 
 declare -a fastq_files=()
 fastq_files=($(get_fastq_pairs "$1"))
