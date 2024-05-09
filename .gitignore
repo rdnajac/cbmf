@@ -4,4 +4,11 @@ ex/
 out/
 test/
 
-/src
+# latex stuff
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.out
+#alias cleantex='rm -f *.aux *.log *.fls *.fdb_latexmk *.synctex.gz *.out'

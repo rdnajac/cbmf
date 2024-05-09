@@ -1,137 +1,233 @@
+%%% Pick from one of the following templates %%%
 \documentclass[unnumsec,webpdf,contemporary,large]{oup-authoring-template}%
+%\documentclass[unnumsec,webpdf,modern,large]{oup-authoring-template}
+%\documentclass[unnumsec,webpdf,traditional,large]{oup-authoring-template}
 
-\graphicspath{{Fig/}}
-
+\onecolumn % for one column layouts
+%\usepackage{showframe}
+%\graphicspath{{Fig/}}
+% line numbers
+%\usepackage[mathlines, switch]{lineno}
+%\usepackage[right]{lineno}
 \theoremstyle{thmstyleone}%
-\newtheorem{theorem}{Theorem}%
+\newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+\newtheorem{proposition}[theorem]{Proposition}%
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}
 
 \begin{document}
 
-\journaltitle{Journal Title Here}
-\DOI{DOI HERE}
-\copyrightyear{2022}
-\pubyear{2019}
-\access{Advance Access Publication Date: Day Month Year}
+\journaltitle{CBMF W4761}
+\pubyear{2024}
+\access{Advance Access Publication Date: 5 May 2024}
 \appnotes{Paper}
 
 \firstpage{1}
+\title[Combinatorial Bioinformatics Meta-Framework]{Efficient Bioinformatics Workflows for High-Throughput Sequence Analysis}
 
-\title[Efficient Bioinformatics Workflows]{Efficient Bioinformatics Workflows for High-Throughput Sequence Analysis}
+\author[1,$\ast$]{Ryan D. Najac\ORCID{0009–0000–6280–5646}}
 
-\author[1,$\ast$]{Ryan D. Najac}
+\authormark{Najac}
 
-\authormark{Najac et al.}
+\abstract{The vast and growing volume of next-generation sequencing data poses significant challenges for bioinformatics, particularly in processing and analysis for those who are not expert programmers. We introduce a suite of automated shell scripts that significantly enhance the efficiency of quality control, alignment, and report generation tasks. Designed to handle diverse datasets and scale robustly, these tools leverage UNIX shell scripting to provide fast, reliable, and scalable solutions for comprehensive bioinformatics analysis.}
+\keywords{Bioinformatics, Next-Generation Sequencing, Data Analysis, Shell Scripting, Bash, Fastq, Compression, Alignment, Quality Control}
 
-\address[1]{\orgdiv{Department of Bioinformatics}, \orgname{Genome Research Institute}, \orgaddress{\state{California}, \country{USA}}}
-
-\corresp[$\ast$]{Corresponding author. \href{email:ryan.najac@genome-research.org}{ryan.najac@genome-research.org}}
-
-\received{Day Month Year}
-\revised{Day Month Year}
-\accepted{Day Month Year}
-
-\abstract{
-This paper discusses the development of a suite of automated scripts designed to streamline the process of quality control, alignment, and report generation for next-generation sequencing data. The scripts are designed to work efficiently across various data scales, leveraging the power of UNIX shell scripting for robust and scalable bioinformatics analysis.
-}
-
-\keywords{Bioinformatics, Next-Generation Sequencing, Data Analysis, Shell Scripting}
-
-\maketitle
+% \maketitle % maybe not?
 
 \section{Introduction}
-The rise of high-throughput sequencing technologies has necessitated the development of equally rapid and reliable data processing workflows. In bioinformatics, efficient data processing and quality control are paramount to ensure the accuracy of final results. This paper presents a set of UNIX-based scripts designed to facilitate these processes in a scalable and reproducible manner.
+High-throughput sequencing technologies have greatly increased the volume of data generated in biological research\footnote{Deniz D, Ozgur A, Stallings CL. Applications and Challenges of High Performance Computing in Biology: Parallel Sequence Alignment. \textit{Int J Comput Biol Drug Des}. 2010;3(2):124-134. \url{https://academic.oup.com/bib/article/15/3/390/186219}}. This surge in data is primarily due to advancements in sequencing technologies and the decreasing cost of sequencing, which have led to an exponential growth in the amount of data produced. Many datasets remain underutilized due to the lack of accessible, automated tools that can handle the complexity and scale of the data involved. This work introduces a suite of UNIX-based scripts that simplify the quality control, alignment, and analysis of sequencing data. These tools are designed to be practical, scalable, and adaptable, serving as a foundational component for high-throughput data processing in bioinformatics.
 
 \section{Methods}
-\subsection{Quality Control}
-We developed a script, \texttt{multifastqc.sh}, which automates the running of FastQC across multiple \texttt{.fastq.gz} files, collecting and zipping the results for easy storage and access. This script ensures that all sequence files undergo thorough quality checks before any further analysis.
 
-\subsection{Sequence Alignment}
-The \texttt{fastq2aln.sh} script automates the alignment of FASTQ files to reference genomes (either mouse or human). This script utilizes Bowtie2 for alignment, followed by SAMtools for sorting and indexing the resultant BAM files, thus preparing the aligned sequences for downstream analysis.
+\section{Tables}
 
-\subsection{Report Generation}
-Post-alignment, \texttt{generate\_report.sh} is used to compile alignment metrics and perform additional data cleaning steps. This script links several smaller Python scripts that summarize data quality and alignment statistics, providing a comprehensive overview of the dataset in a concise report.
+The scripts that aggregate FastQC data output comma-separated values (CSV) files for each sample processed. These CSV files are then combined into a single table that summarizes the quality control metrics for all samples.
 
-\section{Results}
-Using these scripts, the time required to process sequencing data from FASTQ to final report stages is significantly reduced, without sacrificing accuracy or detail in the reporting of sequence quality and alignment metrics.
+\subsection{Quality Control Summary}
 
-\section{Discussion}
-The integration of these scripts into daily bioinformatics workflows can significantly streamline the processing of large-scale sequencing data. Future improvements may include enhanced error handling and the incorporation of machine learning models to predict data quality.
+This table summarizes the quality control checks for each sample, indicating whether specific metrics have passed or failed the QC criteria. The data shown reflects the initial rows from the qcsummary.csv file generated by the FastQC scripts. The \texttt{multifastqc.sh} script processes multiple samples in parallel, then combines the individual QC summaries into a single table.
 
-\section{Conclusion}
-This suite of scripts represents a significant step forward in the automation of bioinformatics workflows, offering robust, scalable solutions that can adapt to the evolving demands of genomic research.
+\begin{table}[htbp]
+\caption{Quality Control Summary\label{tab1}}
+\centering
+\begin{tabular}{@{}lllllllllll@{}}
+\toprule
+Sample & Basic Stats & Seq Quality & Tile Quality & Seq Scores & Seq Content & GC Content & N Content & Seq Length & Dup Levels & Adapter Content \\
+\midrule
+Sample1 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample2 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample3 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample4 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample5 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+Sample6 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+Sample7 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+Sample8 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+\botrule
+\end{tabular}
+\begin{tablenotes}%
+\item Note: The QC summary data displayed is extracted from the first few entries of the CSV outputs of the FastQC analysis scripts.
+\end{tablenotes}
+\end{table}
 
-\begin{appendices}
+\subsection{Detailed Basic Statistics}
 
-\section{Source Code}
-The source code for the scripts discussed in this paper is available upon request from the corresponding author.
+This table shows detailed basic statistics for each sample as produced by another script in the FastQC suite. Below are the initial rows from the `basic_stats.csv`.
 
-\end{appendices}
+\begin{table}[htbp]
+\caption{Detailed Basic Statistics\label{tab2}}
+\centering
+\begin{tabular}{@{}llllllll@{}}
+\toprule
+Sample ID & Filename & File type & Encoding & Total Sequences & Total Bases & Sequence length & \%GC \\
+\midrule
+Sample1 & Sample1_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,037,876 & 606 Mbp & 35-76 & 51 \\
+Sample2 & Sample2_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,862,535 & 592.8 Mbp & 35-76 & 51 \\
+Sample3 & Sample3_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,083,218 & 609.5 Mbp & 35-76 & 51 \\
+Sample4 & Sample4_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,989,349 & 602.4 Mbp & 35-76 & 51 \\
+Sample5 & Sample5_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,037,876 & 606 Mbp & 35-76 & 51 \\
+Sample6 & Sample6_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,862,535 & 592.8 Mbp & 35-76 & 51 \\
+Sample7 & Sample7_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,083,218 & 609.5 Mbp & 35-76 & 51 \\
+Sample8 & Sample8_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,989,349 & 602.4 Mbp & 35-76 & 51 \\
+\botrule
+\end{tabular}
+\begin{tablenotes}%
+\item Note: This table includes detailed statistics for the first eight samples processed. Each entry corresponds to an output from the FastQC report files.
+\end{tablenotes}
+\end{table}
+
+\keywords{Bioinformatics, Next-Generation Sequencing, Data Analysis, Shell Scripting, Bash, Fastq, Compression, Alignment, Quality Control}
+
+% \maketitle % maybe not?
+
+\section{Introduction}
+High-throughput sequencing technologies have greatly increased the volume of data generated in biological research\footnote{Deniz D, Ozgur A, Stallings CL. Applications and Challenges of High Performance Computing in Biology: Parallel Sequence Alignment. \textit{Int J Comput Biol Drug Des}. 2010;3(2):124-134. \url{https://academic.oup.com/bib/article/15/3/390/186219}}. This surge in data is primarily due to advancements in sequencing technologies and the decreasing cost of sequencing, which have led to an exponential growth in the amount of data produced. Many datasets remain underutilized due to the lack of accessible, automated tools that can handle the complexity and scale of the data involved. This work introduces a suite of UNIX-based scripts that simplify the quality control, alignment, and analysis of sequencing data. These tools are designed to be practical, scalable, and adaptable, serving as a foundational component for high-throughput data processing in bioinformatics.
+
+\section{Methods}
+
+\section{Tables}
+
+The scripts that aggregate FastQC data output comma-separated values (CSV) files for each sample processed. These CSV files are then combined into a single table that summarizes the quality control metrics for all samples.
+
+\subsection{Quality Control Summary}
+
+This table summarizes the quality control checks for each sample, indicating whether specific metrics have passed or failed the QC criteria. The data shown reflects the initial rows from the qcsummary.csv file generated by the FastQC scripts. The \textt{multifastqc.sh} script processes multiple samples in parallel, then combines the individual QC summaries into a single table.
+
+\begin{table}[htbp]
+\caption{Quality Control Summary\label{tab1}}
+\centering
+\begin{tabular}{@{}lllllllllll@{}}
+\toprule
+Sample & Basic Stats & Seq Quality & Tile Quality & Seq Scores & Seq Content & GC Content & N Content & Seq Length & Dup Levels & Adapter Content \\
+\midrule
+Sample1 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample2 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample3 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample4 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample5 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+Sample6 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+Sample7 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+Sample8 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+\botrule
+\end{tabular}
+\begin{tablenotes}%
+\item Note: The QC summary data displayed is extracted from the first few entries of the CSV outputs of the FastQC analysis scripts.
+\end{tablenotes}
+\end{table}
+
+\subsection{Detailed Basic Statistics}
+
+This table shows detailed basic statistics for each sample as produced by another script in the FastQC suite. Below are the initial rows from the `basic_stats.csv`.
+
+\begin{table}[htbp]
+\caption{Detailed Basic Statistics\label{tab2}}
+\centering
+\begin{tabular}{@{}llllllll@{}}
+\toprule
+Sample ID & Filename & File type & Encoding & Total Sequences & Total Bases & Sequence length & \%GC \\
+\midrule
+Sample1 & Sample1\_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,037,876 & 606 Mbp & 35-76 & 51 \\
+Sample2 & Sample2\_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,862,535 & 592.8 Mbp & 35-76 & 51 \\
+Sample3 & Sample3\_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,083,218 & 609.5 Mbp & 35-76 & 51 \\
+Sample4 & Sample4\_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,989,349 & 602.4 Mbp & 35-76 & 51 \\
+Sample5 & Sample5\_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,037,876 & 606 Mbp & 35-76 & 51 \\
+Sample6 & Sample6\_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,862,535 & 592.8 Mbp & 35-76 & 51 \\
+Sample7 & Sample7\_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,083,218 & 609.5 Mbp & 35-76 & 51 \\
+Sample8 & Sample8\_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,989,349 & 602.4 Mbp & 35-76 & 51 \\
+\botrule
+\end{tabular}
+\begin{tablenotes}%
+\item Note: This table includes detailed statistics for the first eight samples processed. Each entry corresponds to an output from the FastQC report files.
+\end{tablenotes}
+\end{table}
+
+
+This is either to be made up manually, or to be generated by an
+appropriate .bst file with BibTeX. Then,
+
+\section{Lists}\label{sec9}
+
+List in \LaTeX{} can be of three types: numbered, bulleted and unnumbered. The ``enumerate'' environment produces a numbered list, the
+``itemize'' environment produces a bulleted list and the ``unlist''
+environment produces an unnumbered list.
+In each environment, a new entry is added via the \verb+\item+ command.
+\begin{enumerate}[1.]
+\item This is the 1st item
+
 
 \section{Competing interests}
 No competing interest is declared.
 
-\section{Author contributions statement}
-R.D.N. conceived the experiments, conducted the software development, analyzed the results, and wrote the manuscript.
-
 \section{Acknowledgments}
-The author thanks the Genome Research Institute for support and funding.
+Thank you to my labmates in the Palomero Lab for their guidance and advice.
 
+%\bibliographystyle{plain}
+%\bibliography{reference}
 \begin{thebibliography}{1}
 
-\bibitem{bioinformatics2015}
-Author, Article title, Journal, Year.
+\bibitem{Langmead2012}
+B.~Langmead and S.~L.~Salzberg,
+``Fast gapped-read alignment with Bowtie 2,''
+\textit{Nature Methods}, vol. 9, no. 4, pp. 357--359, 2012.
+\texttt{DOI: 10.1038/nmeth.1923}
+[\texttt{URL:} \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3322381/}].
+
+\bibitem{Giancarlo2014}
+R.~Giancarlo, S.~E.~Rombo, and F.~Utro,
+``Compressive biological sequence analysis and archival in the era of high-throughput sequencing technologies,''
+\textit{Briefings in Bioinformatics}, vol. 15, no. 3, pp. 390--406, 2014.
+\texttt{DOI: 10.1093/bib/bbt088}
+[\texttt{URL:} \url{https://doi.org/10.1093/bib/bbt088}].
+
+\bibitem{Bonfield2022}
+J.~K.~Bonfield,
+``CRAM 3.1: advances in the CRAM file format,''
+\textit{Bioinformatics}, vol. 38, no. 6, pp. 1497--1503, 2022.
+\texttt{DOI: 10.1093/bioinformatics/btac010}
+[\texttt{URL:} \url{https://doi.org/10.1093/bioinformatics/btac010}].
+
+\bibitem{Li2009}
+H.~Li et al.,
+``The Sequence Alignment/Map format and SAMtools,''
+\textit{Bioinformatics}, vol. 25, no. 16, pp. 2078--2079, 2009.
+\texttt{DOI: 10.1093/bioinformatics/btp352}
+[\texttt{URL:} \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2723002/}].
+
+\bibitem{Peste2022}
+A.~Peste, A.~Vladu, E.~Kurtic, C.~H.~Lampert, and D.~Alistarh,
+``CrAM: A Compression-Aware Minimizer,''
+\textit{arXiv preprint arXiv:2207.14200}, 2022.
+[\texttt{URL:} \url{https://arxiv.org/abs/2207.14200}].
+
+\bibitem{Nakato2013}
+R.~Nakato, T.~Itoh, and K.~Shirahige,
+``DROMPA: easy-to-handle peak calling and visualization software for the computational analysis and validation of ChIP-seq data,''
+\textit{Genes \& Cells}, vol. 18, no. 7, pp. 589--601, 2013.
+\texttt{DOI: 10.1111/gtc.12058}
+[\texttt{URL:} \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3738949/}].
 
 \end{thebibliography}
-
-\end{document}
-
-
-\documentclass[unnumsec,webpdf,contemporary,large]{oup-authoring-template}%
-
-\graphicspath{{Fig/}}
-
-\theoremstyle{thmstyleone}%
-\newtheorem{theorem}{Theorem}%
-
-\begin{document}
-
-\title[Streamlined NGS Data Processing]{Streamlined Next-Generation Sequencing Data Processing Using a Suite of Shell Scripts}
-
-\author[1,$\ast$]{First Author}
-
-\authormark{Author Name et al.}
-
-\address[1]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\street{Street}, \postcode{Postcode}, \state{State}, \country{Country}}}
-
-\corresp[$\ast$]{Corresponding author. \href{email:email-id.com}{email-id.com}}
-
-\abstract{
-We describe a suite of shell scripts designed to streamline the processing of next-generation sequencing data. This suite, which includes tools for quality control, alignment, and report generation, improves the efficiency and automation of bioinformatics pipelines. Availability and implementation details are provided to ensure accessibility to non-commercial users.
-}
-
-\keywords{NGS, bioinformatics, shell scripting, data processing}
-
-\maketitle
-
-\section{Introduction}
-The increasing volume of data produced by next-generation sequencing technologies demands efficient and automated tools for data processing. Our suite of shell scripts addresses this need by providing a comprehensive solution for managing the entire workflow, from raw data quality control to alignment and summarization.
-
-\section{Software Description}
-The software suite comprises several components, each designed for a specific task in the NGS data processing pipeline:
-\begin{itemize}
-    \item \texttt{fastq2aln.sh}: Automates the alignment of FASTQ files using popular tools like BWA and SAMtools.
-    \item \texttt{qcsummary.py}: Summarizes quality control metrics from FastQC reports into a single table.
-    \item \texttt{multifastqc.sh}: Facilitates the batch processing of multiple FASTQ files for quality control analysis.
-    \item \texttt{generate\_report.sh}: Generates a comprehensive report integrating all the QC and alignment metrics.
-    \item \texttt{flagstat2csv.py}: Converts SAMtools flagstat output into a CSV format for easier analysis and visualization.
-    \item \texttt{clean\_data.py}: Provides functions for cleaning and preparing datasets for downstream analysis.
-\end{itemize}
-
-\section{Availability and Implementation}
-The scripts are implemented in Bash and Python, ensuring compatibility with most Unix-like operating systems. All software is freely available to non-commercial users under the [License Name] license. The tools do not require any mandatory user registration, and are designed to perform efficiently across a broad range of computing environments. The software can be accessed at \url{https://github.com/YourGitHubRepo}.
-
-\section{Conclusion}
-This suite of scripts simplifies and automates the processing of NGS data, making it accessible to researchers with varying levels of computational expertise. By streamlining critical steps in the bioinformatics workflow, our tools help users to focus more on analysis and less on data management.
-
-\end{document}
 

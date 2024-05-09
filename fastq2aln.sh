@@ -18,9 +18,9 @@ readonly HUMANREF="download/GRCh38_latest_genomic.fna.gz"
 readonly OPTIONS="hxg:"
 readonly USAGE="Usage: ${SCRIPT_NAME} [-hxg] <directory>
 Options:
-  -h    Display this help and exit
-  -x    Print each command before execution
-  -g    Specify reference genome ('mouse' or 'human', default: 'human')
+-h    Display this help and exit
+-x    Print each command before execution
+-g    Specify reference genome ('mouse' or 'human', default: 'human')
 "
 
 # Helper functions to print colored messages
@@ -37,73 +37,73 @@ usage(){ printf "%s\n"; "$USAGE"; exit ${1:-0} >&2; }
 #======================= COMMAND LINE PARSING ===================
 declare REF_GENOME="human"  # Default to human genome
 while getopts ":hxg:" opt; do
-    case $opt in
-        h) usage 0 ;;
-        x) set -x ;;
-        g) REF_GENOME=${OPTARG} ;;
-        \?) printf "Invalid option: -%s\n" "$OPTARG" >&2; usage 1 ;;
-    esac
+  case $opt in
+    h) usage 0 ;;
+    x) set -x ;;
+    g) REF_GENOME=${OPTARG} ;;
+    \?) printf "Invalid option: -%s\n" "$OPTARG" >&2; usage 1 ;;
+  esac
 done
 
 shift $((OPTIND - 1))
 if [[ $# -lt 1 ]]; then
-    warn "Error: Too few arguments"
-    usage 1
+  warn "Error: Too few arguments"
+  usage 1
 fi
 
 # Select reference genome based on the option
 case "$REF_GENOME" in
-    mouse) REF="$MOUSEREF" ;;
-    human) REF="$HUMANREF" ;;
-    *)     warn "Error: Unsupported reference genome '$REF_GENOME'."; exit 1 ;;
+  mouse) REF="$MOUSEREF" ;;
+  human) REF="$HUMANREF" ;;
+  *)     warn "Error: Unsupported reference genome '$REF_GENOME'."; exit 1 ;;
 esac
 
 #======================= MAIN FUNCTIONALITY =====================
 get_fastq_pairs() {
-    local dir=${1:-$(pwd)}
-    local suffix="_001.fastq.gz"
-    declare -a files=()
+  local dir=${1:-$(pwd)}
+  local suffix="_001.fastq.gz"
+  declare -a files=()
 
     # Use find to avoid globbing issues and directly process each matching file
     while IFS= read -r r1; do
-        local r2="${r1%_R1$suffix}_R2$suffix"
-        if [[ -f "$r2" ]]; then
-            files+=("$(basename "${r1%_R1$suffix}")")
-        fi
+      local r2="${r1%_R1$suffix}_R2$suffix"
+      if [[ -f "$r2" ]]; then
+        files+=("$(basename "${r1%_R1$suffix}")")
+      fi
     done < <(find "$dir" -maxdepth 1 -type f -name "*_R1$suffix")
 
     printf "%s\n" "${files[@]}"
-}
+  }
 
-fastq2bam() {
+  fastq2bam() {
     local id="$1"
     local r1="${id}_R1_001.fastq.gz"
     local r2="${id}_R2_001.fastq.gz"
 
     # Heavy lifting: align the reads and sort the resulting BAM file
     bowtie2 --time --threads "$MAX_THREADS" --mm -x "$REF" -1 "$r1" -2 "$r2" \
-        2>> "${id}.log" | samtools sort -@ "$MAX_THREADS" 2>> "${id}.log" > "${id}.bam"
+      2>> "${id}.log" | samtools sort -@ "$MAX_THREADS" 2>> "${id}.log" > "${id}.bam"
 
     okay "Alignment completed for $id"
-}
+  }
 
 #======================= COMPRESSION =============================
 convert() {
-    local file="$1"
-    case "${file##*.}" in
-        bam)
-            samtools view -@ "$MAX_THREADS" -C -T "$FNA" -o "${file%.bam}.cram" "$file"
-            okay "Converted $file to CRAM format"
-            ;;
-        cram)
-            samtools view -@ "$MAX_THREADS" -b -o "${file%.cram}.bam" "$file"
-            okay "Converted $file to BAM format"
-            ;;
-        *)
-            warn "Error: Unsupported file type."
-            exit 1
-            ;;
-    esac
+  local file="$1"
+  case "${file##*.}" in
+    bam)
+      samtools view -@ "$MAX_THREADS" -C -T "$FNA" -o "${file%.bam}.cram" "$file"
+      okay "Converted $file to CRAM format"
+      ;;
+    cram)
+      samtools view -@ "$MAX_THREADS" -b -o "${file%.cram}.bam" "$file"
+      okay "Converted $file to BAM format"
+      ;;
+    *)
+      warn "Error: Unsupported file type."
+      exit 1
+      ;;
+  esac
 }
 
 #======================= MAIN ====================================
@@ -115,5 +115,5 @@ declare -a fastq_files=()
 fastq_files=($(get_fastq_pairs "$1"))
 
 for id in "${fastq_files[@]}"; do
-   echo fastq2bam "$id"
+  echo fastq2bam "$id"
 done
