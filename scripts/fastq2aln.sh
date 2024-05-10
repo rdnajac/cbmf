@@ -5,14 +5,14 @@
 ## Last modified: 2024-05-03
 #================================================================
 set -euo pipefail   # enforce strict error handling
+set -x
 
 readonly SCRIPT_NAME=$(basename "$0")
 readonly SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-readonly MAX_THREADS=$(nproc)
+readonly THREADS=$(nproc)
 
-readonly FNA="download/GCA_000001635.9_GRCm39_full_analysis_set.fna.gz"
 readonly MOUSEREF="download/GCA_000001635.9_GRCm39_genomic.fna.gz"
-readonly HUMANREF="download/GRCh38_latest_genomic.fna.gz"
+readonly HUMANREF="/home/ubuntu/genomes/GCA_000001405.15_GRCh38_full_analysis_set.fna.bowtie_index"
 
 #======================= HELP AND OPTIONS =======================
 readonly OPTIONS="hxg:"
@@ -75,35 +75,18 @@ get_fastq_pairs() {
     printf "%s\n" "${files[@]}"
   }
 
-  fastq2bam() {
+fastq2bam() {
     local id="$1"
     local r1="${id}_R1_001.fastq.gz"
     local r2="${id}_R2_001.fastq.gz"
 
-    # Heavy lifting: align the reads and sort the resulting BAM file
-    bowtie2 --time --threads "$MAX_THREADS" --mm -x "$REF" -1 "$r1" -2 "$r2" 2>> "${id}.log" \
-      | samtools sort -@ "$MAX_THREADS" 2>> "${id}.log" > "${id}.bam"
-
-    okay "Alignment completed for $id"
-  }
-
-#======================= COMPRESSION =============================
-convert() {
-  local file="$1"
-  case "${file##*.}" in
-    bam)
-      samtools view -@ "$MAX_THREADS" -C -T "$FNA" -o "${file%.bam}.cram" "$file"
-      okay "Converted $file to CRAM format"
-      ;;
-    cram)
-      samtools view -@ "$MAX_THREADS" -b -o "${file%.cram}.bam" "$file"
-      okay "Converted $file to BAM format"
-      ;;
-    *)
-      warn "Error: Unsupported file type."
-      exit 1
-      ;;
-  esac
+    # Align the reads, sort by name, fix mate information, sort again, and mark duplicates
+    bowtie2 --time --threads "$THREADS" --mm -x "$REF" -1 "$r1" -2 "$r2" 2>> "${id}.log" \
+            | samtools sort -n -@ "$THREADS" 2>> "${id}.log" > "${id}.bam"
+      # | samtools sort -n -@ "$THREADS" - \
+      # | samtools fixmate -m -@ "$THREADS" - - \
+      # | samtools sort -@ "$THREADS" - \
+      # | samtools markdup -r -@ "$THREADS" - "${id}_dedup.bam"
 }
 
 #======================= MAIN ====================================
@@ -113,5 +96,5 @@ declare -a fastq_files=()
 fastq_files=($(get_fastq_pairs "$1"))
 
 for id in "${fastq_files[@]}"; do
-  echo fastq2bam "$id"
+  fastq2bam "$id"
 done
