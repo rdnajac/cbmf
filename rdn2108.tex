@@ -1,0 +1,175 @@
+\documentclass[unnumsec,webpdf,contemporary,large]{oup-authoring-template}
+
+\onecolumn
+
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}%
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+\journaltitle{CBMF W4761}
+\pubyear{2024}
+\access{Advance Access Publication Date: 5 May 2024}
+\appnotes{Paper}
+
+\firstpage{1}
+\title[Combinatorial Bioinformatics Meta-Framework]{Efficient Bioinformatics Workflows for High-Throughput Sequence Analysis}
+
+\author[1,$\ast$]{Ryan D. Najac\ORCID{0009–0000–6280–5646}}
+
+\authormark{Najac}
+
+\abstract{The vast and growing volume of next-generation sequencing data poses significant challenges for bioinformatics, particularly in processing and analysis for those who are not expert programmers. We introduce a suite of automated shell scripts that significantly enhance the efficiency of quality control, alignment, and report generation tasks. Designed to handle diverse datasets and scale robustly, these tools leverage UNIX shell scripting to provide fast, reliable, and scalable solutions for comprehensive bioinformatics analysis.}
+\keywords{Bioinformatics, Next-Generation Sequencing, Data Analysis, Shell Scripting, Bash, Fastq, Compression, Alignment, Quality Control}
+
+\section{Introduction}
+High-throughput sequencing technologies have greatly increased the volume of data generated in biological research\footnote{Deniz D, Ozgur A, Stallings CL. Applications and Challenges of High Performance Computing in Biology: Parallel Sequence Alignment. \textit{Int J Comput Biol Drug Des}. 2010;3(2):124-134. \url{https://academic.oup.com/bib/article/15/3/390/186219}}. This surge in data is primarily due to advancements in sequencing technologies and the decreasing cost of sequencing, which have led to an exponential growth in the amount of data produced. Many datasets remain underutilized due to the lack of accessible, automated tools that can handle the complexity and scale of the data involved. This work introduces a suite of UNIX-based scripts that simplify the quality control, alignment, and analysis of sequencing data. These tools are designed to be practical, scalable, and adaptable, serving as a foundational component for high-throughput data processing in bioinformatics.
+
+\section{Methods}
+
+The Combinatorial Bioinformatic Meta-Framework (CBMF) encapsulates a suite of tools and workflows designed to streamline the processing of high-throughput sequencing data. This framework comprises shell scripting utilities and command-line tools, facilitating tasks ranging from data acquisition and quality control to alignment and analysis.
+
+\subsection{Prerequisites and Setup}
+
+The CBMF operates on Unix-based systems and requires several tools that users must install before leveraging the framework. These tools include common command-line utilities like \texttt{aws}, \texttt{ssh}, \texttt{scp}, \texttt{rsync}, \texttt{tmux}, and \texttt{vim} \citep{Langmead2012}. Installation details are provided in the accompanying documentation and recommend using system package managers (e.g., \texttt{sudo apt install} for Ubuntu systems) for installation.
+
+\subsection{Quality Control and Alignment Workflow}
+
+The framework uses FastQC \citep{Andrews2010FastQC} for initial quality control, automating the process across multiple files using a custom script, \texttt{multifastqc.sh}. Reference genomes for human and mouse are fetched from NCBI Datasets \citep{Giancarlo2014} and indexed using Bowtie2 \citep{Langmead2012}, facilitating subsequent alignment tasks.
+
+The alignment process involves mapping sequencing reads to reference genomes with Bowtie2, handling data output in SAM/BAM formats, and sorting and indexing alignments using SAMtools \citep{Li2009}. This pipeline is crucial for preparing data for downstream analyses, such as variant calling or differential expression analysis.
+
+\subsection{Remote Access and Data Management}
+
+CBMF supports remote data management via command-line tools such as \texttt{aws} CLI for interacting with AWS S3 buckets, \texttt{ssh} for secure access to remote servers, and \texttt{rsync} for efficient file synchronization. These tools are integral for handling large datasets typical of next-generation sequencing projects.
+
+\subsection{Automation and Scripting}
+
+Efficient automation scripts are provided for routine tasks, such as updating system packages, running quality control checks, and managing computational resources across multiple cores using \texttt{nproc} to determine the number of available CPU threads \citep{Peste2022}. Safety features are emphasized through stringent error handling directives in bash scripts (\texttt{set -euo pipefail}), ensuring robust execution \citep{Nakato2013}.
+
+\subsection{RNA-seq Analysis (Work in Progress)}
+
+Future implementations aim to incorporate RNA-seq specific tools like Cufflinks for transcript assembly and quantification, with considerations for library compatibility and performance optimizations through multi-threading and memory management.
+
+\subsection{Documentation and Community Resources}
+
+Comprehensive documentation, including usage examples and troubleshooting tips, is maintained alongside the codebase. Community input is encouraged through open forums and issue tracking, fostering an inclusive environment for tool development and user feedback.
+
+\textbf{Note:} The described methods and tools are continuously updated to accommodate new technological advancements and user requirements in bioinformatics research.
+
+
+\section{Tables}
+
+The scripts that aggregate FastQC data output comma-separated values (CSV) files for each sample processed. These CSV files are then combined into a single table that summarizes the quality control metrics for all samples.
+
+\subsection{Quality Control Summary}
+
+This table summarizes the quality control checks for each sample, indicating whether specific metrics have passed or failed the QC criteria. The data shown reflects the initial rows from the qcsummary.csv file generated by the FastQC scripts. The \texttt{multifastqc.sh} script processes multiple samples in parallel, then combines the individual QC summaries into a single table.
+
+\begin{table}[htbp]
+\caption{Quality Control Summary\label{tab1}}
+\centering
+\begin{tabular}{@{}lllllllllll@{}}
+\toprule
+Sample & Basic Stats & Seq Quality & Tile Quality & Seq Scores & Seq Content & GC Content & N Content & Seq Length & Dup Levels & Adapter Content \\
+\midrule
+Sample1 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample2 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample3 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample4 & PASS & PASS & PASS & PASS & FAIL & PASS & PASS & WARN & PASS & PASS \\
+Sample5 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+Sample6 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+Sample7 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+Sample8 & PASS & PASS & PASS & PASS & FAIL & WARN & PASS & WARN & PASS & PASS \\
+\botrule
+\end{tabular}
+\begin{tablenotes}%
+\item Note: The QC summary data displayed is extracted from the first few entries of the CSV outputs of the FastQC analysis scripts.
+\end{tablenotes}
+\end{table}
+
+\subsection{Detailed Basic Statistics}
+
+This table shows detailed basic statistics for each sample as produced by another script in the FastQC suite. Below are the initial rows from the `basic_stats.csv`.
+
+\begin{table}[htbp]
+\caption{Detailed Basic Statistics\label{tab2}}
+\centering
+\begin{tabular}{@{}llllllll@{}}
+\toprule
+Sample ID & Filename & File type & Encoding & Total Sequences & Total Bases & Sequence length & \%GC \\
+\midrule
+Sample1 & Sample1_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,037,876 & 606 Mbp & 35-76 & 51 \\
+Sample2 & Sample2_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,862,535 & 592.8 Mbp & 35-76 & 51 \\
+Sample3 & Sample3_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,083,218 & 609.5 Mbp & 35-76 & 51 \\
+Sample4 & Sample4_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,989,349 & 602.4 Mbp & 35-76 & 51 \\
+Sample5 & Sample5_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,037,876 & 606 Mbp & 35-76 & 51 \\
+Sample6 & Sample6_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,862,535 & 592.8 Mbp & 35-76 & 51 \\
+Sample7 & Sample7_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 8,083,218 & 609.5 Mbp & 35-76 & 51 \\
+Sample8 & Sample8_R1.fastq.gz & Conventional & Sanger/Illumina 1.9 & 7,989,349 & 602.4 Mbp & 35-76 & 51 \\
+\botrule
+\end{tabular}
+\begin{tablenotes}%
+\item Note: This table includes detailed statistics for the first eight samples processed. Each entry corresponds to an output from the FastQC report files.
+\end{tablenotes}
+\end{table}
+
+\section{Competing interests}
+No competing interest is declared.
+
+\section{Acknowledgments}
+Thank you to my labmates in the Palomero Lab for their guidance and advice.
+
+\begin{thebibliography}{1}
+
+\bibitem{Langmead2012}
+B.~Langmead and S.~L.~Salzberg,
+``Fast gapped-read alignment with Bowtie 2,''
+\textit{Nature Methods}, vol. 9, no. 4, pp. 357--359, 2012.
+\texttt{DOI: 10.1038/nmeth.1923}
+[\texttt{URL:} \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3322381/}].
+
+\bibitem{Giancarlo2014}
+R.~Giancarlo, S.~E.~Rombo, and F.~Utro,
+``Compressive biological sequence analysis and archival in the era of high-throughput sequencing technologies,''
+\textit{Briefings in Bioinformatics}, vol. 15, no. 3, pp. 390--406, 2014.
+\texttt{DOI: 10.1093/bib/bbt088}
+[\texttt{URL:} \url{https://doi.org/10.1093/bib/bbt088}].
+
+\bibitem{Bonfield2022}
+J.~K.~Bonfield,
+``CRAM 3.1: advances in the CRAM file format,''
+\textit{Bioinformatics}, vol. 38, no. 6, pp. 1497--1503, 2022.
+\texttt{DOI: 10.1093/bioinformatics/btac010}
+[\texttt{URL:} \url{https://doi.org/10.1093/bioinformatics/btac010}].
+
+\bibitem{Li2009}
+H.~Li et al.,
+``The Sequence Alignment/Map format and SAMtools,''
+\textit{Bioinformatics}, vol. 25, no. 16, pp. 2078--2079, 2009.
+\texttt{DOI: 10.1093/bioinformatics/btp352}
+[\texttt{URL:} \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2723002/}].
+
+\bibitem{Peste2022}
+A.~Peste, A.~Vladu, E.~Kurtic, C.~H.~Lampert, and D.~Alistarh,
+``CrAM: A Compression-Aware Minimizer,''
+\textit{arXiv preprint arXiv:2207.14200}, 2022.
+[\texttt{URL:} \url{https://arxiv.org/abs/2207.14200}].
+
+\bibitem{Nakato2013}
+R.~Nakato, T.~Itoh, and K.~Shirahige,
+``DROMPA: easy-to-handle peak calling and visualization software for the computational analysis and validation of ChIP-seq data,''
+\textit{Genes \& Cells}, vol. 18, no. 7, pp. 589--601, 2013.
+\texttt{DOI: 10.1111/gtc.12058}
+[\texttt{URL:} \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3738949/}].
+
+\end{thebibliography}
+
+\end{document}
+
