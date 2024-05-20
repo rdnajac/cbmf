@@ -2,6 +2,54 @@
 name = "Teresa Palomero"
 
 [[publications]]
+title = "Genomic characterization of cutaneous T-cell lymphoma and Sezary syndrome"
+journal = "Nature Genetics"
+year = 2023
+url = "https://doi.org/10.1038/s41588-023-01001-9"
+
+[[publications]]
+title = "Therapeutic targeting of NOTCH1 signaling in Peripheral T-cell Lymphomas"
+journal = "Nature Reviews Cancer"
+year = 2022
+url = "https://doi.org/10.1038/s41586-022-05326-3"
+
+[[publications]]
+title = "The genomic landscape of angioimmunoblastic T-cell lymphoma"
+journal = "Nature Communications"
+year = 2021
+url = "https://doi.org/10.1038/s41467-021-21410-3"
+
+[[publications]]
+title = "Genomic and epigenomic insights into the pathogenesis of cutaneous T-cell lymphoma"
+journal = "Blood"
+year = 2020
+url = "https://doi.org/10.1182/blood.2020004834"
+
+[[publications]]
+title = "Role of Vav1 genomic alterations in T-Cell differentiation and transformation in Peripheral T-Cell Lymphoma"
+journal = "Proceedings of the National Academy of Sciences"
+year = 2019
+url = "https://doi.org/10.1073/pnas.1901733116"
+
+[[publications]]
+title = "Mechanisms of therapeutic response to Tipifarnib in a mouse model of Angioimmunoblastic T-Cell Lymphoma"
+journal = "Cancer Cell"
+year = 2018
+url = "https://doi.org/10.1016/j.ccell.2018.01.001"
+
+[[publications]]
+title = "Activating mutations and translocations in the guanine exchange factor VAV1 in peripheral T-cell lymphomas"
+journal = "Proceedings of the National Academy of Sciences"
+year = 2017
+url = "https://www.pnas.org/doi/pdf/10.1073/pnas.1608839114"
+
+[[publications]]
+title = "Targeted cellular immunotherapy for T cell malignancies"
+journal = "Nature Medicine"
+year = 2017
+url = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5848213/"
+
+[[publications]]
 title = "Targeted cellular immunotherapy for T cell malignancies"
 journal = "Nature medicine"
 year = 2017

@@ -515,3 +515,5 @@ samtools faidx download/GCA_000001635.9_GRCm39_full_analysis_set.fna.gz
 decompress with gzip and recompress with bgzip
 ```
 gunzip GCA_000001635.9_GRCm39_full_analysis_set.fna.gz && bgzip download/GCA_000001635.9_GRCm39_full_analysis_set.fna
+
+

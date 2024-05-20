@@ -7,7 +7,6 @@
 set -euo pipefail   # enforce strict error handling
 set -x
 
-
 #======================= GLOBALS ================================
 # define these after you download the reference genomes
 readonly HUMANREF="/home/ubuntu/genomes/GCA_000001405.15_GRCh38_full_analysis_set.fna.bowtie_index"
@@ -46,25 +45,22 @@ get_fastq_pairs() {
 
 fastq2bam() {
   local id="$1"
-  local #TODO handle directory
   local r1="${id}_R1_001.fastq.gz"
   local r2="${id}_R2_001.fastq.gz"
   local log_file="${id}.log"
 
   log() { echo "$(date +%H%M%S) $*" >> "$log_file"; }
 
+  log "start $id"
   {
-    log "Starting processing of $id"
-
     # Align the reads, sort by name, fix mate information, sort again, and mark duplicates
     bowtie2 --time --threads "$THREADS" --mm -x "$MOUSEREF" -1 "$r1" -2 "$r2" \
       | samtools sort -n -@ "$THREADS" - \
       | samtools fixmate -m -@ "$THREADS" - - \
       | samtools sort -@ "$THREADS" - \
-      | samtools markdup -r -@ "$THREADS" - "${id}_dedup.bam"
-
-    log "Finished processing of $id"
+      | samtools markdup -@ "$THREADS" - "${id}.bam"
   } 2> "$log_file"
+  log "finish $id"
 }
 
 #======================= MAIN ====================================
