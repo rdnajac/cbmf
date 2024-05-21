@@ -13,3 +13,6 @@
 [submodule "src/ballgown"]
 	path = src/ballgown
 	url = git@github.com:alyssafrazee/ballgown.git
+[submodule "src/stringtie"]
+	path = src/stringtie
+	url = git@github.com:gpertea/stringtie.git
