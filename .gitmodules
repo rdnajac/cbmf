@@ -7,3 +7,6 @@
 [submodule "src/bowtie2"]
 	path = src/bowtie2
 	url = https://github.com/BenLangmead/bowtie2.git
+[submodule "src/FastQC"]
+	path = src/FastQC
+	url = https://github.com/s-andrews/FastQC.git
