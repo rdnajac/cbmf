@@ -10,3 +10,6 @@
 [submodule "src/FastQC"]
 	path = src/FastQC
 	url = https://github.com/s-andrews/FastQC.git
+[submodule "src/ballgown"]
+	path = src/ballgown
+	url = git@github.com:alyssafrazee/ballgown.git
