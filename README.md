@@ -6,50 +6,11 @@ All the code I don't want to write twice.
 >
 > combinatorial bioinformatic meta-framework
 
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Shell scripting](#shell-scripting)
-- [Remote access](#remote-access)
-  * [Command Line Tools](#command-line-tools) - [`aws`](#aws) - [`ssh`](#ssh) - [`scp`](#scp) - [`rsync`](#rsync) - [`tmux`](#tmux) - [`vim`](#vim)
-  * [BaseSpace CLI (`bs`)](#basespace-cli-bs)
-- [Alignment Workflow](#alignment-workflow)
-  * [FastQC](#fastqc)
-    - [Automation](#automation)
-  * [Reference genomes](#reference-genomes)
-    - [Human](#human) w
-    - [Mouse](#mouse)
-  * [Bowtie2](#bowtie2)
-    - [Building Bowtie2](#building-bowtie2)
-    - [Lambda phage example](#lambda-phage-exmple)
-- [RNA-seq: work in progress...](#rna-seq-work-in-progress)
-  * [cufflinks](#cufflinks)
-    - [boost libraries](#boost-libraries)
-    - [eigen](#eigen)
-
-## Prerequisites
-
-In addition to the software listed in [`src/README.md`](src/README.md),
-you will need to install the following software if you want to build from source.
-
-``` sh
-sudo apt install stuff
-```
-
 ## Shell scripting
 
 - [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
 - [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
 - [Bash Best Practices](https://bertvv.github.io/cheat-sheets/Bash.html)
-
-| shell | summary | note |
-| ----- | ------- | ---- |
-| `bash`| default on most systems | has assosciative arrays |
-| `sh`  | OG | lead with `#!/bin/sh` for portability |
-| `zsh` | macOS | better tab completion [Zsh Reference Manual](https://zsh.sourceforge.io/Doc/Release/zsh_toc.html)|
-
-
-### Useful one-liners
 
 ``` sh
 # update and upgrade everything
@@ -61,17 +22,6 @@ sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt a
 # run last arguments of last command
 # eg last command was `ls -l /path/to/file`
 !$   # /path/to/file
-```
-
-### Multi-threading
-
-Many programs have a flag that allows them to be run across multiple threads.
-
-``` sh
-THREADS=$(nproc)  # use the maximum number of cores
-
-# `samtools` uses the `-@` flag to specify the number of threads
-samtools view -@ $THREADS -bSu | samtools sort -@ $THREADS > eg2.bam
 ```
 
 ### Safety first
@@ -233,77 +183,12 @@ Copy current vim buffer to remote server
 ```
 ---
 
-### BaseSpace CLI (`bs`)
-- [BaseSpace CLI Command Reference](https://developer.basespace.illumina.com/docs/content/documentation/cli/cli-overview)
-``` sh
-# install on macOS
-# https://github.com/basespace/homebrew-basespace
-brew tap basespace/basespace
-brew install bs-cli
-
-# then authenticate with your BaseSpace credentials
-bs authenticate
-```
-| command| description |
-|---|---|
-`accession`|Register a new item
-`add`|Add lane or workflow settings
-`archive`|Archive entities
-`authenticate`|Make an authentication request to BaseSpace (aliases: auth)
-`await`|Await completion or status change
-`children`|Retrieve child entities (aliases: child)
-`clear`|Clear lane or workflow settings
-`content`|Show all files in an entity (aliases: contents, dir)
-`copy`|Copy an entity to a new location (aliases: duplicate)
-`create`|Create an entity
-`delete`|Move entities to your trash (aliases: rm, move-to-trash)
-`download`|Download files from an entity
-`empty`|Empty a store
-`export`|Export lane or workflow settings
-`get`|Get detailed information about an entity (aliases: info, inspect)
-`header`|List headers for an entity (aliases: headers)
-`history`|Retrieve account activity records for a user or workgroup
-`import`|Import lane or workflow settings
-`kill`|Abort entities
-`launch`|Execute a task
-`link`|Get a direct link for an entity
-`list`|List and filter entities (aliases: filter, list-all)
-`load`|Load into your environment
-`logs`|Retrieve log files (aliases: log)
-`rename`|Rename entities
-`restore`|Restore items
-`revoke`|Invalidate a resource (aliases: expire)
-`seqstats`|Sequencing stats
-`set`|Set properties in an entity
-`translate`|Translate v1 <-> v2 entity IDs
-`unarchive`|Restore entities from archival storage
-`unlock`|Unlock a locked entity
-`update`|Update entities
-`upload`|Upload files to an entity
-`whoami`|Get information about selected user/configuration
-`yield`|Return yield information for an entity (aliases: yields)
-
-#### `bs list project`
-
-|Name|Id|
-|---|---|
-| HEL_H3K27ac_ChIPSeq1 |381715669|
-| Untitled from 230306_NS500289_1231_AHW5Y3BGXN |383461079|
-| CBP_P300 |388989668|
-
-
-
-``` sh
-bs list biosample > biosamples.txt
-bs list biosample --project-id 381715669
-bs list biosample --project-id 383461079
-bs list biosample --project-id 388989668
-```
-
 ## Alignment Workflow
-There are a number of tools available for aligning reads to a reference genome. We're using `Bowtie2`, but first: reference genomes.
+
+## Reference Genomes
 
 ### `samtools`
+
 > Samtools is a suite of programs for interacting with high-throughput sequencing data. It consists of three separate repositories:
 > * [Samtools](https:/github.com/samtools/samtools): Reading/writing/editing/indexing/viewing SAM/BAM/CRAM format
 > * [BCFtools](https:/github.com/samtools/bcftools): Reading/writing BCF2/VCF/gVCF files and calling/filtering/summarising SNP and short indel sequence variants
@@ -373,6 +258,14 @@ optionally, set environment variables
 export MOUSEREF=~/genomes/GCA_000001635.9_GRCm39_full_analysis_set.fna.bowtie_index
 export HUMANREF=~/genomes/GCA_000001405.15_GRCh38_full_analysis_set.fna.bowtie_index
 ```
+
+### Hisat2
+
+
+
+
+
+Usage: 
 
 ### Bowtie2
 Instead of exporting the path like `export BT2_HOME=/home/ubuntu/src/bowtie2`, install the binary by `sudo cp`ing it to `/usr/local/bin`

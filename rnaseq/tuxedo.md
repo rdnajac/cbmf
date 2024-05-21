@@ -21,16 +21,24 @@ git clone https://github.com/gpertea/stringtie.git && cd stringtie && make relea
 ### Ballgown
 
 Start R and run:
+
 ```R
-if (!requireNamespace("BiocManager", quietly=TaRUE))
+if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
-BiocManager::install("ballgown")
+BiocManager::install    ("ballgown")
 ```
 
+## Genome Indexes
 
-## HISAT
-
-### Genome Indexes on AWS
+### AWS
 
 `aws s3 ls --no-sign-request s3://genome-idx/`
 
+
+https://genome-idx.s3.amazonaws.com/hisat/grch38_snprep.tar.gz
+downlload and extract
+wget https://genome-idx.s3.amazonaws.com/hisat/grch38_snprep.tar.gz
+tar -xvf grch38_snprep.tar.gz
+saved in /home/ubuntu/genomes/hisat2/grch38_snprep
+# add hisat2 to path
+export PATH=$PATH:/home/ubuntu/src/hisat2/
