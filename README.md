@@ -7,6 +7,8 @@ All the code I don't want to write twice.
 > combinatorial bioinformatic meta-framework
 
 ## Shell scripting
+Checkout this link to my aws instructions [here](aws/AmazonWebServices.md)
+
 
 - [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
 - [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
@@ -144,94 +146,6 @@ sudo apt install openjdk-11-jdk
 run `fastqc` on all `fastq` files in a directory
 
 ##### `qcsummary.py`
-
-### Reference genomes
-Arbitrainly using the most recent major releases of the human and mouse genomes  from [NCBI Datasets](https://www.ncbi.nlm.nih.gov/datasets)
-|species|assembly|ftp|
-|---|---|---|
-[human](https://www.ncbi.nlm.nih.gov/grc/human)|GCA_000001405.15_GRCh38 | https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/
-[mouse](https://www.ncbi.nlm.nih.gov/grc/mouse) | GCA_000001635.9_GRCm39 | https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/
-
-``` sh
-# download using ftp
-wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/GCA_000001405.15_GRCh38_genomic.fna.gz
-wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/GCA_000001635.9_GRCm39_genomic.fna.gz
-
-# and build the index files
-bowtie2-build GCA_000001405.15_GRCh38_genomic.fna.gz GRCh38
-bowtie2-build GCA_000001635.9_GRCm39_genomic.fna.gz GRCm39
-```
-or
-``` sh
-# download the prebuilt index files
-curl -O https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_full_analysis_set.fna.bowtie_index.tar.gz
-curl -O https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001635.9_GRCm39_full_analysis_set.fna.bowtie_index.tar.gz
-
-# and extract the files
-tar -xvf GCA_000001405.15_GRCh38_full_analysis_set.fna.bowtie_index.tar.gz
-tar -xvf GCA_000001635.9_GRCm39_full_analysis_set.fna.bowtie_index.tar.gz
-```
-optionally, set environment variables
-``` sh
-export MOUSEREF=~/genomes/GCA_000001635.9_GRCm39_full_analysis_set.fna.bowtie_index
-export HUMANREF=~/genomes/GCA_000001405.15_GRCh38_full_analysis_set.fna.bowtie_index
-```
-
-### Hisat2
-
-
-
-
-
-Usage:
-
-### Bowtie2
-Instead of exporting the path like `export BT2_HOME=/home/ubuntu/src/bowtie2`, install the binary by `sudo cp`ing it to `/usr/local/bin`
-
-> **Note**: Use the `--mm` flag to use memory-mapped I/O, especially since this reduces overhead with multiple threads.
->
-> see: `man mmap`
-
-#### Building Bowtie2
-Skip this section if you are not building from source.
-
-Building from source gives the options for:
-1. basic automatic dependency management and static linkage of `zstd` and `zlib`
-    - `make static-libs && make STATIC_BUILD=1`
-2. SRA (Sequence Read Archive) support
-    - `make sra-deps && make USE_SRA=1.`
-3. libsais support: a state-of-the-art suffix array construction algorithm that speeds up the building of the index
-    - `[g]make libsais USE_SAIS_OPENMP=1 *`
-    - this is important so it can be multithreaded
-
-To build bowtie2-build with libsais first make sure that the libsais submodule is available. This can be done in one of the following ways:
-``` sh
-# first time cloning
-git clone --recursive https://github.com/BenLangmead/bowtie2.git
-
-# existing checkout of bowtie2
-git submodule init && git submodule update
-```
-
-#### Building with CMake
-To build Bowtie2 with SRA and libsais support:
-``` sh
-cmake . -D USE_SRA=1 -D USE_SAIS=1 && cmake --build .
-```
-
-#### Lambda phage example
-from `fastq` (or the compressed `fastq.gz`) to `sam` to `bam` to `sorted.bam`
-``` sh
-# align example paired-end reads
-bowtie2 -x example/index/lambda_virus \
-        -1 example/reads/reads_1.fq   \
-        -2 example/reads/reads_2.fq | \
-        samtools view -bS - |         \
-        samtools sort > eg2.sorted.bam
-```
-Sorted BAM is a useful format because the alignments are
-- compressed, which is convenient for long-term storage, and
-- sorted, which is conveneint for variant discovery.
 
 ---
 ### `samtools`
