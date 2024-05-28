@@ -12,3 +12,6 @@ test/
 *.synctex.gz
 *.out
 #alias cleantex='rm -f *.aux *.log *.fls *.fdb_latexmk *.synctex.gz *.out'
+
+# don't track the package manager
+vimfect
