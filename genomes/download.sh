@@ -1,82 +1,69 @@
 #!/bin/bash
 #
-# Download and verify the latest major releases of human and mouse genomes
-# and organize them into ~/genomes/{human, mouse}
-#
-# Author: [Your Name]
-# Date: [Today's Date]
+# Download and verify the latest major releases of human and mouse genomes.
 
-set -euo pipefail
+set -euxo pipefail
 
 # Constants for URLs and directories
-readonly HUMAN_BASE_URL="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38"
-readonly MOUSE_BASE_URL="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39"
-readonly HUMAN_DIR="${HOME}/genomes/human"
-readonly MOUSE_DIR="${HOME}/genomes/mouse"
-readonly HUMAN_CHECKSUM_FILE="md5checksums.txt"
-readonly MOUSE_CHECKSUM_FILE="md5checksums.txt"
+readonly NCBI_BASE_URL="https://ftp.ncbi.nlm.nih.gov/genomes/all"
+readonly HUMAN_LATEST="GCA_000001405.15_GRCh38"
+readonly MOUSE_LATEST="GCA_000001635.9_GRCm39"
+readonly HUMAN_BASE_URL="${NCBI_BASE_URL}/GCA/000/001/405/${HUMAN_LATEST}"
+readonly MOUSE_BASE_URL="${NCBI_BASE_URL}/GCA/000/001/635/${MOUSE_LATEST}"
+readonly PREBUILT_INDEXES="seqs_for_alignment_pipelines.ucsc_ids"
+readonly BASE_URLS=("$HUMAN_BASE_URL" "$MOUSE_BASE_URL")
+readonly CHECKSUMS=(
+  "${HUMAN_BASE_URL}/md5checksums.txt"
+  "${MOUSE_BASE_URL}/md5checksums.txt"
+)
+readonly WGET_FLAGS="--quiet --show-progress --progress=bar:force:noscroll --no-parent --no-host-directories -e robots=off --cut-dirs=7"
+readonly DEST_DIRS=("$HOME/genomes/human" "$HOME/genomes/mouse")
 
-# Helper functions for colored messages
-info() {
-  printf "\033[94m%s\033[0m\n" "${1}" >&2
+create_directories() {
+  for dir in "${DEST_DIRS[@]}"; do
+    mkdir -p "$dir"
+  done
 }
 
-warn() {
-  printf "\033[91m%s\033[0m\n" "${1}" >&2
+# Download prebuilt indexes recursively
+download_prebuilt_indexes() {
+  local prebuilt_path="$1"
+  for i in "${!BASE_URLS[@]}"; do
+    wget ${WGET_FLAGS} -r -P "${DEST_DIRS[$i]}" "${BASE_URLS[$i]}/$prebuilt_path" &
+  done
 }
 
-#######################################
-# Download and verify genome files.
-# Globals:
-#   None
-# Arguments:
-#   base_url: Base URL of the genome files.
-#   dest_dir: Destination directory for downloaded files.
-#   checksum_file: Name of the checksum file.
-# Outputs:
-#   Writes status messages to STDOUT
-# Returns:
-#   0 if successful, exits with 1 if checksum verification fails.
-#######################################
-download_genome() {
-  local base_url="$1"
-  local dest_dir="$2"
-  local checksum_file="$3"
-
-  wget -q -r -np -nH --cut-dirs=7 -P "${dest_dir}" "${base_url}/"
-  wget -q -P "${dest_dir}" "${base_url}/${checksum_file}"
-
-  pushd "${dest_dir}" > /dev/null
-  if md5sum -c "${checksum_file}"; then
-    info "All files in ${dest_dir} verified successfully."
-  else
-    warn "Checksum verification failed for files in ${dest_dir}"
-    exit 1
-  fi
-  popd > /dev/null
+# Download individual checksum files
+download_checksums() {
+  for i in "${!CHECKSUMS[@]}"; do
+    wget ${WGET_FLAGS} -P "${DEST_DIRS[$i]}" "${CHECKSUMS[$i]}" &
+ done
 }
 
-#######################################
-# Main function to orchestrate downloads and verifications.
-# Globals:
-#   HUMAN_DIR
-#   MOUSE_DIR
-# Outputs:
-#   Writes status messages to STDOUT
-# Returns:
-#   0 if successful
-#######################################
-main() {
-  mkdir -p "${HUMAN_DIR}" "${MOUSE_DIR}"
+# Verify checksums
+verify_checksums() {
+  for dir in "${DEST_DIRS[@]}"; do
+    pushd "$dir" > /dev/null
 
-  info "Downloading and verifying human genome..."
-  download_genome "${HUMAN_BASE_URL}" "${HUMAN_DIR}" "${HUMAN_CHECKSUM_FILE}"
+    if [ -f "md5checksums.txt" ]; then
+      while read -r md5 file; do
+        if ! echo "${md5} ${file}" | md5sum -c --status; then
+          echo "Checksum verification failed for ${file}" >&2
+          exit 1
+        fi
+      done < "md5checksums.txt"
+    else
+      echo "Checksum file not found in ${dir}" >&2
+      exit 1
+    fi
 
-  info "Downloading and verifying mouse genome..."
-  download_genome "${MOUSE_BASE_URL}" "${MOUSE_DIR}" "${MOUSE_CHECKSUM_FILE}"
-
-  info "All downloads and verifications completed successfully."
+    popd > /dev/null
+  done
 }
 
-main "$@"
+# Main
+create_directories
+download_prebuilt_indexes "$PREBUILT_INDEXES"
+download_checksums
+#verify_checksums
 

@@ -34,7 +34,6 @@ ubuntu@ip-172-31-32-180:~/rnaseq/ra/aligned$
 
 for i in *.bam; do stringtie -p $(nproc) -o ${i}.gtf $i & ; done
 # fix it so it runs in parallel
-for i in *.bam; do stringtie -p $(nproc) -o ${i}.gtf $i & done
 # zip all .gtf files into ra_rnaseq.zip
 zip ra_rnaseq.zip *.gtf
 ```
