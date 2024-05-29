@@ -31,6 +31,12 @@ Update and upgrade everything on Ubuntu using `apt`:
 sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y
 ```
 
+## `/genomes` Directory
+
+The [`/genomes`](./genomes/README.md) directory contains the reference genomes and annotations for the organisms that are used in the pipelines. The files are downloaded from the [NCBI Assembly](https://www.ncbi.nlm.nih.gov/assembly) database.
+
+Link to genomes [link]
+
 ## `samtools`
 
 > Samtools is a suite of programs for interacting with high-throughput sequencing data. It consists of three separate repositories:
