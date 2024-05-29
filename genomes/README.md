@@ -20,6 +20,10 @@ Using the most recent major releases of the human and mouse genomes from [NCBI D
 - [human](https://www.ncbi.nlm.nih.gov/grc/human)
 - [mouse](https://www.ncbi.nlm.nih.gov/grc/mouse)
 
+### GCA vs. GCF
+
+> The GenBank (GCA) assembly is an archival record that is owned by the submitter and may or may not include annotation. A RefSeq (GCF) genome assembly represents an NCBI-derived copy of a submitted GenBank (GCA) assembly. RefSeq (GCF) assembly records are maintained by NCBI.[^1]
+
 ### Downloading the reference genomes
 Index of /genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/seqs_for_alignment_pipelines.ucsc_ids
 
@@ -257,3 +261,6 @@ Sorted BAM is a useful format because the alignments are
 - compressed, which is convenient for long-term storage, and
 - sorted, which is conveneint for variant discovery.
 
+<!-- footnotes -->
+
+[^1]:[FAQs - NCBI]( https://www.ncbinlm.nih.gov/datasets/docs/v2/troubleshooting/faq/#:~:text=The%20GenBank%20(GCA)%20assembly%20is,records%20are%20maintained%20by%20NCBI)

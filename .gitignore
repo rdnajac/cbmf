@@ -1,8 +1,5 @@
 .
 data/
-ex/
-out/
-test/
 
 # latex stuff
 *.aux
@@ -12,9 +9,3 @@ test/
 *.synctex.gz
 *.out
 #alias cleantex='rm -f *.aux *.log *.fls *.fdb_latexmk *.synctex.gz *.out'
-
-# don't track the package manager
-vimfect
-
-# don't track lab members' personal files
-kalay/

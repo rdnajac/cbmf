@@ -27,6 +27,7 @@ This project uses GitHub Flavored Markdown (GFM) for documentation. GFM is a dia
 ## Useful One-Liners
 
 Update and upgrade everything on Ubuntu using `apt`:
+
 ```sh
 sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y
 ```

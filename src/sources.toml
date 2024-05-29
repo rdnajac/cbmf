@@ -3,21 +3,8 @@ name = "SAMtools"
 repository = "https://github.com/samtools/samtools"
 publication_name = "Twelve years of SAMtools and BCFtools"
 doi = "https://doi.org/10.1093/gigascience/giab008"
-version = "N/A"
+version = "samtools 1.20-3-gedf2131 (htslib 1.20-1-gdeeb9f01)"
 
-[[software]]
-name = "BCFtools"
-repository = "https://github.com/samtools/bcftools"
-publication_name = "Twelve years of SAMtools and BCFtools"
-doi = "https://doi.org/10.1093/gigascience/giab008"
-version = "N/A"
-
-[[software]]
-name = "HTSlib"
-repository = "https://github.com/samtools/htslib"
-publication_name = "Twelve years of SAMtools and BCFtools"
-doi = "https://doi.org/10.1093/gigascience/giab008"
-version = "N/A"
 
 [[software]]
 name = "DROMPAplus"
@@ -30,7 +17,7 @@ version = "N/A"
 name = "FastQC"
 repository = "https://github.com/s-andrews/FastQC"
 publication_name = "FastQC: A Quality Control tool for High Throughput Sequence Data"
-doi = "N/A"
+doi = "https://www.bioinformatics.babraham.ac.uk/projects/fastqc/"
 version = "0.12.0"
 
 [[software]]
