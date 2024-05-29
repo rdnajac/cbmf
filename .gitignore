@@ -15,3 +15,6 @@ test/
 
 # don't track the package manager
 vimfect
+
+# don't track lab members' personal files
+kalay/
