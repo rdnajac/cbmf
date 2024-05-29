@@ -20,17 +20,30 @@ This project uses GitHub Flavored Markdown (GFM) for documentation. GFM is a dia
 
 ## Bookmarks
 
-- [Bioinformatics Stack Exchange](https://bioinformatics.stackexchange.com/) md
+- [Bioinformatics Stack Exchange](https://bioinformatics.stackexchange.com/)
 - [Biostars](https://www.biostars.org/)
 - [Biopython](https://biopython.org/)
 
 ## Useful One-Liners
 
-Update and upgrade everything on Ubuntu using `apt`:
+Update and upgrade everything on Ubuntu
 
 ```sh
 sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y
 ```
+
+Generate a txt file containing the md5sums of all files in a directory
+
+```sh
+find . -type f -exec md5sum {} \; > md5sums.txt
+```
+
+Check the files against the md5sums in the txt file
+
+```sh
+md5sum -c md5sums.txt
+```
+
 
 ## `/genomes` Directory
 
@@ -86,3 +99,62 @@ decompress with gzip and recompress with bgzip
 ```sh
 gunzip GCA_000001635.9_GRCm39_full_analysis_set.fna.gz && bgzip download/GCA_000001635.9_GRCm39_full_analysis_set.fna
 ```
+
+## RNAseq
+
+### Tuxedo Suite[^1]
+
+1. HISAT2: A fast and sensitive alignment program for mapping next-generation sequencing reads (Kim et al., 2015)
+2. StringTie: A fast and highly efficient assembler of RNA-Seq alignments into potential transcripts (Pertea et al., 2015)
+3. Ballgown: Flexible, isoform-level differential expression analysis (Frazee et al., 2015)
+
+### Installation
+
+Source code:
+
+1. [HISAT2](htts://github.com/DaehwanKimLab/hisat2)
+2. [StringTie](https://github.com/gpertea/stringtie)
+3. [Ballgown](https://bioconductor.org/packages/release/bioc/html/ballgown.html)
+
+Function to install software and add to path:
+
+```bash
+install_and_add_to_path() {
+  (
+    git clone "$1" && cd "$(basename "$1" .git)" && make -j "$(nproc)"
+    export PATH="$PATH:$(pwd)"
+  )
+}
+```
+
+> [!CAUTION]
+> This function makes a lot of assumptions about the software being installed. It may not work for all software.
+
+
+```bash
+install_and_add_to_path https://github.com/DaehwanKimLab/hisat2.git
+install_and_add_to_path https://github.com/gpertea/stringtie.git
+```
+
+### Ballgown
+
+Start R and run:
+
+```R
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("ballgown")
+```
+
+
+
+
+### FastQC
+Quality control of high throughput sequencing data.
+
+#### Installation
+```sh
+sudo apt install openjdk-11-jdk &&
+```
+
+

@@ -5,61 +5,42 @@
 # Fail on any error
 set -euxo pipefail
 
-# TODO: /mnt/data/genomes ?
-LOCAL_GENOMES="$HOME/genomes"
-
-# Create directories using brace expansion
-mkdir -pv "$LOCAL_GENOMES/{human,mouse}"
-
-# Constants for URLs and directories
-NCBI="ftp.ncbi.nlm.nih.gov/genomes/all"
-GENEBANK="GCA"
-REFSEQ="GCF"
-HUMAN_LATEST="GCA_000001405.15_GRCh38"
-MOUSE_LATEST="GCA_000001635.9_GRCm39"
-
-# Construct HTTPS URLs
-HUMAN_URL="https://${NCBI}/${GENEBANK}/${HUMAN_LATEST}"
-MOUSE_URL="https://${NCBI}/${GENEBANK}/${MOUSE_LATEST}"
-
-# The folder to download the prebuilt indexes from
+# Base URL and constants for URLs and directories
+NCBI_FTP_BASE="https://ftp.ncbi.nlm.nih.gov/genomes/all"
+HUMAN_GENOME_PATH="GCA/000/001/405/GCA_000001405.15_GRCh38"
+MOUSE_GENOME_PATH="GCA/000/001/635/GCA_000001635.9_GRCm39"
 PREBUILT_INDEXES="seqs_for_alignment_pipelines.ucsc_ids"
 
-# Checksum file to verify the downloaded files
-CHECKSUM_FILE="md5checksums.txt"
-CHECKSUMS=("${HUMAN_URL}/${CHECKSUM_FILE}" "${MOUSE_URL}/${CHECKSUM_FILE}")
+# Construct full URLs
+HUMAN_URL="${NCBI_FTP_BASE}/${HUMAN_GENOME_PATH}"
+MOUSE_URL="${NCBI_FTP_BASE}/${MOUSE_GENOME_PATH}"
 
 # Define the flags for wget so we can easily reuse or modify them
-WGET_FLAGS="--quiet --show-progress --progress=bar:force:noscroll --no-parent --no-host-directories -e robots=off --cut-dirs=7"
+WGET_NO_FLAGS="--no-parent --no-directories --no-host-directories --no-check-certificate"
+WGET_ADDITIONAL_FLAGS="--quiet -e robots=off --cut-dirs=7 --show-progress --progress=bar:force:noscroll"
+MY_WGET="wget ${WGET_NO_FLAGS} ${WGET_ADDITIONAL_FLAGS}"
 
-# Download prebuilt indexes and checksums
-wget ${WGET_FLAGS} -r -P "$HOME/genomes/human" "${HUMAN_URL}/${PREBUILT_INDEXES}" "${HUMAN_URL}/${CHECKSUM_FILE}" &
-wget ${WGET_FLAGS} -r -P "$HOME/genomes/mouse" "${MOUSE_URL}/${PREBUILT_INDEXES}" "${MOUSE_URL}/${CHECKSUM_FILE}" &
+download_genome() {
+  local url="$1"
+  local species="$2"
 
-## Download individual checksum files
-#download_checksums() {
-#  for i in "${!CHECKSUMS[@]}"; do
-#    wget ${WGET_FLAGS} -P "${DEST_DIRS[$i]}" "${CHECKSUMS[$i]}" &
-# done
-#}
+  mkdir -pv "$species"
 
-## Verify checksums
-#verify_checksums() {
-#  for dir in "${DEST_DIRS[@]}"; do
-#    pushd "$dir" > /dev/null
+  # Download the genome files in parallel
+  for file in $(wget "${url}" -O - | grep -oP '(?<=href=")[^"]*' | grep -E '(\.bed|\.fai|\.gz|\.gz\.txt)$'); do
+    ${MY_WGET} -P "$species" "${url}/${file}" &
+  done
+}
 
-#    if [ -f "md5checksums.txt" ]; then
-#      while read -r md5 file; do
-#        if ! echo "${md5} ${file}" | md5sum -c --status; then
-#          echo "Checksum verification failed for ${file}" >&2
-#          exit 1
-#        fi
-#      done < "md5checksums.txt"
-#    else
-#      echo "Checksum file not found in ${dir}" >&2
-#      exit 1
-#    fi
+if [[ "$1" =~ ^(-h|--human|[Hh][Uu][Mm][Aa][Nn])$ ]]; then
+  download_genome "${HUMAN_URL}/${PREBUILT_INDEXES}" "human"
+elif [[ "$1" =~ ^(-m|--mouse|[Mm][Oo][Uu][Ss][Ee])$ ]]; then
+  download_genome "${MOUSE_URL}/${PREBUILT_INDEXES}" "mouse"
+else
+  echo "Invalid argument: $1" >&2
+  exit 1
+fi
 
-#    popd > /dev/null
-#  done
-#}
+echo -e "🌈\e[31mS\e[32mu\e[33mc\e[34mc\e[35me\e[36ms\e[37ms\e[0m!✨"
+
+# TODO check checksums

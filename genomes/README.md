@@ -1,10 +1,12 @@
-# Genomes :dna:
+# Genomes
 
-Using the most recent major releases of the human and mouse genomes  from [NCBI Datasets](https://www.ncbi.nlm.nih.gov/datasets)
-|species|assembly|
-|---|---|
-| [human](https://www.ncbi.nlm.nih.gov/grc/human) | [GCA_000001405.15_GRCh38](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/) |
- [mouse](https://www.ncbi.nlm.nih.gov/grc/mouse) | [GCA_000001635.9_GRCm39](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/) |
+## Download Data
+
+The Genome Reference Consortium (GRC) provides the latest major releases of the human and mouse genomes at the following FTP sites:
+- [GRCm39 (latest major release) FTP](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/)
+- [GRCh38 (latest major release) FTP](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/)
+
+Use the files contained in the `seqs_for_alignment_pipelines.ucsc_ids` to skip the building of the index files.
 
 ## Alignment
 
