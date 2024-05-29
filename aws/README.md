@@ -1,12 +1,16 @@
 # Amazon Web Services
 
+[AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/index.html)
+
 ## EC2
 
+- Connect to and interact the ec2 instance using `ssh` and `scp`
+- Bonus points if you `netrw` to edit files remotely with `vim`
+- TODO `tmux` for persistent sessions
+- TODO `rsync` for keeping directories in sync
+- TODO add section on ftp and downloading from Azenta
 ## S3
 
-### `aws`
-
-- [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/index.html)
 - [AWS S3 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html)
 - s3 uri format `s3://bucketname/uri`
 
@@ -18,15 +22,6 @@ aws s3 sync <source> <destination>
 aws s3 cp s3://bucketname/uri/*.fastq.gz .
 ```
 
-## Remote access
-
-- Connect to and interact the ec2 instance using `ssh` and `scp`
-- Bonus points if you `netrw` to edit files remotely with `vim`
-- TODO `tmux` for persistent sessions
-- TODO `rsync` for keeping directories in sync
-- TODO add section on ftp and downloading from Azenta
-
-### `aws`
 
 - [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/index.html)
 - [AWS S3 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html)
@@ -93,3 +88,4 @@ Copy current vim buffer to remote server
 ``` vim
 :!scp % aws:~/path/to/remote/file
 ```
+
