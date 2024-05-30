@@ -32,14 +32,18 @@ download_genome() {
   done
 }
 
-if [[ "$1" =~ ^(-h|--human|[Hh][Uu][Mm][Aa][Nn])$ ]]; then
-  download_genome "${HUMAN_URL}/${PREBUILT_INDEXES}" "human"
-elif [[ "$1" =~ ^(-m|--mouse|[Mm][Oo][Uu][Ss][Ee])$ ]]; then
-  download_genome "${MOUSE_URL}/${PREBUILT_INDEXES}" "mouse"
-else
-  echo "Invalid argument: $1" >&2
-  exit 1
-fi
+# if [[ "$1" =~ ^(-h|--human|[Hh][Uu][Mm][Aa][Nn])$ ]]; then
+#   download_genome "${HUMAN_URL}/${PREBUILT_INDEXES}" "human"
+# elif [[ "$1" =~ ^(-m|--mouse|[Mm][Oo][Uu][Ss][Ee])$ ]]; then
+#   download_genome "${MOUSE_URL}/${PREBUILT_INDEXES}" "mouse"
+# else
+#   echo "Invalid argument: $1" >&2
+#   exit 1
+# fi
+
+# Assuming the mouse files have already been downloaded, gunzip the files
+
+
 
 echo -e "🌈\e[31mS\e[32mu\e[33mc\e[34mc\e[35me\e[36ms\e[37ms\e[0m!✨"
 

@@ -1,29 +1,34 @@
 #!/bin/bash
 
-update_ssh_config() {
-    new_hostname="$1"
-    config_file="$HOME/.ssh/config"
+# This script checks the environment variable MY_EC2_ID for an AWS instance ID.
+# It starts the instance if it is not already running and updates the SSH
+# configuration file with the instance's public DNS name.
 
-    if [ -z "$new_hostname" ]; then
-        echo "Usage: update_ssh_config new_hostname"
-        return 1
-    fi
+# Exit if MY_EC2_ID is not set
+[[ -z "${MY_EC2_ID}" ]] && echo "MY_EC2_ID is not set." >&2 && exit 1
 
-    if [ ! -f "$config_file" ]; then
-        echo "SSH config file does not exist: $config_file"
-        return 1
-    fi
+# Check if the instance is running, start it if it is not
+if [ "$(aws ec2 describe-instances --instance-ids "${MY_EC2_ID}" --query 'Reservations[0].Instances[0].State.Name' --output text)" != "running" ]; then
+  echo "Starting the instance..."
+  aws ec2 start-instances --instance-ids "${MY_EC2_ID}"
+fi
 
-    # Modify the sed command to work on macOS by adding an empty string after -i
-    sed -i '' "\$s/^  HostName .*/  HostName $new_hostname/" "$config_file"
+# Get the public DNS name of the instance
+new_hostname="$(aws ec2 describe-instances --instance-ids "${MY_EC2_ID}" --query 'Reservations[0].Instances[0].PublicDnsName' --output text)"
 
-    echo "Hostname in $config_file has been updated to $new_hostname."
-}
+# Define the SSH config file path
+config_file="$HOME/.ssh/config"
 
-# Assuming the instance ID is stored in the MY_AWS_ID environment variable...
-update_ssh_config "$(aws ec4 describe-instances --instance-ids "${MY_AWS_ID}" --query 'Reservations[0].Instances[0].PublicDnsName' --output text)"
+# Check if the SSH config file exists
+if [ ! -f "$config_file" ]; then
+  echo "SSH config file does not exist: $config_file" >&2
+  exit 2
+fi
 
-# TODO: check if the instance is running, start it if it is not
+# Update the SSH config file with the new hostname
+sed -i '' "\$s/^  HostName .*/  HostName $new_hostname/" "$config_file"
 
-# if its nor already running:
-# update_ssh_config "$(aws ec2 start-instances --instance-ids "${MY_AWS_ID}" --query 'StartingInstances[0].InstanceId' --output text)"
+echo "Hostname in $config_file has been updated to $new_hostname."
+
+tail -n 4 $config_file
+

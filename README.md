@@ -1,22 +1,72 @@
-<!-- markdownlint-disable MD013 -->
 # cbmf 🧬
 
-**Combinatorial Bioinformatic Meta-Framework**: automating everything from data acquisition to analysis.
-
-## About
-
-This project is a collection of scripts and tools to automate bioinformatics workflows designed to be modular and extensible.
-
-### Documentation
+**Combinatorial Bioinformatic Meta-Framework**:
+automating everything from data acquisition to analysis.
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-#### GitHub Flavored Markdown
+## About
+
+A collection of notes, scripts, and resources to automate bioinformatics workflows.
+
+Code is designed to be modular and extensible.
+
+### Structure of the Repository
+
+Each folder contains a README.md with information about
+the contents of the folder and how to use the scripts and resources.
+
+The README.md files are written in GitHub Flavored Markdown (GFM), a superset of the standard Markdown syntax (note the `.md` extension), so they can be viewed either as plain text or as a rendered webpage on GitHub.
+
+For more information, see the [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). There is also a guide to [basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
+
+which is a dialect of Markdown that is supported by GitHub. It extends the standard Markdown syntax with additional features that are useful for writing technical documentation. For more information, see the [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). There is also a guide to [basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
 This project uses GitHub Flavored Markdown (GFM) for documentation. GFM is a dialect of Markdown that is supported by GitHub that It extends the standard Markdown syntax with additional features that are useful for writing technical documentation. For more information, see the [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). There is also a guide to [basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
-> [!TIP]
+> \[!TIP\]
 > Use [markdownlint](https://github.com/DavidAnson/markdownlint) to lint markdown files.
+
+## Workflow
+
+### Data Acquisition
+
+fastq files
+
+#### Azenta
+
+#### NextSeq550
+
+#### MiSeq
+
+### Data Processing
+
+#### 0. Quality Control
+
+- [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+- another thing
+
+#### 1. Alignment
+
+- [HISAT2](https://daehwankimlab.github.io/hisat2/)
+- [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
+
+##### HISAT2
+
+Copy, paste, and execute the following code to get started.
+
+For more information, read the [manual](https://daehwankimlab.github.io/hisat2/manual/).
+
+````sh
+
+details, see the [HISAT2 manual](https://daehwankimlab.github.io/hisat2/manual/).
+
+```sh
+#!/bin/bash
+
+git clone "https://github.com/DaehwanKimLab/hisat2" && \
+export PATH="$PATH:$(cd hisat2 && make -j \"$(nproc)\" && pwd)"
+````
 
 ## Bookmarks
 
@@ -29,7 +79,7 @@ This project uses GitHub Flavored Markdown (GFM) for documentation. GFM is a dia
 Update and upgrade everything on Ubuntu
 
 ```sh
-sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y
+sudo sh -c 'apt update && apt upgrade -y && apt dist-upgrade -y && apt autoremove -y && apt autoclean && apt clean'
 ```
 
 Generate a txt file containing the md5sums of all files in a directory
@@ -44,12 +94,11 @@ Check the files against the md5sums in the txt file
 md5sum -c md5sums.txt
 ```
 
-
 ## `/genomes` Directory
 
 The [`/genomes`](./genomes/README.md) directory contains the reference genomes and annotations for the organisms that are used in the pipelines. The files are downloaded from the [NCBI Assembly](https://www.ncbi.nlm.nih.gov/assembly) database.
 
-Link to genomes [link]
+Link to genomes \[link\]
 
 ## `samtools`
 
@@ -62,13 +111,19 @@ Link to genomes [link]
 ### key commands
 
 - [`samtools sort`](https://www.htslib.org/doc/samtools-sort.html) - sort alignments by leftmost coordinates
+
 - [`samtools view`](https://www.htslib.org/doc/samtools-view.html) - converts between different formats
+
 - [`samtools flagstat`](https://www.htslib.org/doc/samtools-flagstat.html) - quickly calculate simple statistics from a BAM file
+
 - [`samtools index`](https://www.htslib.org/doc/samtools-index.html) - index a BAM file
+
 - [`samtools merge`](https://www.htslib.org/doc/samtools-merge.html) - merge multiple sorted BAM files
+
 - [`samtools mpileup`](https://www.htslib.org/doc/samtools-mpileup.html) - multi-way pileup
 
 - [samtools](http://www.htslib.org/doc/samtools.html) is a suite of programs for interacting with high-throughput sequencing data.
+
 - TODO: `REF_PATH` and `REF_CACHE`
 
 ### `.bam` to `.cram`
@@ -81,7 +136,7 @@ CRAM is a compressed version of the BAM format that is more efficient for long-t
 **_IMPORTANT_**:
 
 1. Alignments should be kept in chromosome/position sort order.
-2. The reference must be available at all times. Losing it may be equivalent to losing all your read sequences.
+1. The reference must be available at all times. Losing it may be equivalent to losing all your read sequences.
 
 when downloading the indexes for pipelines, see the compatibility issue below
 
@@ -102,19 +157,19 @@ gunzip GCA_000001635.9_GRCm39_full_analysis_set.fna.gz && bgzip download/GCA_000
 
 ## RNAseq
 
-### Tuxedo Suite[^1]
+### Tuxedo Suite\[^1\]
 
 1. HISAT2: A fast and sensitive alignment program for mapping next-generation sequencing reads (Kim et al., 2015)
-2. StringTie: A fast and highly efficient assembler of RNA-Seq alignments into potential transcripts (Pertea et al., 2015)
-3. Ballgown: Flexible, isoform-level differential expression analysis (Frazee et al., 2015)
+1. StringTie: A fast and highly efficient assembler of RNA-Seq alignments into potential transcripts (Pertea et al., 2015)
+1. Ballgown: Flexible, isoform-level differential expression analysis (Frazee et al., 2015)
 
 ### Installation
 
 Source code:
 
 1. [HISAT2](htts://github.com/DaehwanKimLab/hisat2)
-2. [StringTie](https://github.com/gpertea/stringtie)
-3. [Ballgown](https://bioconductor.org/packages/release/bioc/html/ballgown.html)
+1. [StringTie](https://github.com/gpertea/stringtie)
+1. [Ballgown](https://bioconductor.org/packages/release/bioc/html/ballgown.html)
 
 Function to install software and add to path:
 
@@ -127,9 +182,8 @@ install_and_add_to_path() {
 }
 ```
 
-> [!CAUTION]
+> \[!CAUTION\]
 > This function makes a lot of assumptions about the software being installed. It may not work for all software.
-
 
 ```bash
 install_and_add_to_path https://github.com/DaehwanKimLab/hisat2.git
@@ -146,15 +200,12 @@ if (!requireNamespace("BiocManager", quietly=TRUE))
 BiocManager::install("ballgown")
 ```
 
-
-
-
 ### FastQC
+
 Quality control of high throughput sequencing data.
 
 #### Installation
+
 ```sh
 sudo apt install openjdk-11-jdk &&
 ```
-
-
