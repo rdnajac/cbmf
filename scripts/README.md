@@ -1,9 +1,8 @@
 # Scripts
 
-Bash comes pre-installed...  which version?
+Bash comes pre-installed... which version?
 
 ## Bash
-
 
 - [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
 - [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
@@ -16,8 +15,8 @@ Guidelines:
 2. Prefer naming scripts with `.sh` extension
 3. Use `set` so that calling the script with bash does not break it
 4. Use `set euxo pipefail` to enable debugging and exit on error
-6. Error messages should be printed to `STDERR` and not `STDOUT`
-8. Start each file with a description of its contents.
+5. Error messages should be printed to `STDERR` and not `STDOUT`
+6. Start each file with a description of its contents.
 
 Generally, shell scripts will go here while python and perl scripts go in their respective directories.
 
@@ -38,7 +37,7 @@ fastqc -o "$output_dir" --noextract --memory 1024 -t "$(nproc)" "$input_dir"/*
 
 SAMtools `conversion_utilities.sh`
 
-``` sh
+```sh
 # aliases for converting sample read files
 # `source conversion_utilities.sh` to add them to your environment
 
@@ -48,10 +47,9 @@ alias paired_to_tab6="paste <(sed 'N;x;N;g;N;s/\n/	/g' reads_1.fq) <(sed 'N;x;N;
 alias paired_to_interleaved="paste -d'\n' <(sed 'N;N;N;s/\n/	/g' reads_1.fq) <(sed 'N;N;N;s/\n/	/g' reads_2.fq) | tr '\t' '\n' > reads_12.fq"
 ```
 
-
 Convert between sam and bam formats:
-``` sh
+
+```sh
 samtools view -@ "$MAX_THREADS" -C -T "$FNA" -o "${file%.bam}.cram" "$file"
 samtools view -@ "$MAX_THREADS" -b -o "${file%.cram}.bam" "$file"
 ```
-

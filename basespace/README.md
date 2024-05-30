@@ -4,7 +4,6 @@ Basespace CLI is a command-line interface for Illumina BaseSpace. It allows you 
 
 ## Installation
 
-
 Ubuntu:
 
 ```sh
@@ -89,9 +88,13 @@ Running `bs list runs` will list all runs in your BaseSpace account.
 | 240522_NB551203_0777_AH7TMNAFX7 | 281093846 | KB_ChIPseq_4         | Complete |
 +---------------------------------+-----------+----------------------+----------+
 ```
+
 ## Download the bcl files for a run
 
 ```sh
 bs download run --id 281093846
 ```
+
+```
+
 ```

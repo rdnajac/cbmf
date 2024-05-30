@@ -3,13 +3,21 @@
 **Combinatorial Bioinformatic Meta-Framework**:
 automating everything from data acquisition to analysis.
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 ## About
 
 A collection of notes, scripts, and resources to automate bioinformatics workflows.
 
 Code is designed to be modular and extensible.
+
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+Stop agonizing over stylistic details and just run prettier
+over your markdown and html files.
+
+```sh
+prettier --write **/*.md **/*.html
+```
+
 
 ### Structure of the Repository
 
@@ -209,3 +217,32 @@ Quality control of high throughput sequencing data.
 ```sh
 sudo apt install openjdk-11-jdk &&
 ```
+
+#### GTF (Gene Transfer Format)
+
+- **Structure**: A specific version of GFF, often referred to as GFF2.
+- **Attributes**: Contains nine fields per line, with the attributes field being a list of key-value pairs separated by semicolons.
+- **Usage**: Primarily used in gene annotation pipelines and by databases like Ensembl.
+- **Example**:
+
+```gtf
+chr1 HAVANA gene 11869 14409 . + . gene_id "ENSG00000223972"; gene_name "DDX11L1";
+```
+
+#### GFF (General Feature Format)
+
+- **Versions**: Includes GFF2 and GFF3, with GFF3 being the more recent and widely used version.
+- **Attributes**: Contains nine fields per line, with the attributes field formatted as a list of tag-value pairs separated by semicolons. GFF3 allows for hierarchical relationships between features.
+- **Usage**: Commonly used for genome annotations and by databases like NCBI and UCSC Genome Browser.
+- \*_Example_
+
+```gff
+##gff-version 3
+chr1 . gene 11869 14409 . + . ID=gene00001;Name=DDX11L1;
+```
+
+- #### Key Differences
+- **Format**: GTF is essentially a specific version of GFF (GFF2) with stricter formatting rules.
+- **Versioning**: GFF3 supports more complex feature relationships and annotations compared to GTF/GFF2.
+- **Usage**: Different databases and tools may prefer one format over the other based on their requirements and the complexity of the annotations.
+  \*:

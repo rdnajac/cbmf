@@ -9,6 +9,7 @@
 - TODO `tmux` for persistent sessions
 - TODO `rsync` for keeping directories in sync
 - TODO add section on ftp and downloading from Azenta
+
 ## S3
 
 - [AWS S3 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html)
@@ -19,14 +20,13 @@
 
 If you see the above warning when trying to make recursive calls to aws objects that have already been restored, rerun the command using the `--force-glacier-transfer` flag. There is no real error, this is just the way the aws cli handles the situation.
 
-``` sh
+```sh
 aws s3 cp s3://bucketname/uri/ . --recursive --force-glacier-transfer
 ```
 
-Check out this [issue]( https://github.com/aws/aws-cli/issues/1699) for more info.
+Check out this [issue](https://github.com/aws/aws-cli/issues/1699) for more info.
 
-
-``` sh
+```sh
 # copy files to/from s3 bucket
 aws s3 sync <source> <destination>
 
@@ -34,12 +34,11 @@ aws s3 sync <source> <destination>
 aws s3 cp s3://bucketname/uri/*.fastq.gz .
 ```
 
-
 - [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/index.html)
 - [AWS S3 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html)
 - s3 uri format `s3://bucketname/uri`
 
-``` sh
+```sh
 # copy files to/from s3 bucket
 aws s3 sync <source> <destination>
 
@@ -50,9 +49,11 @@ aws s3 cp s3://bucketname/uri/*.fastq.gz .
 ### `ssh`
 
 edit `~/.ssh/config`
+
 - add the location of the private key file so you don't have to specify it with `-i` each time you connect
 - add the `User` and `Hostname` fields so you don't have to specify them each time
-``` sh
+
+```sh
 # example ~/.ssh/config
 Host aws
     Hostname ec2-3-235-0-0.compute-1.amazonaws.com
@@ -64,7 +65,8 @@ Host aws
 
 - "secure copy" files between computers using `ssh`
 - this means the config from `~/.ssh/config` is used
-``` sh
+
+```sh
 # copy file to home dir of remote aws instance
 scp localfile.txt aws:~
 
@@ -76,7 +78,7 @@ scp aws:~/remotefile.txt .
 
 - useful for keeping all files in a directory up-to-date
 
-``` sh
+```sh
 # copy all files in a directory to a remote server
 rsync -avz --progress /path/to/local/dir/ aws:/path/to/remote/dir/
 ```
@@ -84,7 +86,8 @@ rsync -avz --progress /path/to/local/dir/ aws:/path/to/remote/dir/
 ### `tmux`
 
 Weird stuff can happen with "nested" sessions over `ssh`. If you want to attach to a tmux session on a remote server, you need to use the `-t` flag since `tmux` is not a login shell.
-``` sh
+
+```sh
 ssh aws             # works
 ssh aws tmux a      # huh?
 ssh aws -t tmux a   # ok
@@ -93,21 +96,23 @@ ssh aws -t tmux a   # ok
 ### `vim`
 
 Once you have ssh configured, you can use vim to edit files remotely thanks to the `netrw` plugin that comes shipped with `vim`.
-``` sh
+
+````sh
 vim scp://aws/remote/path/to/file
 Copy current vim buffer to remote server
 
 ``` vim
 :!scp % aws:~/path/to/remote/file
-```
-
+````
 
 # Snapshots
+
 #
+
 aws ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].{ID:SnapshotId,VolumeID:VolumeId,StartTime:StartTime,State:State,Progress:Progress,VolumeSize:VolumeSize,Description:Description}' --output table
 
 This is cool:
 
-``` sh
+```sh
 echo ./update-aws-ssh.sh "$(aws ec2 describe-instances --instance-ids "$instance_id" --query 'Reservations[0].Instances[0].PublicDnsName' --output text)"
 ```

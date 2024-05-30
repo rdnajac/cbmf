@@ -1,9 +1,11 @@
 # cbmf/scripts/
 
 ## [`perl`](https://www.perl.org/)
+
 a high-level, general-purpose, interpreted, dynamic programming language
 
 perfer `perl` over `bash` for more complex (and more portable) scripts
+
 ```perl
 CONTEXTS  SIGILS  ref        ARRAYS        HASHES
 void      $scalar SCALAR     @array        %hash
@@ -71,26 +73,30 @@ stat      localtime    caller         SPECIAL VARIABLES
 11 blksz               3..10 only     @_    subroutine args
 12 blcks               with EXPR      %ENV  environment
 ```
+
 > https://perldoc.perl.org/perlcheat
 
-
 ### to run
+
 `.pl` files are run by the `perl` interpreter
 
 ```bash
 $ perl script.pl
 Hello, Perl!
 ```
-### `script.pl` 
+
+### `script.pl`
+
 ```perl
 #!/usr/bin/perl
 print "Hello, Perl!\n";
 ```
 
 #### more `perl`
+
 ```perl
 #!/usr/bin/perl
-# print the ASCII value of each character in a string 
+# print the ASCII value of each character in a string
 $str = "Hello, Perl!";
 for $i (0..length($str)-1) {
     print substr($str, $i, 1) . " - " . ord(substr($str, $i, 1)) . "\n";
