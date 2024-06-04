@@ -18,6 +18,21 @@ These tools are in no way exhaustive,
 but they provide a foundation for building more complex pipelines and workflows,
 tailored to your experimental design and specific research questions.
 
+## How to
+
+You are free to use the scripts and resources in this repository
+as they are, or modify them to suit your needs.
+
+If you are viewing these document on GitHub, you can copy the code snippets directly
+by clicking the clipboard icon in the top right corner of code blocks like this one:
+
+```sh
+git clone https://github.com/rdnajac/cbmf.git
+```
+
+Installation instructions will generally be provided for Debian systems,
+but the most scripts should work on any Unix-like system, e.g., macOS.
+
 ## Structure of the Repository
 
 Each folder contains a README.md with information about the folder's contents and
@@ -53,10 +68,6 @@ Othwerwise, consult the documentation for the appropriate Illumina sequencer:
 
 - [MiSeq](https://support.illumina.com/sequencing/sequencing_instruments/miseq/documentation.html)
 - [NextSeq500](https://support.illumina.com/sequencing/sequencing_instruments/nextseq-550/documentation.html)
-
-> [!NOTE]
-> If you are using the BaseSpace command line interface (CLI),
-> check out my quick reference guide [here](docs/basespace.md).
 
 ### bcl2fastq
 

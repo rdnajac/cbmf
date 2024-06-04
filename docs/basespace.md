@@ -1,31 +1,24 @@
-# BaseSpace CLI: `bs`
+# BaseSpace and the `bs` command-line interface
 
 Read the [documentation](https://developer.basespace.illumina.com/docs).
 
 ## Setup
 
-Skip ahead to [examples](#examples) if you already `bs` installed and authenticated.
-
-### Installation
-
-Ubuntu:
+Install on Linux or macOS:
 
 ```sh
 sudo wget "https://launch.basespace.illumina.com/CLI/latest/amd64-linux/bs" -O /usr/local/bin/bs
 ```
 
 > [!CAUTION]
-> This command will download the BaseSpace CLI executable to `/usr/local/bin/bs`.
-> If you want to install elsewhere, change the path in the command.
+> If you want to install the binary somewhere other than `/usr/local/bin`,
+> change the path in the command.
 
-To install the BaseSpace CLI on macOS, use Homebrew:
+or install on macOS using Homebrew:
 
 ```sh
-brew tap basespace/basespace
-brew install bs-cli
+brew tap basespace/basespace && brew install bs-cli
 ```
-
-### Authenticate
 
 After installation, authenticate with your BaseSpace credentials:
 
@@ -33,9 +26,7 @@ After installation, authenticate with your BaseSpace credentials:
 bs authenticate
 ```
 
-### Verify
-
-Run 'bs whoami' to verify that you are authenticated:
+Finally, run 'bs whoami' to verify that you are authenticated:
 
 ```plaintext
 +----------------+----------------------------------------------------+
@@ -51,13 +42,13 @@ Run 'bs whoami' to verify that you are authenticated:
 +----------------+----------------------------------------------------+
 ```
 
-ubuntu@ip-172-31-32-180:~$
-
 ## Examples
 
-### `bs list runs`
+List all projects:
 
-Running `bs list runs` will list all runs in your BaseSpace account.
+```sh
+bs list projects
+```
 
 ```plaintext
 +---------------------------------+-----------+----------------------+----------+
@@ -68,21 +59,6 @@ Running `bs list runs` will list all runs in your BaseSpace account.
 | 230519_NS500289_1262_AHHLJNBGXT | 258955746 | CBP_p300             | Complete |
 | 240522_NB551203_0777_AH7TMNAFX7 | 281093846 | KB_ChIPseq_4         | Complete |
 +---------------------------------+-----------+----------------------+----------+
-```
-
-## Download the bcl files for all runs
-
-```sh
-# capture the output following the second 
-for run in $(bs list runs --json | jq -r '.[].Id'); do
-  bs download run $run --output-dir $run
-done
-one liner:
-for run in $(bs list runs --json | jq -r '.[].Id'); do bs download run $run --output-dir $run; done
-```
-
-```
-
 ```
 
 ## Command Reference

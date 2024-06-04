@@ -1,7 +1,6 @@
-# 
+#
 
 ## iSCB
-
 
 https://academic.oup.com/bioinformatics/pages/instructions_for_authors
 
@@ -20,4 +19,3 @@ providing scalable and reliable solutions for bioinformatics analysis.
 Using shell scripts ensures reproducibility and maintainability of code,
 even when not actively maintained, fostering robust and efficient bioinformatics
 workflows.
-

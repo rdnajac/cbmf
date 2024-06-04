@@ -125,4 +125,3 @@ Copy current vim buffer to remote server
 ````
 
 Inide vim, you can use the `:Explore` command to browse the remote server.
-
