@@ -1,18 +1,32 @@
-# Amazon Web Services
+# Amazon Web Services :cloud:
+
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
 
 [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/index.html)
 
 ## EC2
 
-- Connect to and interact the ec2 instance using `ssh` and `scp`
-- Bonus points if you `netrw` to edit files remotely with `vim`
-- TODO `tmux` for persistent sessions
-- TODO `rsync` for keeping directories in sync
-- TODO add section on ftp and downloading from Azenta
+[EC2 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/ec2/index.html)
+
+Some useful tools for connecting to and interacting with ec2 instances;
+
+- `ssh` for connecting to the instance
+- `scp` and `rsync` for copying files to and from the instance
+- `tmux` for persistent sessions
+- `netrw` to remotely edit files and browse directories in `vim`
+
+### Snapshots
+
+aws ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].{ID:SnapshotId,VolumeID:VolumeId,StartTime:StartTime,State:State,Progress:Progress,VolumeSize:VolumeSize,Description:Description}' --output table
+
+```sh
+echo ./update-aws-ssh.sh "$(aws ec2 describe-instances --instance-ids "$instance_id" --query 'Reservations[0].Instances[0].PublicDnsName' --output text)"
+```
 
 ## S3
 
-- [AWS S3 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html)
+[S3 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html)
+
 - s3 uri format `s3://bucketname/uri`
 
 > [!WARNING]
@@ -45,6 +59,8 @@ aws s3 sync <source> <destination>
 # copy all files of a certain type to local
 aws s3 cp s3://bucketname/uri/*.fastq.gz .
 ```
+
+## Other CLI Tools
 
 ### `ssh`
 
@@ -85,7 +101,9 @@ rsync -avz --progress /path/to/local/dir/ aws:/path/to/remote/dir/
 
 ### `tmux`
 
-Weird stuff can happen with "nested" sessions over `ssh`. If you want to attach to a tmux session on a remote server, you need to use the `-t` flag since `tmux` is not a login shell.
+Weird stuff can happen with "nested" sessions over `ssh`.
+If you want to attach to a tmux session on a remote server,
+you need to use the `-t` flag since `tmux` is not a login shell.
 
 ```sh
 ssh aws             # works
@@ -95,7 +113,8 @@ ssh aws -t tmux a   # ok
 
 ### `vim`
 
-Once you have ssh configured, you can use vim to edit files remotely thanks to the `netrw` plugin that comes shipped with `vim`.
+Once you have ssh configured, you can use vim to edit files remotely thanks to
+the `netrw` plugin that comes shipped with `vim`.
 
 ````sh
 vim scp://aws/remote/path/to/file
@@ -105,14 +124,5 @@ Copy current vim buffer to remote server
 :!scp % aws:~/path/to/remote/file
 ````
 
-# Snapshots
+Inide vim, you can use the `:Explore` command to browse the remote server.
 
-#
-
-aws ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].{ID:SnapshotId,VolumeID:VolumeId,StartTime:StartTime,State:State,Progress:Progress,VolumeSize:VolumeSize,Description:Description}' --output table
-
-This is cool:
-
-```sh
-echo ./update-aws-ssh.sh "$(aws ec2 describe-instances --instance-ids "$instance_id" --query 'Reservations[0].Instances[0].PublicDnsName' --output text)"
-```

@@ -1,80 +1,101 @@
-# cbmf 🧬
+# Combinatorial Bioinformatic Meta-Framework 🧬
 
-**Combinatorial Bioinformatic Meta-Framework**:
-automating everything from data acquisition to analysis.
+Notes, scripts, and resources to streamline and multiplex the analysis of
+high-throughput sequencing data, from raw reads to biological insights.
 
+## Overview
 
-## About
+This repository contains tools to automate key bioinformatic tasks:
 
-A collection of notes, scripts, and resources to automate bioinformatics workflows.
+- Data acquisition and storage
+- Quality control
+- Alignment to reference genomes
+- Transcript assembly and quantification
+- Differential expression analysis (work in progress)
+- Visualization of results (work in progress)
 
-Code is designed to be modular and extensible.
+These tools are in no way exhaustive,
+but they provide a foundation for building more complex pipelines and workflows,
+tailored to your experimental design and specific research questions.
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-Stop agonizing over stylistic details and just run prettier
-over your markdown and html files.
+## Structure of the Repository
 
-```sh
-prettier --write **/*.md **/*.html
+Each folder contains a README.md with information about the folder's contents and
+how to use the scripts and resources.
+For more information about these documents, click [here](docs/README.md).
+
+```plaintext
+.
+├── docs
+│   ├── README.md
+
+├── genomes
+│   ├── README.md
+
+├── scripts
+│   ├── README.md
+
 ```
 
+## Workflows
 
-### Structure of the Repository
-
-Each folder contains a README.md with information about
-the contents of the folder and how to use the scripts and resources.
-
-The README.md files are written in GitHub Flavored Markdown (GFM), a superset of the standard Markdown syntax (note the `.md` extension), so they can be viewed either as plain text or as a rendered webpage on GitHub.
-
-For more information, see the [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). There is also a guide to [basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
-
-which is a dialect of Markdown that is supported by GitHub. It extends the standard Markdown syntax with additional features that are useful for writing technical documentation. For more information, see the [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). There is also a guide to [basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
-
-This project uses GitHub Flavored Markdown (GFM) for documentation. GFM is a dialect of Markdown that is supported by GitHub that It extends the standard Markdown syntax with additional features that are useful for writing technical documentation. For more information, see the [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). There is also a guide to [basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
-
-> \[!TIP\]
-> Use [markdownlint](https://github.com/DavidAnson/markdownlint) to lint markdown files.
-
-## Workflow
+This next section describes the steps involved in the analysis
+of high-throughput sequencing data.
 
 ### Data Acquisition
 
-fastq files
+If you used Azenta for sequencing, they will send a link to directly download
+the demultiplexed FASTQ files (plus md5 checksums[^1]) from their sFTP server.
+Click [here](https://3478602.fs1.hubspotusercontent-na1.net/hubfs/3478602/13012-M%26G%200222%20sFTP%20Guide-3.pdf)
+for instructions on how to download data from Azenta's sFTP server.
 
-#### Azenta
+Othwerwise, consult the documentation for the appropriate Illumina sequencer:
 
-#### NextSeq550
+- [MiSeq](https://support.illumina.com/sequencing/sequencing_instruments/miseq/documentation.html)
+- [NextSeq500](https://support.illumina.com/sequencing/sequencing_instruments/nextseq-550/documentation.html)
 
-#### MiSeq
+> [!NOTE]
+> If you are using the BaseSpace command line interface (CLI),
+> check out my quick reference guide [here](docs/basespace.md).
+
+### bcl2fastq
+
+> Read the [User Guide](https://support.illumina.com/content/dam/illumina-support/documents/documentation/software_documentation/bcl2fastq/bcl2fastq_letterbooklet_15038058brpmi.pdf).
+
+If you have raw sequencing data in BCL format, you will need to convert it to
+FASTQ format using the bcl2fastq2 Conversion Software.
+This step can be skipped if you used Azenta for sequencing,
+or if you correctly uploaded a valid sample sheet prior to sequencing.
+
+#### Installation
+
+Download bcl2fastq2 Conversion Software v2.20 Installer (Linux rpm) from
+[Illumina](https://support.illumina.com/sequencing/sequencing_software/bcl2fastq-conversion-software.html).
+
+Check out this [post](https://www.biostars.org/p/266897/) for instructions
+on how to convert this rpm (Red Hat Package Manager) file
+into a deb (Debian Package Manager) file.
+
+```sh
+sudo alien -i bcl2fastq2-v2.20.0.422-Linux-x86_64.rpm
+```
+
+The `-i` flag installs the package after converting it to a temporary deb file.
 
 ### Data Processing
 
-#### 0. Quality Control
-
 - [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-- another thing
 
-#### 1. Alignment
-
-- [HISAT2](https://daehwankimlab.github.io/hisat2/)
-- [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
-
-##### HISAT2
+### HISAT2
 
 Copy, paste, and execute the following code to get started.
 
 For more information, read the [manual](https://daehwankimlab.github.io/hisat2/manual/).
 
-````sh
-
-details, see the [HISAT2 manual](https://daehwankimlab.github.io/hisat2/manual/).
-
 ```sh
-#!/bin/bash
-
 git clone "https://github.com/DaehwanKimLab/hisat2" && \
 export PATH="$PATH:$(cd hisat2 && make -j \"$(nproc)\" && pwd)"
-````
+```
 
 ## Bookmarks
 
@@ -102,11 +123,11 @@ Check the files against the md5sums in the txt file
 md5sum -c md5sums.txt
 ```
 
-## `/genomes` Directory
+The [`/genomes`](./genomes/README.md) directory contains information about
+how to acquire and use reference genomes to align raw reads.
 
-The [`/genomes`](./genomes/README.md) directory contains the reference genomes and annotations for the organisms that are used in the pipelines. The files are downloaded from the [NCBI Assembly](https://www.ncbi.nlm.nih.gov/assembly) database.
-
-Link to genomes \[link\]
+the reference genomes and annotations for the organisms that are used in the pipelines.
+The files are downloaded from the [NCBI Assembly](https://www.ncbi.nlm.nih.gov/assembly) database.
 
 ## `samtools`
 
@@ -116,21 +137,13 @@ Link to genomes \[link\]
 > - [BCFtools](https:/github.com/samtools/bcftools): Reading/writing BCF2/VCF/gVCF files and calling/filtering/summarising SNP and short indel sequence variants
 > - [HTSlib](https:/github.com/samtools/): A C library for reading/writing high-throughput sequencing data
 
-### key commands
-
-- [`samtools sort`](https://www.htslib.org/doc/samtools-sort.html) - sort alignments by leftmost coordinates
-
-- [`samtools view`](https://www.htslib.org/doc/samtools-view.html) - converts between different formats
-
-- [`samtools flagstat`](https://www.htslib.org/doc/samtools-flagstat.html) - quickly calculate simple statistics from a BAM file
-
-- [`samtools index`](https://www.htslib.org/doc/samtools-index.html) - index a BAM file
-
-- [`samtools merge`](https://www.htslib.org/doc/samtools-merge.html) - merge multiple sorted BAM files
-
-- [`samtools mpileup`](https://www.htslib.org/doc/samtools-mpileup.html) - multi-way pileup
-
 - [samtools](http://www.htslib.org/doc/samtools.html) is a suite of programs for interacting with high-throughput sequencing data.
+- [`samtools sort`](https://www.htslib.org/doc/samtools-sort.html) - sort alignments by leftmost coordinates
+- [`samtools view`](https://www.htslib.org/doc/samtools-view.html) - converts between different formats
+- [`samtools flagstat`](https://www.htslib.org/doc/samtools-flagstat.html) - quickly calculate simple statistics from a BAM file
+- [`samtools index`](https://www.htslib.org/doc/samtools-index.html) - index a BAM file
+- [`samtools merge`](https://www.htslib.org/doc/samtools-merge.html) - merge multiple sorted BAM files
+- [`samtools mpileup`](https://www.htslib.org/doc/samtools-mpileup.html) - multi-way pileup
 
 - TODO: `REF_PATH` and `REF_CACHE`
 
@@ -218,31 +231,10 @@ Quality control of high throughput sequencing data.
 sudo apt install openjdk-11-jdk &&
 ```
 
-#### GTF (Gene Transfer Format)
+  <!-- Footnotes -->
 
-- **Structure**: A specific version of GFF, often referred to as GFF2.
-- **Attributes**: Contains nine fields per line, with the attributes field being a list of key-value pairs separated by semicolons.
-- **Usage**: Primarily used in gene annotation pipelines and by databases like Ensembl.
-- **Example**:
-
-```gtf
-chr1 HAVANA gene 11869 14409 . + . gene_id "ENSG00000223972"; gene_name "DDX11L1";
-```
-
-#### GFF (General Feature Format)
-
-- **Versions**: Includes GFF2 and GFF3, with GFF3 being the more recent and widely used version.
-- **Attributes**: Contains nine fields per line, with the attributes field formatted as a list of tag-value pairs separated by semicolons. GFF3 allows for hierarchical relationships between features.
-- **Usage**: Commonly used for genome annotations and by databases like NCBI and UCSC Genome Browser.
-- \*_Example_
-
-```gff
-##gff-version 3
-chr1 . gene 11869 14409 . + . ID=gene00001;Name=DDX11L1;
-```
-
-- #### Key Differences
-- **Format**: GTF is essentially a specific version of GFF (GFF2) with stricter formatting rules.
-- **Versioning**: GFF3 supports more complex feature relationships and annotations compared to GTF/GFF2.
-- **Usage**: Different databases and tools may prefer one format over the other based on their requirements and the complexity of the annotations.
-  \*:
+[^1]:
+    The md5 checksum is a unique 32-character hexadecimal used to verify the
+    integrity of the file during download or transfer. A checksum is computed for
+    each file and changes if the file is modified. Read the original
+    [RFC 1321](https://www.ietf.org/rfc/rfc1321.txt) for more information.

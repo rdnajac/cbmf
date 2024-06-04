@@ -1,11 +1,18 @@
-.
+# gitignore - specifies intentionally untracked files to ignore
+
+# hidden files and directories
+.*
+
+# build files
+bin/
+
+# work in progress
 data/
 
-# latex stuff
+# latex build files
 *.aux
 *.log
 *.fls
 *.fdb_latexmk
 *.synctex.gz
 *.out
-#alias cleantex='rm -f *.aux *.log *.fls *.fdb_latexmk *.synctex.gz *.out'

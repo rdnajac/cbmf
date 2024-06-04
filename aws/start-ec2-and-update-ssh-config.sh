@@ -4,6 +4,9 @@
 # It starts the instance if it is not already running and updates the SSH
 # configuration file with the instance's public DNS name.
 
+# Exit if any command fails
+set -euo pipefail
+
 # Exit if MY_EC2_ID is not set
 [[ -z "${MY_EC2_ID}" ]] && echo "MY_EC2_ID is not set." >&2 && exit 1
 
@@ -30,5 +33,4 @@ sed -i '' "\$s/^  HostName .*/  HostName $new_hostname/" "$config_file"
 
 echo "Hostname in $config_file has been updated to $new_hostname."
 
-tail -n 4 $config_file
-
+tail -n 4 "$config_file"
