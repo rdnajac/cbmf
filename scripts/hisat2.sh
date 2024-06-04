@@ -54,7 +54,7 @@ stringtie --merge -G "$REFSEQ_ANNOTATION_GTF" -o stringtie_merged.gtf ./*.gtf
 stringtie --merge -p 32 -G /home/ubuntu/genomes/mouse/GCA_000001635.9_GRCm39_full_analysis_set.refseq_annotation.gff -o stringtie_merged.gtf merge_list.txt
 
 # now re-run stringtie with the merged file on each sample
-for f in ./*.bam; do stringtie -p 32 -G stringtie_merged.gtf -o "${f%.bam}_stringtie.gtf" "$f" & done
+for f in ./*.bam; do stringtie -eB -p 32 -G stringtie_merged.gtf -o "${f%.bam}_stringtie.gtf" "$f" & done
 
 # for id in "${SAMPLES[@]}"; do
 
