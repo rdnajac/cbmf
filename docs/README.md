@@ -36,6 +36,8 @@ npx cspell **/*.md
 
 Check out this article on [semantic line breaks](https://sembr.org/).
 
+https://github.com/hackergrrl/art-of-readme
+
 Institute of Electrical and Electronics Engineers (IEEE)
 publications on writing effective technical documents:
 

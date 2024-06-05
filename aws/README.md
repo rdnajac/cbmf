@@ -1,14 +1,19 @@
 # Amazon Web Services :cloud:
 
-![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
-
 [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/index.html)
+
+## Getting Started
+
+[Install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
+> [!TIP]
+> Optionally, set up [command completion](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-completion.html)
 
 ## EC2
 
 [EC2 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/ec2/index.html)
 
-Some useful tools for connecting to and interacting with ec2 instances;
+Useful command-line tools for connecting to and interacting with EC2 instances:
 
 - `ssh` for connecting to the instance
 - `scp` and `rsync` for copying files to and from the instance
@@ -17,20 +22,39 @@ Some useful tools for connecting to and interacting with ec2 instances;
 
 ### Snapshots
 
-aws ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].{ID:SnapshotId,VolumeID:VolumeId,StartTime:StartTime,State:State,Progress:Progress,VolumeSize:VolumeSize,Description:Description}' --output table
-
 ```sh
-echo ./update-aws-ssh.sh "$(aws ec2 describe-instances --instance-ids "$instance_id" --query 'Reservations[0].Instances[0].PublicDnsName' --output text)"
+aws ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].{ID:SnapshotId,VolumeID:VolumeId,StartTime:StartTime,State:State,Progress:Progress,VolumeSize:VolumeSize,Description:Description}' --output table
 ```
 
 ## S3
 
 [S3 CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html)
 
-- s3 uri format `s3://bucketname/uri`
+S3 URI (Uniform Resource Identifier) format: `s3://bucketname/uri`
+
+### Glacier storage
+
+[Amazon S3 Glacier storage classes](https://aws.amazon.com/s3/storage-classes/glacier/)
+
+Files uploaded to s3 are converted to Glacier storage class after a certain
+amount of time. This means that the files are not immediately accessible and
+must be restored to their original form before they can be downloaded.
+
+```sh
+# restore all objects in a bucket to their original form
+aws s3api restore-object --bucket bucketname --key uri --restore-request '{"Days":25,"GlacierJobParameters":{"Tier":"Standard"}}'
+```
+
+If you encounter the following warning when trying to download files from s3:
 
 > [!WARNING]
 > Object is of storage class GLACIER. Unable to perform download operations on GLACIER objects. You must restore the object to be able to the perform operation.
+
+First, ensure that the object has been restored by running the following command:
+
+```sh
+aws s3api head-object --bucket "${bucketname}" --key "${uri}"
+```
 
 If you see the above warning when trying to make recursive calls to aws objects that have already been restored, rerun the command using the `--force-glacier-transfer` flag. There is no real error, this is just the way the aws cli handles the situation.
 
