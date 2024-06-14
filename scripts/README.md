@@ -1,24 +1,15 @@
 # Scripts
 
-Bash comes pre-installed... which version?
+GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
 
 ## Bash
-
+- `man bash`
 - [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
+- [Bash Guide](https://mywiki.wooledge.org/BashGuide)
 - [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
 - [Bash Best Practices](https://bertvv.github.io/cheat-sheets/Bash.html)
 - [Shell script templates](https://stackoverflow.com/questions/430078/shell-script-templates)
-
-Guidelines:
-
-1. Always use `#!/bin/bash` as the shebang
-2. Prefer naming scripts with `.sh` extension
-3. Use `set` so that calling the script with bash does not break it
-4. Use `set euxo pipefail` to enable debugging and exit on error
-5. Error messages should be printed to `STDERR` and not `STDOUT`
-6. Start each file with a description of its contents.
-
-Generally, shell scripts will go here while python and perl scripts go in their respective directories.
+- [Safety First!](https://github.com/anordal/shellharden/blob/master/how_to_do_things_safely_in_bash.md)
 
 ## Utils
 

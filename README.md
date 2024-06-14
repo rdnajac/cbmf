@@ -29,7 +29,7 @@ This repository contains tools to automate key bioinformatic tasks:
 - Visualization of results (work in progress)
 
 > [!IMPORTANT]
-> These tools are in no way exhaustive, but are meant to provide a
+> These tools not exhaustive, but are meant to provide a
 > foundation for building more complex pipelines and workflows,
 > tailored to your experimental design and specific research questions.
 
