@@ -8,6 +8,9 @@ bin/
 
 # work in progress
 data/
+out/
+tmp/
+R/
 
 # latex build files
 *.aux
@@ -16,3 +19,6 @@ data/
 *.fdb_latexmk
 *.synctex.gz
 *.out
+
+# R
+.Rproj.user
