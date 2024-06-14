@@ -32,6 +32,19 @@ aws ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].{ID:SnapshotId
 
 S3 URI (Uniform Resource Identifier) format: `s3://bucketname/uri`
 
+### Renaming objects
+
+#### [mv](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/mv.html)
+
+```sh
+aws s3 mv s3://bucketname/oldkey s3://bucketname/newkey
+```
+
+This unfortunately does not make it easy to view progress.  
+
+Instead, cp and rm
+
+
 ### Glacier storage
 
 [Amazon S3 Glacier storage classes](https://aws.amazon.com/s3/storage-classes/glacier/)

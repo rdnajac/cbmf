@@ -1,117 +1,32 @@
-files=(
-CTO22-70-T-CCCPV2-CF_S7_L001_R1_001.fastq.gz
- CTO22-70-T-CCCPV2-CF_S7_L001_R2_001.fastq.gz
- CTO22-70-T-CCCPV2-CF_S7_L002_R1_001.fastq.gz
- CTO22-70-T-CCCPV2-CF_S7_L002_R2_001.fastq.gz
- CTO22-70-T-CCCPV2-CF_S7_L003_R1_001.fastq.gz
- CTO22-70-T-CCCPV2-CF_S7_L003_R2_001.fastq.gz
- CTO22-70-T-CCCPV2-CF_S7_L004_R1_001.fastq.gz
- CTO22-70-T-CCCPV2-CF_S7_L004_R2_001.fastq.gz
- CTO22-71-T-CCCPV2-CF_S8_L001_R1_001.fastq.gz
- CTO22-71-T-CCCPV2-CF_S8_L001_R2_001.fastq.gz
- CTO22-71-T-CCCPV2-CF_S8_L002_R1_001.fastq.gz
- CTO22-71-T-CCCPV2-CF_S8_L002_R2_001.fastq.gz
- CTO22-71-T-CCCPV2-CF_S8_L003_R1_001.fastq.gz
- CTO22-71-T-CCCPV2-CF_S8_L003_R2_001.fastq.gz
- CTO22-71-T-CCCPV2-CF_S8_L004_R1_001.fastq.gz
- CTO22-71-T-CCCPV2-CF_S8_L004_R2_001.fastq.gz
- CTO22-72-T-CCCPV2-CF_S9_L001_R1_001.fastq.gz
- CTO22-72-T-CCCPV2-CF_S9_L001_R2_001.fastq.gz
- CTO22-72-T-CCCPV2-CF_S9_L002_R1_001.fastq.gz
- CTO22-72-T-CCCPV2-CF_S9_L002_R2_001.fastq.gz
- CTO22-72-T-CCCPV2-CF_S9_L003_R1_001.fastq.gz
- CTO22-72-T-CCCPV2-CF_S9_L003_R2_001.fastq.gz
- CTO22-72-T-CCCPV2-CF_S9_L004_R1_001.fastq.gz
- CTO22-72-T-CCCPV2-CF_S9_L004_R2_001.fastq.gz
- CTO22-73-T-CCCPV2-CF_S10_L001_R1_001.fastq.gz
- CTO22-73-T-CCCPV2-CF_S10_L001_R2_001.fastq.gz
- CTO22-73-T-CCCPV2-CF_S10_L002_R1_001.fastq.gz
- CTO22-73-T-CCCPV2-CF_S10_L002_R2_001.fastq.gz
- CTO22-73-T-CCCPV2-CF_S10_L003_R1_001.fastq.gz
- CTO22-73-T-CCCPV2-CF_S10_L003_R2_001.fastq.gz
- CTO22-73-T-CCCPV2-CF_S10_L004_R1_001.fastq.gz
- CTO22-73-T-CCCPV2-CF_S10_L004_R2_001.fastq.gz
- CTO22-74-T-CCCPV2-CF_S11_L001_R1_001.fastq.gz
- CTO22-74-T-CCCPV2-CF_S11_L001_R2_001.fastq.gz
- CTO22-74-T-CCCPV2-CF_S11_L002_R1_001.fastq.gz
- CTO22-74-T-CCCPV2-CF_S11_L002_R2_001.fastq.gz
- CTO22-74-T-CCCPV2-CF_S11_L003_R1_001.fastq.gz
- CTO22-74-T-CCCPV2-CF_S11_L003_R2_001.fastq.gz
- CTO22-74-T-CCCPV2-CF_S11_L004_R1_001.fastq.gz
- CTO22-74-T-CCCPV2-CF_S11_L004_R2_001.fastq.gz
- CTO22-75-T-CCCPV2-CF_S12_L001_R1_001.fastq.gz
- CTO22-75-T-CCCPV2-CF_S12_L001_R2_001.fastq.gz
- CTO22-75-T-CCCPV2-CF_S12_L002_R1_001.fastq.gz
- CTO22-75-T-CCCPV2-CF_S12_L002_R2_001.fastq.gz
- CTO22-75-T-CCCPV2-CF_S12_L003_R1_001.fastq.gz
- CTO22-75-T-CCCPV2-CF_S12_L003_R2_001.fastq.gz
- CTO22-75-T-CCCPV2-CF_S12_L004_R1_001.fastq.gz
- CTO22-75-T-CCCPV2-CF_S12_L004_R2_001.fastq.gz
- CTO22-76-T-CCCPV2-CF_S13_L001_R1_001.fastq.gz
- CTO22-76-T-CCCPV2-CF_S13_L001_R2_001.fastq.gz
- CTO22-76-T-CCCPV2-CF_S13_L002_R1_001.fastq.gz
- CTO22-76-T-CCCPV2-CF_S13_L002_R2_001.fastq.gz
- CTO22-76-T-CCCPV2-CF_S13_L003_R1_001.fastq.gz
- CTO22-76-T-CCCPV2-CF_S13_L003_R2_001.fastq.gz
- CTO22-76-T-CCCPV2-CF_S13_L004_R1_001.fastq.gz
- CTO22-76-T-CCCPV2-CF_S13_L004_R2_001.fastq.gz
- CTO22-77-T-CCCPV2-CF_S14_L001_R1_001.fastq.gz
- CTO22-77-T-CCCPV2-CF_S14_L001_R2_001.fastq.gz
- CTO22-77-T-CCCPV2-CF_S14_L002_R1_001.fastq.gz
- CTO22-77-T-CCCPV2-CF_S14_L002_R2_001.fastq.gz
- CTO22-77-T-CCCPV2-CF_S14_L003_R1_001.fastq.gz
- CTO22-77-T-CCCPV2-CF_S14_L003_R2_001.fastq.gz
- CTO22-77-T-CCCPV2-CF_S14_L004_R1_001.fastq.gz
- CTO22-77-T-CCCPV2-CF_S14_L004_R2_001.fastq.gz
- CTO22-78-T-CCCPV2-CF_S15_L001_R1_001.fastq.gz
- CTO22-78-T-CCCPV2-CF_S15_L001_R2_001.fastq.gz
- CTO22-78-T-CCCPV2-CF_S15_L002_R1_001.fastq.gz
- CTO22-78-T-CCCPV2-CF_S15_L002_R2_001.fastq.gz
- CTO22-78-T-CCCPV2-CF_S15_L003_R1_001.fastq.gz
- CTO22-78-T-CCCPV2-CF_S15_L003_R2_001.fastq.gz
- CTO22-78-T-CCCPV2-CF_S15_L004_R1_001.fastq.gz
- CTO22-78-T-CCCPV2-CF_S15_L004_R2_001.fastq.gz
- CTO22-89-T-CCCPV2-CF_S16_L001_R1_001.fastq.gz
- CTO22-89-T-CCCPV2-CF_S16_L001_R2_001.fastq.gz
- CTO22-89-T-CCCPV2-CF_S16_L002_R1_001.fastq.gz
- CTO22-89-T-CCCPV2-CF_S16_L002_R2_001.fastq.gz
- CTO22-89-T-CCCPV2-CF_S16_L003_R1_001.fastq.gz
- CTO22-89-T-CCCPV2-CF_S16_L003_R2_001.fastq.gz
- CTO22-89-T-CCCPV2-CF_S16_L004_R1_001.fastq.gz
- CTO22-89-T-CCCPV2-CF_S16_L004_R2_001.fastq.gz
- CTO22-90-T-CCCPV2-CF_S17_L001_R1_001.fastq.gz
- CTO22-90-T-CCCPV2-CF_S17_L001_R2_001.fastq.gz
- CTO22-90-T-CCCPV2-CF_S17_L002_R1_001.fastq.gz
- CTO22-90-T-CCCPV2-CF_S17_L002_R2_001.fastq.gz
- CTO22-90-T-CCCPV2-CF_S17_L003_R1_001.fastq.gz
- CTO22-90-T-CCCPV2-CF_S17_L003_R2_001.fastq.gz
- CTO22-90-T-CCCPV2-CF_S17_L004_R1_001.fastq.gz
- CTO22-90-T-CCCPV2-CF_S17_L004_R2_001.fastq.gz
- CTO22-91-T-CCCPV2-CF_S18_L001_R1_001.fastq.gz
- CTO22-91-T-CCCPV2-CF_S18_L001_R2_001.fastq.gz
- CTO22-91-T-CCCPV2-CF_S18_L002_R1_001.fastq.gz
- CTO22-91-T-CCCPV2-CF_S18_L002_R2_001.fastq.gz
- CTO22-91-T-CCCPV2-CF_S18_L003_R1_001.fastq.gz
- CTO22-91-T-CCCPV2-CF_S18_L003_R2_001.fastq.gz
- CTO22-91-T-CCCPV2-CF_S18_L004_R1_001.fastq.gz
- CTO22-91-T-CCCPV2-CF_S18_L004_R2_001.fastq.gz
- CTO22-92-T-CCCPV2-CF_S5_L001_R1_001.fastq.gz
- CTO22-92-T-CCCPV2-CF_S5_L001_R2_001.fastq.gz
- CTO22-92-T-CCCPV2-CF_S5_L002_R1_001.fastq.gz
- CTO22-92-T-CCCPV2-CF_S5_L003_R1_001.fastq.gz
- CTO22-92-T-CCCPV2-CF_S5_L003_R2_001.fastq.gz
- CTO22-92-T-CCCPV2-CF_S5_L004_R1_001.fastq.gz
- CTO22-92-T-CCCPV2-CF_S5_L004_R2_001.fastq.gz
-)
+#!/bin/bash
 
-# de-glaciarize each file for 7 days:
-# for file in "${files[@]}"; do
-#   aws s3api restore-object --bucket lab-aaf-ngs-data-archive --key Targeted_Sequencing/20220426_CCPv2_13PTCL_TargetedResequencing_WL/"$file" --restore-request '{"Days":7,"GlacierJobParameters":{"Tier":"Standard"}}' &
-# done
+# This file is used to de-glaciarize files in a specific S3 bucket.
 
-for file in "${files[@]}"; do
-  aws s3api head-object --bucket lab-aaf-ngs-data-archive --key Targeted_Sequencing/20220426_CCPv2_13PTCL_TargetedResequencing_WL/"$file"
+# define variables 
+BUCKET="lab-aaf-ngs-data-archive"
+
+FOLDER="RNAseq/20220807_DNMT3A_RHOA_PreLymphoma_APL/"
+FILES="nohup.out runSTAR.sh runSTAR_v2.sh runfeatureCounts.sh runfeatureCounts2.sh samples.txt"
+KEYS=()
+for FILE in $FILES; do
+  KEYS+=("$FOLDER$FILE")
 done
 
+# define the length of time to de-glaciarize the files for
+DAYS=7
+
+restore() {
+  aws s3api restore-object --bucket $BUCKET --key $1 --restore-request '{"Days":'$DAYS',"GlacierJobParameters":{"Tier":"Standard"}}' | tee -a deglaciarize.log
+}
+
+check() {
+  aws s3api head-object --bucket $BUCKET --key $1 | grep Restore | awk -v key="$1" '{print key, $0}' | tee -a deglaciarize.log
+}
+
+for KEY in "${KEYS[@]}"; do
+  # restore $KEY
+  check $KEY
+done 
+
 # one-liner to aws sync that to a local folder:
-# aws s3 sync --force-glacier-transfer s3://lab-aaf-ngs-data-archive/Targeted_Sequencing/20220426_CCPv2_13PTCL_TargetedResequencing_WL/ /path/to/local/folder/
+# aws s3 sync --force-glacier-transfer s3://lab-aaf-ngs-data-archive/ /path/to/local/folder/
