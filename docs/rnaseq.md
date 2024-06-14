@@ -34,6 +34,17 @@ install_and_add_to_path https://github.com/DaehwanKimLab/hisat2.git
 install_and_add_to_path https://github.com/gpertea/stringtie.git
 ```
 
+### HISAT2
+
+To install, run this in the folder containing the executables:
+
+```bash
+sudo cp -v hisat2 hisat2-align-s hisat2-align-l hisat2-build hisat2-build-s hisat2-build-l hisat2-inspect hisat2-inspect-s hisat2-inspect-l /usr/local/bin
+```
+
+
+```bash
+
 ### Ballgown
 
 Start R and run:
@@ -43,3 +54,5 @@ if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
 BiocManager::install("ballgown")
 ```
+
+

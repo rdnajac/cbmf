@@ -17,8 +17,7 @@ is easy to read and write (with the added bonus of automatic rendering on GitHub
 
 ## Code Style
 
-Note to self: stop agonizing over stylistic details and use `prettier`
-to automatically and consistently format markdown and html files.
+Use `prettier` to automatically and consistently format markdown and html files.
 
 ```sh
 prettier --write **/*.md **/*.html
