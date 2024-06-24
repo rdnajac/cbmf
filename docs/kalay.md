@@ -40,9 +40,11 @@ ubuntu@ip-172-31-32-180:~/kalay$ bs list runs
 
 Download runs with `bs download run --id "$run_id"`
 
-The first three runs should contain the correct sample sheets for demux.
-
-The final two runs have been demultiplexed manually after failing automatic demultiplexing.
+bs download run --id 253069839
+bs download run --id 254559306
+bs download run --id 258955746
+bs download run --id 281093846
+bs download run --id 281976710
 
 ### AWS
 
@@ -54,3 +56,29 @@ The final two runs have been demultiplexed manually after failing automatic demu
 - 20230519_ChIP-seq_HEL_CREBBP-p300_ruxolitinib_SGC-CBP30_CB/
 - 20240522_KB_ChIPseq_4/
 - 20240617_KB_ChIPseq_5/
+
+#### Reorganize
+
+s3://lab-aaf-scratch
+
+## Demux
+
+Assuming the sample sheeet in each run folder is correct. run the following commands:
+
+```sh
+for i in {1..5} do;
+    demux.sh bs_run${i}/ run${i}_fastq;
+done
+```
+
+Write-protect the fastq files in the run folders.
+
+```sh
+chmod -w ./*.fastq.gz
+```
+
+Generate the md5sums for the fastq files.
+
+```sh
+md5sum *.fastq.gz > md5sum.txt
+```

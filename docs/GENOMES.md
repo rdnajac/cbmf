@@ -101,3 +101,18 @@ download_genome() {
   done
 }
 ```
+
+```sh
+# oneliner to download the mouse bowtie2 index
+wget -qO- https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/seqs_for_alignment_pipelines.ucsc_ids/fna.bowtie_index.tar.gz | tar -xvz
+```
+
+[^1]: https://www.ncbi.nlm.nih.gov/genome/doc/assembly/
+
+```
+
+```
+
+```
+
+```

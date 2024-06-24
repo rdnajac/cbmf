@@ -136,7 +136,13 @@ ys | sudo sh -c 'apt update && apt upgrade && apt dist-upgrade && apt autoremove
 Generate a txt file containing the md5sums of all files in a directory
 
 ```sh
-find . -type f -exec md5sum {} \; > md5sums.txt
+md5sum ./*.fastq.gz > md5sums.txt
+```
+
+Generate a txt file containing the md5sums of all files in all subdirs
+
+```sh
+md5sum ./*/*.fastq.gz > checksums.md5
 ```
 
 Check the files against the md5sums in the txt file
@@ -149,6 +155,12 @@ Export the current working directory to the PATH
 
 ```sh
 export PATH=$PATH:$(pwd)
+```
+
+Check the total size of each folder in the current directory
+
+```sh
+du -sha --max-depth=1
 ```
 
 The [`/genomes`](./genomes/README.md) directory contains information about
