@@ -41,7 +41,8 @@ CRAM is a compressed version of the BAM format.
 2. The reference must be available at all times.
    Losing it may be equivalent to losing all your read sequences.
 
-when downloading the indexes for pipelines, see the compatibility issue below
+> [!TIP]
+> when downloading the indexes for pipelines, see the compatibility issue below
 
 ```sh
 

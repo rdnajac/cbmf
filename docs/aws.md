@@ -40,10 +40,9 @@ S3 URI (Uniform Resource Identifier) format: `s3://bucketname/uri`
 aws s3 mv s3://bucketname/oldkey s3://bucketname/newkey
 ```
 
-This unfortunately does not make it easy to view progress.  
+This unfortunately does not make it easy to view progress.
 
 Instead, cp and rm
-
 
 ### Glacier storage
 
