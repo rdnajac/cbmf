@@ -2,6 +2,8 @@
 
 Read the [documentation](https://developer.basespace.illumina.com/docs).
 
+Check out [examples](https://developer.basespace.illumina.com/docs/content/documentation/cli/cli-examples).
+
 ## Setup
 
 Install on Linux or macOS:
@@ -44,34 +46,6 @@ Finally, run 'bs whoami' to verify that you are authenticated:
 
 ## Examples
 
-`bs list projects`
-
-```plaintext
-+-----------------------------------------------+-----------+-------------+
-|                     Name                      |    Id     |  TotalSize  |
------------------------------------------------+-----------+-------------+
-| Default Project For Biosample                 | 373117836 | 0           |
-| HEL_H3K27ac_ChIPSeq1                          | 381715669 | 35368103819 |
-| Untitled from 230306_NS500289_1231_AHW5Y3BGXN | 383461079 | 48723224112 |
-| CBP_P300                                      | 388989668 | 53787523313 |
-| HEL_H3K27ac_ChIPSeq1                          | 419362172 | 204521      |
-| Unindexed Reads                               | 419398983 | 14913976509 |
-+-----------------------------------------------+-----------+-------------+
-```
-
-`bs list runs`
-
-```plaintext
-+---------------------------------+-----------+----------------------+----------+
-|              Name               |    Id     |    ExperimentName    |  Status  |
-+---------------------------------+-----------+----------------------+----------+
-| 230215_NB551203_0628_AHC32JBGXN | 253069839 | HEL_H3K27ac_ChIPSeq1 | Complete |
-| 230306_NS500289_1231_AHW5Y3BGXN | 254559306 | HEL_STAT5_H3K27ac_2  | Complete |
-| 230519_NS500289_1262_AHHLJNBGXT | 258955746 | CBP_p300             | Complete |
-| 240522_NB551203_0777_AH7TMNAFX7 | 281093846 | KB_ChIPseq_4         | Complete |
-+---------------------------------+-----------+----------------------+----------+
-```
-
 ### Downloading files
 
 `bs download run --id 281093846`
@@ -90,10 +64,16 @@ RTAConfiguration.xml         SampleSheet.csv
 RTALogs/
 ```
 
-### bcl2fastq
+### Scratch
+
+Get the size of a run:
+bs get run --id 281976710 --TotalSize
+bs list runs -F Name -F QcStatus -F TotalSize -F AppSession.Application.Name
+
+## bcl2fastq
 
 ```sh
-bcl2fastq --ignore-missing-bcls --ignore-missing-filter --ignore-missing-positions --ignore-missing-controls --auto-set-to-zero-barcode-mismatches --find-adapters-with-sliding-window --adapter-stringency 0.9 --mask-short-adapter-reads 35 --minimum-trimmed-read-length 35 -R run4 --sample-sheet ~/SampleSheet.csv -o ./fastq
+bcl2fastq --ignore-missing-bcls --ignore-missing-filter --ignore-missing-positions --ignore-missing-controls --auto-set-to-zero-barcode-mismatches --find-adapters-with-sliding-window --adapter-stringency 0.9 --mask-short-adapter-reads 35 --minimum-trimmed-read-length 35 -R run5 --sample-sheet ./run5/SampleSheet.csv -o ./run5_fastq
 ```
 
 ## Command Reference

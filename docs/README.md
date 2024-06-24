@@ -25,7 +25,7 @@ prettier --write **/*.md **/*.html
 
 ## Spell checking with `cspell`
 
-Use [`cspell`](https://cspell.org/) ckage to spell check markdown files:
+Use [`cspell`](https://cspell.org/) to spell check markdown files:
 
 ```sh
 npx cspell **/*.md
