@@ -4,7 +4,6 @@
 
 # Enforce "strict" error handling
 set -euo pipefail
-set -x
 
 export GENOMES="/home/ubuntu/genomes"
 export MOUSEREF="${GENOMES}/mouse/GCA_000001635.9_GRCm39_full_analysis_set"
@@ -42,6 +41,9 @@ fastq2bam()
 
 cd FASTQ || exit
 
+# make a logfile for this run
+
+# redirect stdout and stderr to the logfile
 for f in *R1.fastq.gz; do
 	id="${f%%_R1.fastq.gz}"
 	fastq2bam "$id" ".fastq.gz"

@@ -1,15 +1,57 @@
 # Scripts
 
-GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
+Forget about POSIX compatibility and any shell thats not `bash`.
 
-## Bash
+It is safe to assume that we will have at least bash 4.0 available.
+
+> [!TIP]
+> Writing scripts in `bash` (and being explicit about it) is a good way to
+> ensure readability and maintainability.
+
+```sh
+$ bash --version
+GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
+```
+
+## Table of Contents
+
+- [About](#about)
+- [Resources](#resources)
+- [Tips & Tricks](#tips--tricks)
+
+## About
+
+`!#/bin/bash`
+
+## Resources
+
 - `man bash`
 - [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
 - [Bash Guide](https://mywiki.wooledge.org/BashGuide)
 - [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
-- [Bash Best Practices](https://bertvv.github.io/cheat-sheets/Bash.html)
-- [Shell script templates](https://stackoverflow.com/questions/430078/shell-script-templates)
 - [Safety First!](https://github.com/anordal/shellharden/blob/master/how_to_do_things_safely_in_bash.md)
+- [Shell script templates](https://stackoverflow.com/questions/430078/shell-script-templates)
+
+### Extra
+
+- Avoid ["Bashisms"](https://mywiki.wooledge.org/Bashism)
+- [arrays](https://mywiki.wooledge.org/BashFAQ/005) are tricky
+
+## Tips & Tricks
+
+### Multiline comments
+
+Use `: '` to open and `'` to close.
+
+```sh
+: '
+This is a
+very neat comment
+in bash
+'
+```
+
+> [source](https://stackoverflow.com/a/43158193)
 
 ## Utils
 
@@ -23,10 +65,7 @@ fastqc -o "$output_dir" --noextract --memory 1024 -t "$(nproc)" "$input_dir"/*
 "$zipped_html_file" "$output_dir"/*.html
 ```
 
-> [!WARN]
-> those variables have to be defined.
-
-SAMtools `conversion_utilities.sh`
+`conversion_utilities.sh` from SAMtools
 
 ```sh
 # aliases for converting sample read files
@@ -43,4 +82,5 @@ Convert between sam and bam formats:
 ```sh
 samtools view -@ "$MAX_THREADS" -C -T "$FNA" -o "${file%.bam}.cram" "$file"
 samtools view -@ "$MAX_THREADS" -b -o "${file%.cram}.bam" "$file"
+# where $FNA is the reference genome in fasta format
 ```

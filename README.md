@@ -28,11 +28,6 @@ This repository contains tools to automate key bioinformatic tasks:
 - Differential expression analysis (work in progress)
 - Visualization of results (work in progress)
 
-> [!IMPORTANT]
-> These tools not exhaustive, but are meant to provide a
-> foundation for building more complex pipelines and workflows,
-> tailored to your experimental design and specific research questions.
-
 ## 🚀 Getting Started
 
 If you are viewing these document on GitHub, you can copy the code snippets directly
