@@ -1,15 +1,18 @@
 #!/bin/bash
 #
 ## Demultplex Illumina Sequencing Data with bcl2fastq
+## note: this script assumes that the run folder contains
+## a valid SampleSheet.csv
+## all par
 
 demultiplex_bcl2fastq()
 {
 	local run_folder=$1
 	local output_folder=$2
-	# local sample_sheet=$3
 
 	# run bcl2fastq with the same flags as a default NextSeq run
-	bcl2fastq --ignore-missing-bcls \
+	bcl2fastq --no-lane-splitting \
+		--ignore-missing-bcls \
 		--ignore-missing-filter \
 		--ignore-missing-positions \
 		--ignore-missing-controls \
