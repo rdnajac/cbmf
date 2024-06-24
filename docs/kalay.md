@@ -1,10 +1,21 @@
+<!-- markdownlint-disable MD013 -->
+
 # ChIPseq for Kalay
 
 This is a markdown file for the ChIPseq analysis of Kalay.
 
+## Overview
+
+- [x] download data from BaseSpace
+- [x] demultiplex data and backup fastq files
+- [x] combine all fastq files for each sample and upload those to s3
+- [x] run fastqc on all fastq files
+
 ## Data
 
-### BaseSpace
+NextSeq run file downloaded from basespace and all runs are demultiplexed.
+
+BaseSpace
 
 | run date | run name (basespace) | size (GB) | %Q30  | %PF   | instrument | flow cell ID |
 | -------- | -------------------- | --------- | ----- | ----- | ---------- | ------------ |
@@ -12,12 +23,9 @@ This is a markdown file for the ChIPseq analysis of Kalay.
 | 20230306 | HEL_STAT5_H3K27ac_2  | 37        | 92.74 | 89.86 | NS500289   | HW5Y3BGXN    |
 | 20230519 | CBP_p300             | 44        | 90.06 | 87.69 | NS500289   | HHLJNBGXT    |
 | 20240522 | KB_ChIPseq_4         | 10        | 94.47 | 93.50 | NB551203   | H7TMNAFX7    |
-| 20240617 | KB_ChIPseq_5         | 281976710 |
-
-Download the first three runs from BaseSpace.
+| 20240617 | KB_ChIPseq_5         | 10        | ?     | ?     | ?          | ?            |
 
 ```plaintext
-
 ubuntu@ip-172-31-32-180:~/kalay$ bs list runs
 +---------------------------------+-----------+----------------------+----------+
 |              Name               |    Id     |    ExperimentName    |  Status  |
@@ -34,6 +42,15 @@ Download runs with `bs download run --id "$run_id"`
 
 The first three runs should contain the correct sample sheets for demux.
 
-```bash
+The final two runs have been demultiplexed manually after failing automatic demultiplexing.
 
-```
+### AWS
+
+`aws s3 ls s3://lab-aaf-ngs-data-archive/ChIPseq/`
+
+- 20230216_ChIP-seq_HEL_H3K27ac_ruxolitinib_SGC-CBP30_CB/
+- 20230308_ChIP-seq_HEL_H3K27ac_ruxolitinib_SGC-CBP30_rep2redo_CB/
+- 20230308_ChIP-seq_HEL_STAT5_ruxolitinib_SGC-CBP30_CB/
+- 20230519_ChIP-seq_HEL_CREBBP-p300_ruxolitinib_SGC-CBP30_CB/
+- 20240522_KB_ChIPseq_4/
+- 20240617_KB_ChIPseq_5/

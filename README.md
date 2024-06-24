@@ -145,6 +145,12 @@ Check the files against the md5sums in the txt file
 md5sum -c md5sums.txt
 ```
 
+Export the current working directory to the PATH
+
+```sh
+export PATH=$PATH:$(pwd)
+```
+
 The [`/genomes`](./genomes/README.md) directory contains information about
 how to acquire and use reference genomes to align raw reads.
 
