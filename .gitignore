@@ -3,14 +3,10 @@
 # hidden files and directories
 .*
 
-# build files
-bin/
-
-# work in progress
+# works in progress
 data/
 out/
 tmp/
-R/
 
 # latex build files
 *.aux
@@ -23,5 +19,3 @@ R/
 # R
 .Rproj.user
 R/
-
-

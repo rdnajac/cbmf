@@ -16,6 +16,8 @@ high-throughput sequencing data, from raw reads to biological insights.
 
 1. 🔭 [Overview](#-overview)
 2. 🚀 [Getting Started](#-getting-started)
+3. 📚 [Documentation](#-documentation)
+4. 📑 [Resources](#-resources)
 
 ## 🔭 Overview
 
@@ -39,6 +41,8 @@ git clone https://github.com/rdnajac/cbmf.git
 
 Installation instructions will generally be provided for Debian systems,
 but the most scripts should work on any Unix-like system, e.g., macOS.
+
+## Resources
 
 ## Structure of the Repository
 
@@ -100,18 +104,20 @@ sudo alien -i bcl2fastq2-v2.20.0.422-Linux-x86_64.rpm
 
 The `-i` flag installs the package after converting it to a temporary deb file.
 
-### Data Processing
+### RNAseq
 
-### HISAT2
+Tuxedo Suite\[^1\]
 
-Copy, paste, and execute the following code to get started.
+- [HISAT2](htts://github.com/DaehwanKimLab/hisat2):
+  A fast and sensitive alignment program for mapping next-generation sequencing reads
+- [StringTie](https://github.com/gpertea/stringtie):
+  A fast and highly efficient assembler of RNA-Seq alignments into potential transcripts
+- [Ballgown](https://bioconductor.org/packages/release/bioc/html/ballgown.html):
+  Flexible, isoform-level differential expression analysis
+
+\[^1\]: Pertea, M., Kim, D., Pertea, G. M., Leek, J. T., & Salzberg, S. L. (2016). Transcript-level expression analysis of RNA-seq experiments with HISAT, StringTie and Ballgown. Nature Protocols, 11(9), 1650–1667. https://doi.org/10.1038/nprot.2016.095
 
 For more information, read the [manual](https://daehwankimlab.github.io/hisat2/manual/).
-
-```sh
-git clone "https://github.com/DaehwanKimLab/hisat2" && \
-export PATH="$PATH:$(cd hisat2 && make -j \"$(nproc)\" && pwd)"
-```
 
 ## Bookmarks
 
@@ -144,6 +150,19 @@ how to acquire and use reference genomes to align raw reads.
 
 the reference genomes and annotations for the organisms that are used in the pipelines.
 The files are downloaded from the [NCBI Assembly database](https://www.ncbi.nlm.nih.gov/assembly).
+
+### [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+
+[FastQC](https://github.com/s-andrews/FastQC) is a simple java application
+that provides some quality control of high throughput sequencing data.
+
+In order to run it, you need a suitable Java Runtime Environment (JRE) installed.
+
+```sh
+sudo apt install openjdk-11-jdk &&
+```
+
+Read the full installation instructions [here](https://raw.githubusercontent.com/s-andrews/FastQC/master/INSTALL.txt).
 
 [^1]:
     The md5 checksum is a unique 32-character hexadecimal used to verify the
