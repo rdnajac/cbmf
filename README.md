@@ -44,25 +44,6 @@ but the most scripts should work on any Unix-like system, e.g., macOS.
 
 ## Resources
 
-## Structure of the Repository
-
-Each folder contains a README.md with information about the folder's contents and
-how to use the scripts and resources.
-For more information about these documents, click [here](docs/README.md).
-
-```plaintext
-.
-├── docs
-│   ├── README.md
-
-├── genomes
-│   ├── README.md
-
-├── scripts
-│   ├── README.md
-
-```
-
 ## Workflows
 
 This next section describes the steps involved in the analysis

@@ -3,10 +3,8 @@
 # hidden files and directories
 .*
 
-# works in progress
+# data copied from ec2
 data/
-out/
-tmp/
 
 # latex build files
 *.aux
