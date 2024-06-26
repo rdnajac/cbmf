@@ -6,113 +6,88 @@
 # Input: sorted bam files
 # Output: GTF files
 set -euo pipefail
+IFS=$'\n\t'
+
 set -x
 
-GENOMES="/home/ubuntu/genomes"
-MOUSEREF="${GENOMES}/mouse/GCA_000001635.9_GRCm39_full_analysis_set"
-MREF_GTF="${MOUSEREF}.refseq_annotation.gtf"
-MREF_GFF="${MOUSEREF}.refseq_annotation.gff"
+# mouse
+REF_GFF="GCA_000001635.9_GRCm39_full_analysis_set.refseq_annotation.gff"
+REF_GTF="GCA_000001635.9_GRCm39_full_analysis_set.refseq_annotation.gtf"
 
-## Run StringTie on a single sample to assemble and quantify expressed genes and transcripts
-run_stringtie()
-{
-	local reference="$1"
-	local input_bam="$2"
-	local output_gtf="$3"
-
-	stringtie -p "$(nproc)" -G "$reference" "$input_bam" >"$output_gtf"
-}
-
-## Run StringTie on each sample in the current directory
-do_run_stringtie()
-{
-	local reference="$1"
-	local input_folder="${2:-.}"
-	local output_folder="${3:-.}"
-
-	for f in "$input_folder"/*.bam; do
-		run_stringtie "$reference" "$f" "${output_folder}/$(basename "${f%.bam}").gtf" &
-	done
-	wait
-	echo "All samples processed with StringTie."
-}
-
-# File to store the merged GTF information
 MERGED_GTF="stringtie_merged.gtf"
 
-# Merge GTF files
-# @sideeffect creates a merged GTF file
-merge_gtfs()
-{
-	local input_folder="${1:-.}"
+# Get the number of processors and save it to a variable
+NPROC=$(nproc)
 
-	echo "Merging GTF files using GFF"
-	stringtie --merge -p "$(nproc)" -G "$MREF_GFF" "$input_folder"/*.gtf >"$MERGED_GTF"
-	echo "GTF files merged into $MERGED_GTF."
+cleanup() {
+	mv -v ./gffcmp* ./gffcompare_output
+	mv -v ./*.gtf ./stringtie_output
+	rm -rfv tmp*
 }
 
-# Compare GFF files
-do_gffcompare()
-{
-	local reference="$1"
-	local merged_gtf="$2"
-	gffcompare -r "$reference" -G -o merged "$merged_gtf"
+prepare_for_export() {
+	local prefix="$(basename "$PWD")"
+
+	zip -rv "$prefix"_stringtie.zip stringtie_output gffcompare_output ballgown_input
+	rm -frv stringtie_output gffcompare_output ballgown_input
 }
 
-# Generate Ballgown input files
-# @brief Process samples with merged GTF
-generate_ballgown_inputs()
-{
-	local reference="$1"
-	local input_folder="${2:-.}"
+# main function
+main() {
+	local directory="${1:-.}"
+	local species="${2:-mouse}"
 
-	for f in "$input_folder"/*.bam; do
-		local id="${f%.bam}"
+	cd "$directory" || {
+		echo "Directory not found."
+		exit 1
+	}
+
+	if [[ "$species" != "mouse" ]]; then
+		echo "Species not supported."
+		exit 2
+	fi
+
+	# output folders
+	mkdir -vp ballgown_input
+	mkdir -vp stringtie_output
+	mkdir -vp gffcompare_output
+
+	reference_dir="$HOME/genomes/mouse"
+	reference_gff="$reference_dir/$REF_GFF"
+	reference_gtf="$reference_dir/$REF_GTF"
+
+	# Run StringTie on each sample to assemble and quantify expressed genes and transcripts
+	for bamfile in ./*.bam; do
+		stringtie -p "$NPROC" -G "$reference_gff" "$bamfile" > "${bamfile%.bam}_ref.gtf" &
+	done
+	echo "Waiting for transcripts to be assembled and quantified..."
+	wait
+	echo "Transcripts assembled and quantified."
+
+	# 2. merge GTF files
+	echo "Merging GTF files..."
+	stringtie --merge -p "$NPROC" -G "$reference_gff" ./*_ref.gtf > "$MERGED_GTF"
+	echo "Merged GTF file created: $MERGED_GTF"
+
+	# gffcompare to compare the merged GTF file to the reference annotation
+	# this can run in parallel
+	{
+		echo "Running gffcompare..."
+		gffcompare "$reference_gff" "$MERGED_GTF" -V 2> gffcmp.log
+	} &
+
+	# 4. generate Ballgown input files
+	echo "Generating Ballgown input files..."
+	for bamfile in ./*.bam; do
+		local id="${bamfile%.bam}"
 		local folder="ballgown_input/$id"
 		mkdir -vp "$folder"
-		echo "stringtie -p $(nproc) -G $reference -e -b $folder -o ${id}_stringtie.gtf $f"
-		stringtie -p "$(nproc)" -G "$reference" -e -b "$folder" -o "${id}_stringtie.gtf" "$f" &
+		stringtie -p "$NPROC" -G "$MERGED_GTF" -e -b "$folder" -o "${id}_stringtie.gtf" "$bamfile" &
 	done
 	wait
 	echo "All samples processed with StringTie using merged GTF."
+	cleanup
+	prepare_for_export
 }
 
-# 1. run StringTie on each sample in pwd
-
-FILES=(
-	./Tet2RhoaG17V_24hAGX51_1_sorted_markdup.bam
-	./Tet2RhoaG17V_24hAGX51_2_sorted_markdup.bam
-	./Tet2RhoaG17V_24hAGX51_3_sorted_markdup.bam
-	./Tet2RhoaG17V_24hDMSO_1_sorted_markdup.bam
-	./Tet2RhoaG17V_24hDMSO_2_sorted_markdup.bam
-	./Tet2RhoaG17V_24hDMSO_3_sorted_markdup.bam
-)
-
-#same but uses our FILES
-do_run_stringtie_on_files()
-{
-	local reference="$1"
-
-	for file in "${FILES[@]}"; do
-		run_stringtie "$reference" "$file" "${file%.bam}.gtf" &
-		echo "StringTie on $file."
-	done
-	wait
-	echo "All samples processed with StringTie."
-}
-
-# do_run_stringtie "$MREF_GFF"
-
-# 2. merge GTF files
-# merge_gtfs ~/FASTQ/gtf
-
-# 3. compare GFF files
-# cd ~/FASTQ/gtf
-# do_gffcompare "$MREF_GFF" "$MERGED_GTF"
-
-# 4. generate Ballgown input files
-cd ~/FASTQ/bam
-generate_ballgown_inputs "$MREF_GFF"
-
-## notes
-# the default output foler contains both the .gtf and _stringtie.gtf files
+main "$@"

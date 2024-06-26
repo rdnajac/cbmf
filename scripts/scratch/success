@@ -1,1 +1,1 @@
-echo -e "🌈\e[31mS\e[32mu\e[33mc\e[34mc\e[35me\e[36ms\e[37ms\e[0m!✨"
+echo -e '🌈\e[31mS\e[32mu\e[33mc\e[34mc\e[35me\e[36ms\e[37ms\e[0m!✨'
