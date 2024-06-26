@@ -82,3 +82,7 @@ Generate the md5sums for the fastq files.
 ```sh
 md5sum *.fastq.gz > md5sum.txt
 ```
+
+for i in 1 3 4 5 do;
+aws s3 cp run${i}\_fastq/ s3://lab-aaf-scratch/ChIPseq/ --recursive
+done
