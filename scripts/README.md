@@ -23,6 +23,14 @@ GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
 
 `!#/bin/bash`
 
+### Structure of these scripts
+
+Scripts prefixed with an underscore (`_`) are meant to be thin
+wrappers around the binaries they call.
+They should be as simple as possible and leave error handling to higher level scripts.
+
+````sh
+
 ## Resources
 
 - `man bash`
@@ -49,7 +57,7 @@ This is a
 very neat comment
 in bash
 '
-```
+````
 
 > [source](https://stackoverflow.com/a/43158193)
 
@@ -69,7 +77,7 @@ fastqc -o "$output_dir" --noextract --memory 1024 -t "$(nproc)" "$input_dir"/*
 
 ```sh
 # aliases for converting sample read files
-# `source conversion_utilities.sh` to add them to your environment
+# `source conversion_utilities.sh` to add them to y     our environment
 
 alias fastq_to_fasta="sed 'N;x;N;N;x;s/@/>/"
 alias paired_to_tab5="paste <(sed 'N;x;N;g;N;s/\n/	/g' reads_1.fq) <(sed  -n 'n;h;n;g;N;s/\n/	/g;p' reads_2.fq) > reads_12.tab5"
@@ -83,4 +91,16 @@ Convert between sam and bam formats:
 samtools view -@ "$MAX_THREADS" -C -T "$FNA" -o "${file%.bam}.cram" "$file"
 samtools view -@ "$MAX_THREADS" -b -o "${file%.cram}.bam" "$file"
 # where $FNA is the reference genome in fasta format
+```
+
+alias for making md5 checksums for all files of a filetype in a directory:
+
+```sh
+alias md5sums="find . -type f -oname '*.fastq' -exec md5sum {} + > md5sums.txt"
+use ./ instead
+
+function md5sums() {
+  md5sum
+  find . -type f -name '*.fastq' -exec md5sum {} + > md5sums.txt
+}
 ```
