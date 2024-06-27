@@ -1,8 +1,8 @@
-#
-
-## iSCB
+# Technical Note
 
 https://academic.oup.com/bioinformatics/pages/instructions_for_authors
+
+## iSCB
 
 The exponential increase in sequencing data due to technological advancements demands efficient and scalable bioinformatic solutions. This repository provides a suite of automated shell scripts that streamline quality control, alignment, and report generation
 Advancements in DNA sequencing technology have led to an exponential increase in

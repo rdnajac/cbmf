@@ -1,10 +1,8 @@
-# cbmf/scripts/
-
-## [`perl`](https://www.perl.org/)
+# [`perl`](https://www.perl.org/)
 
 a high-level, general-purpose, interpreted, dynamic programming language
 
-perfer `perl` over `bash` for more complex (and more portable) scripts
+use `perl` over `bash` for more complex scripts
 
 ```perl
 CONTEXTS  SIGILS  ref        ARRAYS        HASHES
@@ -76,7 +74,7 @@ stat      localtime    caller         SPECIAL VARIABLES
 
 > https://perldoc.perl.org/perlcheat
 
-### to run
+## to run
 
 `.pl` files are run by the `perl` interpreter
 
@@ -85,14 +83,14 @@ $ perl script.pl
 Hello, Perl!
 ```
 
-### `script.pl`
+## `script.pl`
 
 ```perl
 #!/usr/bin/perl
 print "Hello, Perl!\n";
 ```
 
-#### more `perl`
+## more `perl`
 
 ```perl
 #!/usr/bin/perl

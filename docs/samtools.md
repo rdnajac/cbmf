@@ -45,16 +45,22 @@ CRAM is a compressed version of the BAM format.
 > when downloading the indexes for pipelines, see the compatibility issue below
 
 ```sh
-
 $ samtools faidx download/GCA_000001635.9_GRCm39_full_analysis_set.fna.gz
 [E::fai_build_core] File truncated at line 1
 [E::fai_build3_core] Cannot index files compressed with gzip, please use bgzip
 [faidx] Could not build fai index download/GCA_000001635.9_GRCm39_full_analysis_set.fna.gz.fai
-
 ```
 
 decompress with gzip and recompress with bgzip
 
 ```sh
 gunzip GCA_000001635.9_GRCm39_full_analysis_set.fna.gz && bgzip download/GCA_000001635.9_GRCm39_full_analysis_set.fna
+```
+
+Convert between sam and bam formats:
+
+```sh
+samtools view -@ "$MAX_THREADS" -C -T "$FNA" -o "${file%.bam}.cram" "$file"
+samtools view -@ "$MAX_THREADS" -b -o "${file%.cram}.bam" "$file"
+# where $FNA is the reference genome in fasta format
 ```
