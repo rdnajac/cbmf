@@ -15,8 +15,8 @@ high-throughput sequencing data, from raw reads to biological insights.
 ## 📖 Table of Contents
 
 1. 🔭 [Overview](#-overview)
-2. 🚀 [Getting Started](#-getting-started)
-3. 📚 [Documentation](#-documentation)
+2. 📚 [Documentation](#-documentation)
+3. 🚀 [Getting Started](#-getting-started)
 4. 📑 [Resources](#-resources)
 5. [Workflows](#workflows)
    1. [Data Acquisition](#data-acquisition)
@@ -34,6 +34,47 @@ This repository contains tools to automate key bioinformatic tasks:
 - Differential expression analysis (work in progress)
 - Visualization of results (work in progress)
 
+## 📚 Documentation
+
+> "Don't document the program; program the document."
+>
+> — _the internet_
+
+The markdown (`.md`) files in this repository are written using
+[GitHub Flavored Markdown \(GFM\)](https://github.github.com/gfm/)[^1].
+
+> [!TIP]
+> GFM gives us additional features like tables, footnotes, and alerts like this one.
+
+### Further Reading
+
+- [basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
+- [About READMEs](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes)
+- [semantic line breaks](https://sembr.org/)
+- [art of README](https://github.com/hackergrrl/art-of-readme)
+
+Institute of Electrical and Electronics Engineers (IEEE)
+publications on writing effective technical documents:
+
+- [Write a Good Technical Report](https://ieeexplore.ieee.org/document/6448763)
+- [Code Documentation](https://ieeexplore.ieee.org/abstract/document/5484109)
+
+### Code Style
+
+Use `prettier` to automatically and consistently format markdown and html files.
+
+```sh
+prettier --write **/*.md **/*.html
+```
+
+### Spell checking with `cspell`
+
+Use [`cspell`](https://cspell.org/) to spell check files.
+
+```sh
+npx cspell **/*.md
+```
+
 ## 🚀 Getting Started
 
 If you are viewing these document on GitHub, you can copy the code snippets directly
@@ -42,10 +83,6 @@ by clicking the clipboard icon in the top right corner of code blocks like this 
 ```sh
 git clone https://github.com/rdnajac/cbmf.git
 ```
-
-## 📚 Documentation
-
-Check out the [documentation](./docs/README.md).
 
 ## 📑 Resources
 
@@ -118,9 +155,22 @@ Otherwise, consult the documentation for the appropriate Illumina sequencer:
 - [MiSeq](https://support.illumina.com/sequencing/sequencing_instruments/miseq/documentation.html)
 - [NextSeq500](https://support.illumina.com/sequencing/sequencing_instruments/nextseq-550/documentation.html)
 
-#### Align reads to a reference genome
+### [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 
-##### Aligners
+[FastQC](https://github.com/s-andrews/FastQC) is a simple java application
+that provides some quality control of high throughput sequencing data.
+
+In order to run it, you need a suitable Java Runtime Environment (JRE) installed.
+
+```sh
+sudo apt install openjdk-11-jdk &&
+```
+
+Read the full installation instructions [here](https://raw.githubusercontent.com/s-andrews/FastQC/master/INSTALL.txt).
+
+### Align reads to a reference genome
+
+aligners:
 
 - [HISAT2](https://daehwankimlab.github.io/hisat2/)
 - [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
@@ -165,27 +215,14 @@ Check the total size of each folder in the current directory
 du -sha --max-depth=1
 ```
 
-The [`/genomes`](./genomes/README.md) directory contains information about
-how to acquire and use reference genomes to align raw reads.
+<!-- Footnotes -->
 
-the reference genomes and annotations for the organisms that are used in the pipelines.
-The files are downloaded from the [NCBI Assembly database](https://www.ncbi.nlm.nih.gov/assembly).
+[^1]:
+    GFM is a superset of the original [Markdown](https://daringfireball.net/projects/markdown/syntax),
+    a lightweight markup language with plain text formatting syntax that is easy to read and write.
 
-### [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-
-[FastQC](https://github.com/s-andrews/FastQC) is a simple java application
-that provides some quality control of high throughput sequencing data.
-
-In order to run it, you need a suitable Java Runtime Environment (JRE) installed.
-
-```sh
-sudo apt install openjdk-11-jdk &&
-```
-
-Read the full installation instructions [here](https://raw.githubusercontent.com/s-andrews/FastQC/master/INSTALL.txt).
-
-[^1]: https://www.ncbi.nlm.nih.gov/genome/doc/assembly/
-[^2]:
+[^2]: https://www.ncbi.nlm.nih.gov/genome/doc/assembly/
+[^3]:
     The md5 checksum is a unique 32-character hexadecimal used to verify the
     integrity of the file during download or transfer. A checksum is computed for
     each file and changes if the file is modified. Read the original
