@@ -2,7 +2,9 @@
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-> Don't document the program; program the document. — _the internet_
+> Don't document the program; program the document.
+>
+> — _the internet_
 
 The `.md` files in this repository are written using
 [GitHub Flavored Markdown \(GFM\)](https://github.github.com/gfm/),
