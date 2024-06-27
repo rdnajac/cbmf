@@ -6,6 +6,10 @@
 # data copied from ec2
 data/
 
+# don't track R files
+.Rproj.user
+R/
+
 # latex build files
 *.aux
 *.log
@@ -14,6 +18,3 @@ data/
 *.synctex.gz
 *.out
 
-# R
-.Rproj.user
-R/

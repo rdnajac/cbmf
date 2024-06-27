@@ -39,10 +39,15 @@ by clicking the clipboard icon in the top right corner of code blocks like this 
 git clone https://github.com/rdnajac/cbmf.git
 ```
 
-Installation instructions will generally be provided for Debian systems,
-but the most scripts should work on any Unix-like system, e.g., macOS.
+## 📚 Documentation
 
-## Resources
+Check out the [documentation](./docs/README.md).
+
+## 📑 Resources
+
+- [Bioinformatics Stack Exchange](https://bioinformatics.stackexchange.com/)
+- [Biostars](https://www.biostars.org/)
+- [Biopython](https://biopython.org/)
 
 ## Workflows
 
@@ -61,52 +66,7 @@ Otherwise, consult the documentation for the appropriate Illumina sequencer:
 - [MiSeq](https://support.illumina.com/sequencing/sequencing_instruments/miseq/documentation.html)
 - [NextSeq500](https://support.illumina.com/sequencing/sequencing_instruments/nextseq-550/documentation.html)
 
-### bcl2fastq
-
-> Read the [User Guide](https://support.illumina.com/content/dam/illumina-support/documents/documentation/software_documentation/bcl2fastq/bcl2fastq_letterbooklet_15038058brpmi.pdf).
-
-If you have raw sequencing data in BCL format, you will need to convert it to
-FASTQ format using the bcl2fastq2 Conversion Software.
-This step can be skipped if you used Azenta for sequencing,
-or if you correctly uploaded a valid sample sheet prior to sequencing.
-
-#### Installation
-
-Download bcl2fastq2 Conversion Software v2.20 Installer (Linux rpm) from
-[Illumina](https://support.illumina.com/sequencing/sequencing_software/bcl2fastq-conversion-software.html).
-
-Check out this [post](https://www.biostars.org/p/266897/) for instructions
-on how to convert this rpm (Red Hat Package Manager) file
-into a deb (Debian Package Manager) file.
-
-```sh
-sudo alien -i bcl2fastq2-v2.20.0.422-Linux-x86_64.rpm
-```
-
-The `-i` flag installs the package after converting it to a temporary deb file.
-
-### RNAseq
-
-Tuxedo Suite\[^1\]
-
-- [HISAT2](htts://github.com/DaehwanKimLab/hisat2):
-  A fast and sensitive alignment program for mapping next-generation sequencing reads
-- [StringTie](https://github.com/gpertea/stringtie):
-  A fast and highly efficient assembler of RNA-Seq alignments into potential transcripts
-- [Ballgown](https://bioconductor.org/packages/release/bioc/html/ballgown.html):
-  Flexible, isoform-level differential expression analysis
-
-\[^1\]: Pertea, M., Kim, D., Pertea, G. M., Leek, J. T., & Salzberg, S. L. (2016). Transcript-level expression analysis of RNA-seq experiments with HISAT, StringTie and Ballgown. Nature Protocols, 11(9), 1650–1667. https://doi.org/10.1038/nprot.2016.095
-
-For more information, read the [manual](https://daehwankimlab.github.io/hisat2/manual/).
-
-## Bookmarks
-
-- [Bioinformatics Stack Exchange](https://bioinformatics.stackexchange.com/)
-- [Biostars](https://www.biostars.org/)
-- [Biopython](https://biopython.org/)
-
-## Useful One-Liners
+## Useful (POSIX-compliant) one-liners
 
 Update and upgrade everything on Ubuntu
 
