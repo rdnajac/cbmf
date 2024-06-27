@@ -1,49 +1,50 @@
 # Scripts
 
-Forget about POSIX compatibility and any shell thats not `bash`.
-
-It is safe to assume that we will have at least bash 4.0 available.
-
-> [!TIP]
-> Writing scripts in `bash` (and being explicit about it) is a good way to
-> ensure readability and maintainability.
-
-```sh
-$ bash --version
-GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
-```
-
-## Table of Contents
-
-- [About](#about)
-- [Resources](#resources)
-- [Tips & Tricks](#tips--tricks)
+The scripts in this directory are all written in `bash`.
 
 ## About
 
-`!#/bin/bash`
+`$ bash --version` prints the version of bash:
 
-### Structure of these scripts
+```plaintext
+GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+```
+
+> [!INFO]
+> Being explicit about the shell you are using is a good way
+> to ensure future compatibility and maintainability.
+
+### POSIX compatibility
+
+It is safe to assume that we will have at least bash 4.0 available.
+Pretend other shells do not exist and write scripts for `bash` only.
+These scripts have been validated only on the following machine
+(output from `$ uname -a`):
+
+```plaintext
+Linux ip-172-31-32-180 6.5.0-1020-aws #20~22.04.1-Ubuntu SMP Wed May  1 16:10:50 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+```
+
+Writing scripts in `bash` (and being explicit about it) is a good way to
+ensure readability and maintainability.
+
+## Files in this directory
 
 Scripts prefixed with an underscore (`_`) are meant to be thin
 wrappers around the binaries they call.
-They should be as simple as possible and leave error handling to higher level scripts.
 
-````sh
+Helper functions ensure the binaries are installed and called
+with the correct arguments.
 
-## Resources
+They are meant to explicitly document the exact command
+invocation including flags and, when necessary, positional
+arguments. This provides a single point of change in case
+the default command invocation changes.
 
-- `man bash`
-- [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
-- [Bash Guide](https://mywiki.wooledge.org/BashGuide)
-- [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
-- [Safety First!](https://github.com/anordal/shellharden/blob/master/how_to_do_things_safely_in_bash.md)
-- [Shell script templates](https://stackoverflow.com/questions/430078/shell-script-templates)
-
-### Extra
-
-- Avoid ["Bashisms"](https://mywiki.wooledge.org/Bashism)
-- [arrays](https://mywiki.wooledge.org/BashFAQ/005) are tricky
+They should be as simple as possible and leave error handling
+to higher level scripts.
 
 ## Tips & Tricks
 
@@ -51,46 +52,14 @@ They should be as simple as possible and leave error handling to higher level sc
 
 Use `: '` to open and `'` to close.
 
+> [source](https://stackoverflow.com/a/43158193)
+
 ```sh
 : '
 This is a
 very neat comment
 in bash
 '
-````
-
-> [source](https://stackoverflow.com/a/43158193)
-
-## Utils
-
-`multifastqc`
-
-```sh
-# run fastqc on all files from an input_dir
-fastqc -o "$output_dir" --noextract --memory 1024 -t "$(nproc)" "$input_dir"/*
-
-# zip all files from the output_dir
-"$zipped_html_file" "$output_dir"/*.html
-```
-
-`conversion_utilities.sh` from SAMtools
-
-```sh
-# aliases for converting sample read files
-# `source conversion_utilities.sh` to add them to y     our environment
-
-alias fastq_to_fasta="sed 'N;x;N;N;x;s/@/>/"
-alias paired_to_tab5="paste <(sed 'N;x;N;g;N;s/\n/	/g' reads_1.fq) <(sed  -n 'n;h;n;g;N;s/\n/	/g;p' reads_2.fq) > reads_12.tab5"
-alias paired_to_tab6="paste <(sed 'N;x;N;g;N;s/\n/	/g' reads_1.fq) <(sed 'N;x;N;g;N;s/\n/	/g' reads_2.fq) > reads_12.tab6"
-alias paired_to_interleaved="paste -d'\n' <(sed 'N;N;N;s/\n/	/g' reads_1.fq) <(sed 'N;N;N;s/\n/	/g' reads_2.fq) | tr '\t' '\n' > reads_12.fq"
-```
-
-Convert between sam and bam formats:
-
-```sh
-samtools view -@ "$MAX_THREADS" -C -T "$FNA" -o "${file%.bam}.cram" "$file"
-samtools view -@ "$MAX_THREADS" -b -o "${file%.cram}.bam" "$file"
-# where $FNA is the reference genome in fasta format
 ```
 
 alias for making md5 checksums for all files of a filetype in a directory:
