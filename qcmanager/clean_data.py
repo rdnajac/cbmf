@@ -1,7 +1,4 @@
-#! /usr/bin/env python3
 import csv
-import sys
-
 
 def read_csv(filename):
     with open(filename, newline="") as file:
@@ -64,13 +61,13 @@ def main():
     cleaned_data, cleaned_headers = clean_data(data, headers)
 
     flagstat_data, flagstat_headers = read_csv(flagstat_csv)
-    print(f"len(flagstat_data): {len(flagstat_data)}")
-    print(f"len(flagstat_headers): {len(flagstat_headers)}")
-    print(f"flagstat_headers: {flagstat_headers}")
-    # final_data, final_headers = merge_data(
-    #     cleaned_data, cleaned_headers, flagstat_data, flagstat_headers
-    # )
-    # write_csv(final_data, final_headers, output_csv)
+    # print(f"len(flagstat_data): {len(flagstat_data)}")
+    # print(f"len(flagstat_headers): {len(flagstat_headers)}")
+    # print(f"flagstat_headers: {flagstat_headers}")
+    final_data, final_headers = merge_data(
+        cleaned_data, cleaned_headers, flagstat_data, flagstat_headers
+    )
+    write_csv(final_data, final_headers, output_csv)
 
 
 if __name__ == "__main__":

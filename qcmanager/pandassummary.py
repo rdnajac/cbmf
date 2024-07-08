@@ -20,8 +20,6 @@ csv_headers = [
 ]
 
 
-
-
 class FastQCAnalyzerWithPandas:
     def __init__(self, directory):
         self.directory = directory
@@ -124,9 +122,3 @@ def print_summary(summary, detailed_summary):
         for issue in issues:
             print(f"{file_name}: {issue[0]} - {issue[1]}", file=sys.stderr)
 
-
-# Example usage
-analyzer = FastQCAnalyzerWithPandas("./")
-analyzer.process_files()
-analyzer.print_summary()
-multireport("your_directory_path")

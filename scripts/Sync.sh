@@ -11,7 +11,8 @@ SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REMOTE_ALIAS="my-ec2"
 
 # define directories to keep in sync
-LOCAL_DATA_DIR="${HOME}/cbmf/data"
+LOCAL_DATA_IN="${HOME}/cbmf/R/in"
+# LOCAL_DATA_OUT="${HOME}/cbmf/R/out"
 
 # if ewre on darwin
 if [[ $(uname) == "Darwin" ]]; then
@@ -22,7 +23,7 @@ if [[ $(uname) == "Darwin" ]]; then
 
 	# DO NOT delete files on the remote that are not on the local
 	# (i.e. only copy files from the remote that are not on the local)
-	rsync -avz "${REMOTE_ALIAS}:~/out/" "$LOCAL_DATA_DIR"/
+	rsync -avz "${REMOTE_ALIAS}:~/out/" "$LOCAL_DATA_IN"/
 else
 	if (grep -q "export PATH=\$PATH:~/scripts" ~/.bashrc); then
 		echo "export PATH=\$PATH:~/scripts" >> ~/.bashrc

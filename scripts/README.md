@@ -30,10 +30,13 @@ Linux ip-172-31-32-180 6.5.0-1020-aws #20~22.04.1-Ubuntu SMP Wed May  1 16:10:50
 Writing scripts in `bash` (and being explicit about it) is a good way to
 ensure readability and maintainability.
 
-| command | description                   |
-| ------- | ----------------------------- |
-| `!!`    | repeat last command           |
-| `!$`    | last argument of last command |
+| command | description                    |
+| ------- | ------------------------------ |
+| `!!`    | repeat last command            |
+| `!$`    | last argument of last command  |
+| `!^`    | first argument of last command |
+| `$_`    | last argument of last command  |
+| `$?`    | exit status of last command    |
 
 ## Resources
 
