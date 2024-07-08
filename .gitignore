@@ -1,14 +1,13 @@
 # gitignore - specifies intentionally untracked files to ignore
 
-# hidden files and directories
+# ignore hidden files and directories
 .*
 
-# data copied from ec2
 data/
 
-# don't track R files
+# don't track R project files
 .Rproj.user
-R/
+
 
 # latex build files
 *.aux

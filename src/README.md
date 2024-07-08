@@ -21,3 +21,13 @@ Source list and software installation instructions.
 [^2]: DROMPA: easy-to-handle peak calling and visualization software for the computational analysis and validation of ChIP-seq data (https://doi.org/10.1111/gtc.12058)
 [^3]: FastQC: A Quality Control tool for High Throughput Sequence Data (https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 [^4]: STAR: ultrafast universal RNA-seq aligner (https://doi.org/10.1093/bioinformatics/bts635)
+
+## Citation format
+
+@article{muzellec2023pydeseq2,
+title={PyDESeq2: a python package for bulk RNA-seq differential expression analysis},
+author={Muzellec, Boris and Telenczuk, Maria and Cabeli, Vincent and Andreux, Mathieu},
+year={2023},
+doi = {10.1093/bioinformatics/btad547},
+journal={Bioinformatics},
+}
