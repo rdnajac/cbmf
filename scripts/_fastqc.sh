@@ -32,12 +32,13 @@ _fastqc() {
 	mkdir -vp "$output_dir"
 
 	## Run FastQC
-	# --noextract: Do not extract the results
 	# -t: Number of threads
 	# --memory: Memory limit for java processes
-	# fastqc --noextract -t "$(nproc)" --memory "$MEMSIZE" -o "$output_dir" ./*
-	fastqc --noextract -t "$(nproc)" --memory 4096 -o bamqc ./*
+	# --noextract: Do not extract the results
+	# -o: Output directory
+	fastqc -t "$(nproc)" --memory "$MEMSIZE" --noextract -o "$output_dir" ./*
 
 }
 
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] && _fastqc "$@"
+# Run the fastqc function
+_fastqc "$@"

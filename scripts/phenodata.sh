@@ -37,3 +37,13 @@ Ponesimod1,Ponesimod,1
 Ponesimod2,Ponesimod,2
 Ponesimod3,Ponesimod,3
 EOF
+
+"$()" and $(()): {{{1
+# " $(..) is not supported by sh (Bourne shell).  However, apparently
+# " some systems (HP?) have as their /bin/sh a (link to) Korn shell
+# " (ie. Posix compliant shell).  /bin/ksh should work for those
+# " systems too, however, so the following syntax will flag $(..) as
+# " an Error under /bin/sh.  By consensus of vimdev'ers!
+
+# example using $(..) instead of `..` (backticks)
+echo "Today is $( "$(date)" )"

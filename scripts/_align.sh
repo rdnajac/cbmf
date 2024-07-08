@@ -25,6 +25,7 @@
 #######################################
 main() {
 	_align "$@"
+	"$(exit $?)" || echo "Alignment failed"
 }
 
 main "$@"
