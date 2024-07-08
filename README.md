@@ -31,7 +31,7 @@ This repository contains tools to automate key bioinformatic tasks:
 - Quality control
 - Alignment to reference genomes
 - Transcript assembly and quantification
-- Differential expression analysis (work in progress)
+- Differential expression analysis
 - Visualization of results (work in progress)
 
 ## 📚 Documentation
@@ -157,36 +157,19 @@ Otherwise, consult the documentation for the appropriate Illumina sequencer:
 
 ### Demultiplexing Illumina sequencing data
 
-#### bcl2fastq
-
-> Read the [User Guide](https://support.illumina.com/content/dam/illumina-support/documents/documentation/software_documentation/bcl2fastq/bcl2fastq_letterbooklet_15038058brpmi.pdf).
-
 If you have raw sequencing data in BCL format, you will need to convert it to
 FASTQ format using the bcl2fastq2 Conversion Software.
 This step can be skipped if you used Azenta for sequencing,
 or if you correctly uploaded a valid sample sheet prior to sequencing.
 
+#### bcl2fastq
+
+Check out the [installation instructions](/INSTALL.md/bcl2fastq) for bcl2fastq2.
+Read the [User Guide](https://support.illumina.com/content/dam/illumina-support/documents/documentation/software_documentation/bcl2fastq/bcl2fastq_letterbooklet_15038058brpmi.pdf).
+
 #### bclconvert
 
 Read the [documentation](https://support-docs.illumina.com/SW/BCL_Convert_v4.0/Content/SW/BCLConvert/BCLConvert.htm).
-
-#### Installation
-
-Illumina hosts the `.rpm` file for CentOS/RedHat Linux distros and the
-source code (which must be compiled) for other distros.
-
-Download bcl2fastq2 Conversion Software v2.20 Installer (Linux rpm) from
-[Illumina](https://support.illumina.com/sequencing/sequencing_software/bcl2fastq-conversion-software.html).
-
-Check out this [post](https://www.biostars.org/p/266897/) for instructions
-on how to convert this rpm (Red Hat Package Manager) file
-into a deb (Debian Package Manager) file.
-
-```sh
-sudo alien -i bcl2fastq2-v2.20.0.422-Linux-x86_64.rpm
-```
-
-The `-i` flag installs the package after converting it to a temporary deb file.
 
 > [!TIP] > `bcl2fastq` is no longer supported; use `bclconvert` instead.
 > You can install `bclconvert` using the same method as described above.
