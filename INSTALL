@@ -1,0 +1,50 @@
+#!/bin/bash
+#
+## This script is used to install the necessary packages for the
+## development environment.
+
+set -euo pipefail
+set -x
+
+THIS_DIR=$(cd "$(dirname "$0")" && pwd)
+PACK_DIR=$THIS_DIR/src
+
+CD_OR_DIE() {
+	cd "${1:-.}" || exit 1
+}
+
+mkdir -vp "$PACK_DIR" && CD_OR_DIE "$PACK_DIR"
+
+_install_STAR() {
+	STAR_DIR=${1:-STAR}
+
+	# STAR requires us to build in the src directory
+	CD_OR_DIE "${STAR_DIR}/src"
+
+	# Build STAR on macOS or Linux
+	if [[ $(uname) == Darwin ]]; then
+		make -f Makefile.MacOS
+	else
+		make -f Makefile.Linux
+	fi
+}
+
+## HTSlib
+## Requirements
+# https://github.com/samtools/htslib/blob/develop/INSTALL
+# zlib (required)
+# libbz2 (required, unless configured with --disable-bz2)
+# liblzma (required, unless configured with --disable-lzma)
+# libcurl (optional, but strongly recommended)
+# libcrypto (optional for Amazon S3 support; not needed on MacOS)
+# libdeflate (optional, but strongly recommended for faster gzip)
+
+_install_htslib() {
+	HTSLIB_DIR=${1:-htslib}
+
+	CD_OR_DIE "$HTSLIB_DIR"
+	git submodule update --init --recursive
+	autoreconf -i
+}
+
+# :vim :ft=sh
