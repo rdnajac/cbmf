@@ -16,3 +16,15 @@
 [submodule "src/STAR"]
 	path = src/STAR
 	url = https://github.com/alexdobin/STAR
+[submodule "src/DROMPAplus"]
+	path = src/DROMPAplus
+	url = https://github.com/rnakato/DROMPAplus
+[submodule "src/phantompeakqualtools"]
+	path = src/phantompeakqualtools
+	url = https://github.com/kundajelab/phantompeakqualtools
+[submodule "src/idr"]
+	path = src/idr
+	url = https://github.com/nboley/idr
+[submodule "src/MACS"]
+	path = src/MACS
+	url = https://github.com/macs3-project/MACS
