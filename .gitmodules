@@ -31,3 +31,6 @@
 [submodule "src/stringtie"]
 	path = src/stringtie
 	url = https://github.com/gpertea/stringtie
+[submodule "src/subread"]
+	path = src/subread
+	url = https://github.com/ShiLab-Bioinformatics/subread

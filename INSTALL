@@ -8,26 +8,13 @@ set -x
 
 THIS_DIR=$(cd "$(dirname "$0")" && pwd)
 PACK_DIR=$THIS_DIR/src
+mkdir -vp "$PACK_DIR"
 
 CD_OR_DIE() {
-	cd "${1:-.}" || exit 1
+	cd "${PACK_DIR}/${1:-}" || exit 1
 }
 
-mkdir -vp "$PACK_DIR" && CD_OR_DIE "$PACK_DIR"
-
-_install_STAR() {
-	STAR_DIR=${1:-STAR}
-
-	# STAR requires us to build in the src directory
-	CD_OR_DIE "${STAR_DIR}/src"
-
-	# Build STAR on macOS or Linux
-	if [[ $(uname) == Darwin ]]; then
-		make -f Makefile.MacOS
-	else
-		make -f Makefile.Linux
-	fi
-}
+# git submodule update --init --recursive
 
 ## HTSlib
 ## Requirements
@@ -39,12 +26,28 @@ _install_STAR() {
 # libcrypto (optional for Amazon S3 support; not needed on MacOS)
 # libdeflate (optional, but strongly recommended for faster gzip)
 
-_install_htslib() {
-	HTSLIB_DIR=${1:-htslib}
+__htslib() {
+	SOURCE_DIR=${1:-htslib}
 
-	CD_OR_DIE "$HTSLIB_DIR"
-	git submodule update --init --recursive
+	CD_OR_DIE "$SOURCE_DIR"
 	autoreconf -i
 }
+
+__subread() {
+	SOURCE_DIR=${1:-subread}
+	BUILD_DIR=$SOURCE_DIR/source
+
+	CD_OR_DIE "$BUILD_DIR"
+
+	# Build subread on macOS or Linux
+	if [[ $(uname) == Darwin ]]; then
+		make -f Makefile.MacOS
+	else
+		make -f Makefile.Linux
+	fi
+}
+
+# https://stackoverflow.com/a/16159057
+"$@"
 
 # :vim :ft=sh
