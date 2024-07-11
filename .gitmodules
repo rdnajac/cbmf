@@ -28,3 +28,6 @@
 [submodule "src/MACS"]
 	path = src/MACS
 	url = https://github.com/macs3-project/MACS
+[submodule "src/stringtie"]
+	path = src/stringtie
+	url = https://github.com/gpertea/stringtie
