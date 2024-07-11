@@ -4,3 +4,15 @@
 [submodule "src/samtools"]
 	path = src/samtools
 	url = https://github.com/samtools/samtools
+[submodule "src/bwa"]
+	path = src/bwa
+	url = https://github.com/lh3/bwa
+[submodule "src/hisat2"]
+	path = src/hisat2
+	url = https://github.com/DaehwanKimLab/hisat2
+[submodule "src/bowtie2"]
+	path = src/bowtie2
+	url = https://github.com/BenLangmead/bowtie2
+[submodule "src/STAR"]
+	path = src/STAR
+	url = https://github.com/alexdobin/STAR
