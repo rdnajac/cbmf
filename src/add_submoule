@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+## Add a (github) repository as a git submodule
+
+set -euo pipefail
+
+SRC=$(git rev-parse --show-toplevel)/src
+
+add_submodule() {
+	local url="$1"
+	cd "$SRC" && git submodule add --force --depth 1 --progress "$url"
+}
+
+# Check if the user has provided at least one  url
+[[ $# -gt 0 ]] || die "Usage: $0 <url>..."
+
+while [[ $# -gt 0 ]]; do
+	add_submodule "$1"
+	shift
+done
