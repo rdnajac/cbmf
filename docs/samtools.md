@@ -25,7 +25,6 @@ for interacting with high-throughput sequencing data that include:
   merge multiple sorted BAM files
 - [`samtools mpileup`](https://www.htslib.org/doc/samtools-mpileup.html):
   multi-way pileup
-
 - TODO: `REF_PATH` and `REF_CACHE`
 
 ## `.bam` to `.cram`
