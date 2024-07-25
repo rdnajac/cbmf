@@ -10,11 +10,11 @@ Go to the [EC2 Console](https://us-east-1.console.aws.amazon.com/ec2/home?region
 and select the instance you want to connect to.  Click on the `Connect`,
 then `EC2 serial console` tab, and `Connect` again.
 
-![EC2 serial console](images/ec2-serial-console.png)
+![EC2 serial console](/images/ec2-serial-console.png)
 
 If everything is working correctly, you should see a prompt like this:
 
-![EC2 serial console login](images/ec2-console-promt.png)
+![EC2 serial console login](/images/ec2-console-prompt.png)
 
 > [!NOTE]
 > If you encounter a login prompt, use the following credentials:
