@@ -46,7 +46,7 @@ the on clipboard icon in the top right corner of code blocks like this one:
 git clone https://github.com/rdnajac/cbmf.git
 ```
 
-> [! CAUTION]
+> [!CAUTION]
 > There is no leading `$` in the code block above,
 > so pasting it may execute the command immediately.
 
@@ -98,10 +98,12 @@ Hooray for cross-platform installation scripts!
 
 ```sh
 "${SHELL}" <(curl -L micro.mamba.pm/install.sh)
-# optionally, enable shell completion
+```
+
+optionally, enable shell completion
+```sh
 micromamba shell completion
-# restart the shell
-exec ${SHELL}
+exec $SHELL # restart the shell
 ```
 
 > [!NOTE]
