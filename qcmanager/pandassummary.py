@@ -121,4 +121,3 @@ def print_summary(summary, detailed_summary):
     for file_name, issues in detailed_summary.items():
         for issue in issues:
             print(f"{file_name}: {issue[0]} - {issue[1]}", file=sys.stderr)
-

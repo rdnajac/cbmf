@@ -16,21 +16,25 @@ export WHT='\033[0;37m'
 export END='\033[0m'
 
 # Helper functions to print colored messages
-warn() {
+warn()
+{
 	printf "${RED}%s${RESET}\n" "$1" >&2
 }
 
-info() {
+info()
+{
 	printf "${BLU}%s${RESET}\n" "$1" >&2
 }
 
 # Quit with an error message and optional exit status
-bail() {
+bail()
+{
 	warn "$1"
 	exit "${2:-1}"
 }
 
-assert() {
+assert()
+{
 	local condition="$1"
 	shift
 	[[ "$condition" ]] || bail "$@"
@@ -41,7 +45,8 @@ readonly E_COMMAND_NOT_EXECUTABLE=126
 readonly E_COMMAND_NOT_FOUND=127
 
 # Check if a command is available
-ensure_installed() {
+ensure_installed()
+{
 	# [[ -e "$1" ]] || bail "Error: $1 not found" "$E_COMMAND_NOT_FOUND"
 	# check another way
 	[[ -x "$(command -v "$1")" ]] || bail "Error: $1 not found" "$E_COMMAND_NOT_FOUND"
@@ -50,7 +55,8 @@ ensure_installed() {
 }
 
 # Test
-_test() {
+_test()
+{
 	warn "Running tests... from ${BASH_SOURCE[0]}"
 	ensure_installed "ls" && info "ls is installed and executable"
 
@@ -59,14 +65,13 @@ _test() {
 	info "All tests passed"
 }
 
-main() {
+main()
+{
 	_test
 }
 
 # Determine if the script is being sourced or executed (run).
 # See:
-# 1. "eRCaGuy_hello_world/bash/if__name__==__main___check_if_sourced_or_executed_best.sh"
-# 1. My answer: https://stackoverflow.com/a/70662116/4561887
 if [ """${BASH_SOURCE[0]}" = """$0" ]; then
 	# This script is being run.
 	__name__="__main__"
@@ -75,9 +80,8 @@ else
 	__name__="__source__"
 fi
 
-# Code entry point. Only run $(main) if this script is being **run**, NOT
-# sourced (imported).
-# - See my answer: https://stackoverflow.com/a/70662116/4561887
-if [ """$__name__" = "__main__" ]; then
-	main """$@"
+# Code entry point. Only run if this script is being **run**, NOT sourced
+# https://stackoverflow.com/a/70662116/4561887
+if [ "$__name__" = "__main__" ]; then
+	main "$@"
 fi

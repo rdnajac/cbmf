@@ -3,6 +3,9 @@
 # ignore hidden files and directories
 .*
 
+# the wiki has its own repo
+wiki/
+
 data/
 
 # don't track R project files

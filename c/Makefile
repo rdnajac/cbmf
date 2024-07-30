@@ -1,3 +1,4 @@
+
 # https://cs3157.github.io/www/2022-1/resources/lecture-notes/01-c-compilation.html
 
 # This Makefile should be used as a template for future Makefiles.
@@ -40,7 +41,7 @@ LDLIBS =
 # Also note that make assumes that main depends on main.o,
 # so we can omit it if we want to.
 
-main: main.o myopts.o
+main: main.o 
 
 # main.o depends not only on main.c, but also on myopts.h because
 # main.c includes myopts.h.  main.o will get recompiled if either
@@ -55,11 +56,7 @@ main: main.o myopts.o
 #     $(CC) -c $(CFLAGS) <the-.c-file>
 #
 
-main.o: main.c myopts.h
-
-# And myopts.o depends on myopts.c and myopts.h.
-
-myopts.o: myopts.c myopts.h
+main.o: main.c
 
 # Always provide the "clean" target that removes intermediate files.
 # What you remove depend on your choice of coding tools
@@ -70,7 +67,7 @@ myopts.o: myopts.c myopts.h
 
 .PHONY: clean
 clean:
-    rm -f *.o a.out core main
+	rm -f *.o a.out core main
 
 # "all" target is useful if your Makefile builds multiple programs.
 # Here we'll have it first do "clean", and rebuild the main target.

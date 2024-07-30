@@ -185,6 +185,7 @@ def write_csv(results_dict, filename="flagstat.csv"):
             ]
             writer.writerow(row)
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Parse flagstat output and write the results to a CSV file."
@@ -217,6 +218,7 @@ def main():
     except Exception as e:
         pr.error(f"Error processing BAM files: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

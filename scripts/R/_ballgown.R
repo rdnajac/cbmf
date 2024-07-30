@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 
 # Set your directories relative to the script location
-input_directory <- "./data/in/ballgown"
-output_directory <- "./data/out"
+input_directory <- "./"
+output_directory <- "./"
 
 #' Initialize or load ballgown object from input directory.
 #'
@@ -40,24 +40,29 @@ init_ballgown <- function(project_directory) {
   return(bg)
 }
 
+
+# samples_list <- list.dirs(sample_directory, full.names = TRUE, recursive = FALSE)
+# again, but just for this cwd
+samples_list <- list.dirs(".", full.names = TRUE, recursive = FALSE)
+# ignore hidden
+
 # Example usage
-agx_bg <- init_ballgown("agx")
-bg_clone <- init_ballgown("clone")
+# agx_bg <- init_ballgown("agx")
+# bg_clone <- init_ballgown("clone")
 dmso_fin_bg <- init_ballgown("dmso-fin")
 dmso_oza_bg <- init_ballgown("dmso-oza")
 dmso_pon_bg <- init_ballgown("dmso-pon")
-all4groups_bg <- init_ballgown("dmso-fin-oza-pon")
+# all4groups_bg <- init_ballgown("dmso-fin-oza-pon")
 
 # step 10: filter low abundance genes
-agx_bg_filt <- subset(agx_bg, "rowVars(texpr(agx_bg)) > 1", genomesubset = TRUE)
-bg_clone_filt <- subset(bg_clone, "rowVars(texpr(bg_clone)) > 1", genomesubset = TRUE)
-
-# Filter all4groups_bg based on its own gene variance
-all4groups_bg_filt <- subset(all4groups_bg, "rowVars(texpr(all4groups_bg)) > 1", genomesubset = TRUE)
-# Filter dmso_fin_bg, dmso_oza_bg, dmso_pon_bg based on genes present in all4groups_bg_filt
-dmso_fin_bg_filt <- subset(dmso_fin_bg, "rownames(texpr(dmso_fin_bg)) %in% rownames(texpr(all4groups_bg_filt))", genomesubset = TRUE)
-dmso_oza_bg_filt <- subset(dmso_oza_bg, "rownames(texpr(dmso_oza_bg)) %in% rownames(texpr(all4groups_bg_filt))", genomesubset = TRUE)
-dmso_pon_bg_filt <- subset(dmso_pon_bg, "rownames(texpr(dmso_pon_bg)) %in% rownames(texpr(all4groups_bg_filt))", genomesubset = TRUE)
+# https://www.biostars.org/p/367562/
+install.packages('metaMA')
+library(metaMA)
+?rowVars
+# >bg_chrX_filt = subset(bg_chrX,″rowVars(texpr(bg_chrX)) >1″,genomesubset=TRUE)
+dmso_fin_bg_filt <- subset(dmso_fin_bg, "rowVars(texpr(dmso_fin_bg)) > 1", genomesubset = TRUE)
+dmso_oza_bg_filt <- subset(dmso_oza_bg, "rowVars(texpr(dmso_oza_bg)) > 1", genomesubset = TRUE)
+dmso_pon_bg_filt <- subset(dmso_pon_bg, "rowVars(texpr(dmso_pon_bg)) > 1", genomesubset = TRUE)
 
 # function to do all that given a bg and a prefix
 run_tuxedo <- function(bg, prefix) {
@@ -104,9 +109,11 @@ run_tuxedo <- function(bg, prefix) {
 	cat("Results saved to", file.path(output_directory, paste0(prefix, "_results_transcripts.csv")), "\n")
 	return(list(transcripts = results_transcripts, genes = results_genes))
 }
-
-results_agx <- run_tuxedo(agx_bg_filt, "agx")
-results_clone <- run_tuxedo(bg_clone_filt, "clone")
+library(ballgown)
+library(RSkittleBrewer)
+library(genefilter)
+library(dplyr)
+library(devtools)
 results_dmso_fin <- run_tuxedo(dmso_fin_bg_filt, "dmso-fin")
 results_dmso_oza <- run_tuxedo(dmso_oza_bg_filt, "dmso-oza")
 results_dmso_pon <- run_tuxedo(dmso_pon_bg_filt, "dmso-pon")
@@ -116,87 +123,29 @@ results_dmso_pon <- run_tuxedo(dmso_pon_bg_filt, "dmso-pon")
 # subset(results_transcripts,results_transcripts$qval<0.05)
 # subset(results_genes,results_genes$qval<0.05)
 
-# step 17+: Data visualization
+fin_sig_transcripts <- subset(results_dmso_fin$transcripts, results_dmso_fin$transcripts$qval < 0.05)
+fin_sig_genes <- subset(results_dmso_fin$genes, results_dmso_fin$genes$qval < 0.05)
+oza_sig_transcripts <- subset(results_dmso_oza$transcripts, results_dmso_oza$transcripts$qval < 0.05)
+oza_sig_genes <- subset(results_dmso_oza$genes, results_dmso_oza$genes$qval < 0.05)
+pon_sig_transcripts <- subset(results_dmso_pon$transcripts, results_dmso_pon$transcripts$qval < 0.05)
+pon_sig_genes <- subset(results_dmso_pon$genes, results_dmso_pon$genes$qval < 0.05)
 
-fpkm_boxplot <- function(bg, name) {
-  fpkm <- texpr(bg, meas = 'FPKM')
-  log2fpkm <- log2(fpkm + 1)
-  
-  samples <- colnames(pData(bg)$ids)
-  groups <- unique(pData(bg)$group)
-  colors <- rainbow(length(groups))
-  
-  # Plot boxplot with specified colors
-  png(file.path(output_directory, "plots", paste0(name, "_fpkm_boxplot.png")))
-  boxplot(log2fpkm, 
-	  col = colors[match(pData(bg)$group, groups)],
-	  las = 2,
-	  ylab = "log2(FPKM+1)",
-	  main = paste("FPKM for", name)
-  )
-  dev.off()
-}
-fpkm_boxplot(agx_bg, "AGX vs DMSO")
-fpkm_boxplot(bg_clone, "induced vs non-induced")
-fpkm_boxplot(dmso_fin_bg, "Fingolimod vs DMSO")
-fpkm_boxplot(dmso_oza_bg, "Ozanimod vs DMSO")
-fpkm_boxplot(dmso_pon_bg, "Ponesimod vs DMSO")
-fpkm_boxplot(agx_bg_filt, "AGX vs DMSO (filtered)")
-fpkm_boxplot(bg_clone_filt, "induced vs non-induced (filtered)")
-fpkm_boxplot(dmso_fin_bg_filt, "Fingolimod vs DMSO (filtered)")
-fpkm_boxplot(dmso_oza_bg_filt, "Ozanimod vs DMSO (filtered)")
-fpkm_boxplot(dmso_pon_bg_filt, "Ponesimod vs DMSO (filtered)")
+# pretty print the results
+# top_DE_transcripts_by_treatment_group_v_dmso <- data.frame(fin=fin_sig_transcripts$gene_name, oza=oza_sig_transcripts$gene_name, pon=pon_sig_transcripts$gene_name)
 
-plot_pvalue_histogram <- function(pvalues, name) {
-  png(file.path(output_directory, "plots", paste0(name, "_pvalues.png")))
-  hist(pvalues, main = "P-value Distribution", xlab = "p-value")
-  dev.off()
-}
+  # arguments imply differing number of rows: 3, 1, 0
+# make it so that they can have empty rows
+# top_DE_transcripts_by_treatment_group_v_dmso <- data.frame(fin=fin_sig_transcripts$gene_name, oza=oza_sig_transcripts$gene_name, pon=pon_sig_transcripts$gene_name)
 
-# Function to plot q-value histogram
-plot_qvalue_histogram <- function(qvalues, name) {
-  png(file.path(output_directory, "plots", paste0(name, "_qvalues.png")))
-  hist(qvalues, main = "Q-value Distribution", xlab = "q-value")
-  dev.off()
-}
+# DE_transcripts_fin <- results_dmso_fin$transcripts
+# sort by q-value in the same step
+DE_transcripts_fin <- results_dmso_fin$transcripts[order(results_dmso_fin$transcripts$qval),]
+DE_transcripts_oza <- results_dmso_oza$transcripts[order(results_dmso_oza$transcripts$qval),]
+DE_transcripts_pon <- results_dmso_pon$transcripts[order(results_dmso_pon$transcripts$qval),]
 
-# Function to plot both histograms
-plot_both_histograms <- function(transcripts, name) {
-  plot_pvalue_histogram(transcripts$pval, name)
-  plot_qvalue_histogram(transcripts$qval, name)
-}
-
-# Example usage
-plot_both_histograms(results_agx$transcripts, "AGX_vs_DMSO")
-plot_both_histograms(results_clone$transcripts, "Induced_vs_Non-induced")
-plot_both_histograms(results_dmso_fin$transcripts, "Fingolimod_vs_DMSO")
-plot_both_histograms(results_dmso_oza$transcripts, "Ozanimod_vs_DMSO")
-plot_both_histograms(results_dmso_pon$transcripts, "Ponesimod_vs_DMSO")
+# save to csv
+write.csv(DE_transcripts_fin, file = file.path(output_directory, "DE_transcripts_fin_dmso.csv"), row.names = FALSE)
+write.csv(DE_transcripts_oza, file = file.path(output_directory, "DE_transcripts_oza_dmso.csv"), row.names = FALSE)
+write.csv(DE_transcripts_pon, file = file.path(output_directory, "DE_transcripts_pon_dmso.csv"), row.names = FALSE)
 
 
-
-# Function to save GCT file from ballgown object
-save_gct_from_ballgown <- function(bg, prefix) {
-  # Extract gene expression data
-  gene_ids <- rownames(bg$expr)
-  sample_ids <- colnames(bg$expr)
-  expr_data <- as.matrix(bg$expr)
-
-  # Prepare the header for the GCT file
-  header <- c("Name", "Description", sample_ids)
-
-  # Create the data frame for the GCT format
-  gct_data <- data.frame(Name = gene_ids, Description = "", expr_data)
-  rownames(gct_data) <- NULL
-
-  # Write to a GCT file
-  gct_file <- file.path(output_directory, paste0(prefix, "_GSEA_input.gct"))
-  write.table(gct_data, file = gct_file, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
-  cat("GCT file saved to", gct_file, "\n")
-}
-
-save_gct_from_ballgown(agx_bg, "agx")
-save_gct_from_ballgown(bg_clone, "clone")
-save_gct_from_ballgown(dmso_fin_bg, "dmso-fin")
-save_gct_from_ballgown(dmso_oza_bg, "dmso-oza")
-save_gct_from_ballgown(dmso_pon_bg, "dmso-pon")

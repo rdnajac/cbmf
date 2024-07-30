@@ -34,28 +34,25 @@ _align2bam() {
 	local log_file="${r1_fastq%_R1*}_align.log"
 	local bam_file="${r1_fastq%_R1*}_sorted_markdup.bam"
 
-	_align "$align_cmd" "$r1_fastq" "$r2_fastq" "$reference" 2>"$log_file" \
-		| samtools sort -@ "$(nproc)" -n - \
+	bowtie2 -p "$(nproc)" --mm -1 "$r1_fastq" -2 "$r2_fastq" -x "$reference"
+		| samtools sort -n -@ "$(nproc)" -      \
 		| samtools fixmate -@ "$(nproc)" -m - - \
-		| samtools sort -@ "$(nproc)" - \
+		| samtools sort    -@ "$(nproc)" -      \
 		| samtools markdup -@ "$(nproc)" - "$bam_file"
 }
 
-run_on_all_fastq_files_in_dir() {
-	local dir="$1"
-	local align_cmd="hisat2"
-	local reference="$HISAT2_MOUSE_INDEX"
 
-	cd "$dir" || {
-		echo "Error: $dir does not exist"
-		exit 1
-	}
+local align_cmd="bowtie"
+local reference="$HISAT2_MOUSE_INDEX"
 
-	for fastq_file in ./*_R1.fastq.gz; do
-		local r1_fastq="$fastq_file"
-		local r2_fastq="${r1_fastq%_R1*}_R2.fastq.gz"
-		_align2bam "$align_cmd" "$r1_fastq" "$r2_fastq" "$reference"
-	done
+cd "$dir" || {
+	echo "Error: $dir does not exist"
+	exit 1
 }
 
-run_on_all_fastq_files_in_dir "$1"
+for fastq_file in ./*_R1.fastq.gz; do
+	local r1_fastq="$fastq_file"
+	local r2_fastq="${r1_fastq%_R1*}_R2.fastq.gz"
+	_align2bam "$align_cmd" "$r1_fastq" "$r2_fastq" "$reference"
+done
+

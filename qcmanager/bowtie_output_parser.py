@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import csv
 import os
@@ -41,7 +41,7 @@ class BowtieOutputDictionary:
 
     def write_to_csv(self, output_csv, parsed_data):
         fieldnames = ['Sample', 'Total Reads', 'Aligned Reads', 'Overall Alignment Rate (%)']
-        
+
         with open(output_csv, 'w', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
@@ -52,14 +52,13 @@ def combine_run_csvs(run_folders, output_csv):
     all_data = []
     for run_folder in run_folders:
         bowtie_data = BowtieOutputDictionary()
-        bowtie_data.read_logs(run_folder)
-        all_data.extend(bowtie_data.parse_output())
-    
+        bowtie_data.reata.parse_output())
+
     bowtie_data.write_to_csv(output_csv, all_data)
 
 # Example usage
-base_folder = os.path.expanduser('~/cbmf/data/kalay/qc/')
+base_folder = '../data/kalay/qc/'
 run_folders = [os.path.join(base_folder, f'run{i}/bowtie2log') for i in range(1, 6)]
-combined_output_csv = os.path.expanduser('~/cbmf/data/kalay/qc/bowtie2_summary_all_runs.csv')
+combined_output_csv = '~/cbmf/data/kalay/qc/bowtie2_summary_all_runs.csv'
 combine_run_csvs(run_folders, combined_output_csv)
 

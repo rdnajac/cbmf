@@ -1,38 +1,31 @@
 #!/bin/bash
 #
-## These commands sync the scripts folder on my local machine
-## to a folder on the remote machine (where that folder is in the PATH)
+## Keep this folder in sync with a remote machine
 set -euo pipefail
 set -x
 
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# remddote alias set in .ssh/config
+# This is set in ~/.ssh/config (`Host my-ec2`)
 REMOTE_ALIAS="my-ec2"
 
-# define directories to keep in sync
-LOCAL_DATA_IN="${HOME}/cbmf/R/in"
-# LOCAL_DATA_OUT="${HOME}/cbmf/R/out"
+echo $REMOTE_ALIAS
 
-# if ewre on darwin
 if [[ $(uname) == "Darwin" ]]; then
-	# assume were on the host
-	# yes, delete files on the remote that are not on the local
-	# (i.e. only copy files from the local that are not on the remote)
+	# assume were on the host if we're on a mac
+	# XXX: this is not a good assumption
 	rsync -avz --delete "$SCRIPTS_DIR"/ "${REMOTE_ALIAS}:~/scripts/"
 
 	# DO NOT delete files on the remote that are not on the local
 	# (i.e. only copy files from the remote that are not on the local)
-	rsync -avz "${REMOTE_ALIAS}:~/out/" "$LOCAL_DATA_IN"/
+	# rsync -avz "${REMOTE_ALIAS}:~/out/" "$LOCAL_DATA_IN"/
 else
+	# change behavior if this script is run on the remote
+	
+	# add the scripts directory to the PATH if it's not already there
 	if (grep -q "export PATH=\$PATH:~/scripts" ~/.bashrc); then
 		echo "export PATH=\$PATH:~/scripts" >> ~/.bashrc
 	fi
 
 fi
 
-# run a script over ssh
-# runs the contents of a local file on a remote machine
-ex-ec2() {
-	ssh my-ec2 "bash -s" < "$1" &
-}

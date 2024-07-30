@@ -12,13 +12,9 @@
 Notes, scripts, and resources to streamline and multiplex the analysis of
 high-throughput sequencing data, from raw reads to biological insights.
 
-## 📖 Table of Contents
+## About
 
-<!-- just leave this for now and let copilot do its thing -->
-
-1. 🔭 [Overview](#-overview)
-
-## 🔭 Overview
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 This repository contains tools to automate key bioinformatic tasks:
 
@@ -29,73 +25,178 @@ This repository contains tools to automate key bioinformatic tasks:
 - Differential expression analysis
 - Visualization of results (work in progress)
 
-### 📚 Documentation
+There is also a wiki with additional resources and tutorials.
+You can access the wiki by clicking on the tab at the top of the page
+or by following [this link](https://github.com/rdnajac/cbmf/wiki).
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+## Usage
 
-The markdown (`.md`) files in this repository are written using
-[GitHub Flavored Markdown \(GFM\)](https://github.github.com/gfm/).
-GFM is a superset of the original [Markdown](https://daringfireball.net/projects/markdown/syntax),
-a lightweight markup language with plain text formatting syntax that is easy to read and write.
+### Prerequisites
 
-> [!TIP]
-> GFM gives us additional features like tables, footnotes, and alerts like this.
+- Basic command line knowledge
+- A POSIX-compliant shell (e.g. `bash`, `zsh`)
+- A text editor (e.g. `vim`, `nano`, `emacs`)
 
-To aid in the writing and maintenance of these documents, I use the following:
+### Code Blocks
 
-| Tool                                          | Description                      | Example                              |
-| --------------------------------------------- | -------------------------------- | ------------------------------------ |
-| [Vim](https://www.vim.org/)                   | text editor                      | `vim README.md`                      |
-| [Prettier](https://prettier.io/)              | formats certain text-based files | `prettier --write **/*.md **/*.html` |
-| [cspell](https://cspell.org/)                 | spell checks text files          | `npx cspell **/*.md`                 |
-| [GitHub Copilot](https://copilot.github.com/) | AI-powered code completion       | `# TODO: the rest of the owl`        |
-
-The tables in this document violate the traditional text width specification
-of ~80 characters per line when they include URLs, but they should still
-render neatly in most markdown viewers.
-
-### 📋 Further Reading
-
-- [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
-- [About READMEs](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes)
-- [Art of README](https://github.com/hackergrrl/art-of-readme)
-- [Write a Good Technical Report](https://ieeexplore.ieee.org/document/6448763)
-- [Code Documentation](https://ieeexplore.ieee.org/abstract/document/5484109)
-- [Semantic line breaks](https://sembr.org/)
-
-> "Don't document the program; program the document."\
-> — the internet
-
-## 🚀 Getting Started
-
-If you are viewing these document on GitHub, you can copy the code snippets directly
-by clicking the clipboard icon in the top right corner of code blocks like this one:
+If you're reading this on GitHub, you can copy shell commands by clicking
+the on clipboard icon in the top right corner of code blocks like this one:
 
 ```sh
 git clone https://github.com/rdnajac/cbmf.git
 ```
 
-### 🛠️ Prerequisites
+> [! CAUTION]
+> There is no leading `$` in the code block above,
+> so pasting it may execute the command immediately.
 
-- Basic command line knowledge
-- A POSIX-compliant shell (e.g. `bash`, `zsh`)
+If you happen to be viewing the plain text version of this document,
+code fences like the one above will note the language of the code block.
+If the language is `console`, the contained text is terminal output.
 
-### 🏗️ Installation
+## Installation
 
-There is an AWS AMI available for this project...
-Read more about lab access [here](/docs/aws.md).
+[Bioconda](https://bioconda.github.io/index.html) lets you install thousands
+of software packages related to biomedical research using the 
+[conda](https://docs.conda.io/en/latest/) package manager.[^1]
 
-If you really want to install everything from scratch, clone the repository
-and then run the following commands to get the submodules included here:
+So to use Bioconda to handle dependencies, you need to install `conda` first. 
+Here is the first of many potential pitfalls of streamlining the installation
+process; there are multiple ways to install the package manager that is suppsoed 
+to resolve the issue of having multiple package managers. Bioconda recommends 
+installing conda via the [Miniconda installer](https://docs.anaconda.com/miniconda/),
+among other [installers](https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html).
 
-```sh
-cd cbmf && git submodule update --init --recursive
+Installing packages as a non-root user is complicated and often leads to broken
+packages with conflicting dependencies. [^2] Virtual environments are a solution,
+but they can be cumbersome to manage. Tools that aim to streamline and simplify 
+the setup of virtual environments, like [`conda-env-mod`](https://github.com/amaji/conda-env-mod)
+can help, but they come with their own sets of issues. For example,
+`conda-env-mod` allows users to use either `conda` or `pip` to install packages,
+and macOS users will be familiar with warnings like this one:
+
+```console
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try brew install
+    xyz, where xyz is the package you are trying to
+    install.
+...
 ```
 
-Then run the installation script... TODO!
+For these reasons, we'll use `micromamba` instead of `conda` to install packages
+**AND** to create and manage virtual environments. `micromamba` is a tiny version 
+of the mamba package manager; both of which are drop-in replacements for `conda`,
+with all the same functionality.
 
-Refer to specific sections below for detailed instructions
-on how to install tools not included as git submodules.
+### Mamba and Micromamba
+
+[Read the docs!](https://mamba.readthedocs.io/en/latest/index.html)
+
+Hooray for cross-platform installation scripts!
+
+```sh
+"${SHELL}" <(curl -L micro.mamba.pm/install.sh)
+# optionally, enable shell completion
+micromamba shell completion
+# restart the shell
+exec ${SHELL}
+```
+
+> [!NOTE]
+> If you encounter this:
+> ```console
+> critical libmamba The given prefix does not exist: "/home/ubuntu/micromamba/envs/completion"
+> ```
+> run:
+> ```sh
+> mkdir -p /home/ubuntu/micromamba/envs/completion
+> ```
+
+We can alias `conda` to `micromamba` since it is a drop-in replacement:
+
+```sh
+alias conda=micromamba
+#alias mm=micromamba
+```
+
+#### Example commands
+
+```sh
+micromamba self-update
+micromamba create -n /path/to/env
+```
+
+Creating a new environment places it in the `envs` directory 
+the _root prefix_ set by `$MAMBA_ROOT_PREFIX` environment variable.
+
+`$ micromamba create -n RNAseq` gives us:
+
+```console
+Empty environment created at prefix: /home/ubuntu/micromamba/envs/RNAseq
+```
+
+Now we can add our packages:
+
+```sh
+micromamba install -n RNAseq -c bioconda -c conda-forge fastqc
+```
+
+> micromamba .
+> It is a statically linked C++ executable with a separate command line interface.
+> It does not need a base environment and does not come with a default version of Python.
+
+### Bioconda
+
+Bioconda is a [`channel`](https://mamba.readthedocs.io/en/latest/advanced_usage/more_concepts.html#channel),
+and its documentation recommends the following configuration:
+
+```sh
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+```
+
+
+However, Mamba documentation recommends against using any of the 
+[Anaconda default channels](https://docs.anaconda.com/working-with-conda/reference/default-repositories/).
+by deactivating them, rather than deprioritizing them... 
+
+Instead of fighting against defaults, write spec files:
+
+```yaml
+name: RNAseq
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - fastqc
+  - hisat2
+  - bwa
+  - bowtie2
+  - samtools
+  - htslib
+  - bcftools
+  - stringtie
+  - bowtie
+  - subread
+```
+
+Then create the environment: 
+
+```sh
+# it doesn't matter if you use .yml or .yaml, but be consistent!
+micromamba env create -f RNAseq.yaml
+```
+
+When you correctly activate the environment, the usual prompt
+will be prefixed with the name of the environment in parentheses:
+
+```console
+(RNAseq) ubuntu@ip-172-31-70-15:~/micromamba/envs$
+```
 
 ### 💾 Data Acquisition
 
@@ -123,17 +224,7 @@ The browser-based interface is useful for small-scale projects, but the
 command-line interface is more efficient for large-scale projects.
 Check out [examples](https://developer.basespace.illumina.com/docs/content/documentation/cli/cli-examples).
 
-Install on Linux-based systems using `wget`:
-
-```sh
-sudo wget "https://launch.basespace.illumina.com/CLI/latest/amd64-linux/bs" -O /usr/local/bin/bs
-```
-
-> [!CAUTION]
-> If you want to install the binary somewhere other than `/usr/local/bin`,
-> change the path in the command.
-
-or install on macOS using Homebrew:
+Install on macOS using Homebrew:
 
 ```sh
 brew tap basespace/basespace && brew install bs-cli
@@ -159,6 +250,15 @@ Finally, run 'bs whoami' to verify that you are authenticated:
 |                | CREATE PROJECTS, CREATE RUNS, START APPLICATIONS,  |
 |                | MOVETOTRASH GLOBAL, WRITE GLOBAL                   |
 +----------------+----------------------------------------------------+
+```
+
+#### AWS S3: Simple Storage Service
+
+s3 uris look like `s3://bucket-name/path/to/file.fastq.gz`
+
+```sh
+URI="s3://lab-aaf-ngs-data-archive/RNAseq/20240409_Tet2Rhoa-S1P1_RA/"
+aws s3 sync "$URI" .
 ```
 
 #### Demultiplexing Illumina sequencing data
@@ -225,7 +325,7 @@ Read the docs:
 To run these QC applications, you need a suitable Java Runtime Environment (JRE):
 
 ```sh
-sudo apt install openjdk-11-jdk &&
+sudo apt-get install -y openjdk-11-jdk
 ```
 
 > [!TIP]
@@ -327,7 +427,7 @@ after reverse transcription to cDNA.
 Transcript-level expression analysis of RNA-seq experiments
 with HISAT, StringTie and Ballgown.[^2]
 
-[^2]: Pertea, M., Kim, D., Pertea, G. M., Leek, J. T., & Salzberg, S. L. (2016). Transcript-level expression analysis of RNA-seq experiments with HISAT, StringTie and Ballgown. Nature Protocols, 11(9), 1650–1667. https://doi.org/10.1038/nprot.2016.095
+[^2]: Pertea, M., Kim, D., Pertea, G. M., Leek, J. T., & Salzberg, S. L. (2016). Transcript-level expression analysis of RNA-seq experiments with HISAT, StringTie and Ballgown. Nature Protocols, 11(9), 1650–1667. <https://doi.org/10.1038/nprot.2016.095>
 
 - [Protocol](https://www.nature.com/articles/nprot.2016.095)
 - [Software Availability](https://ccb.jhu.edu/software.shtml)
@@ -400,20 +500,22 @@ Check the files against the md5sums in the txt file
 md5sum -c md5sums.txt
 ```
 
-Export the current working directory to the PATH
-
-```sh
-export PATH=$PATH:$(pwd)
-```
-
 Check the total size of each folder in the current directory
 
 ```sh:
 du -sha --max-depth=1
 ```
 
-<!-- Schaarschmidt S, Fischer A, Zuther E, Hincha DK. -->
-<!-- Evaluation of Seven Different RNA-Seq Alignment Tools Based on -->
-<!-- Experimental Data from the Model Plant Arabidopsis thaliana. -->
-<!-- Int J Mol Sci. 2020 Mar 3;21(5):1720. -->
-<!-- doi: 10.3390/ijms21051720. PMID: 32138290; PMCID: PMC7084517. -->
+## Acknowledgements
+
+Shout out to these awesome docs:
+- [Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/)
+- [tao-of-tmux](https://tao-of-tmux.readthedocs.io/)
+- [mamba](https://mamba.readthedocs.io/)
+
+<!-- References -->
+
+<!-- Bioconda -->
+[^1]: Grüning, Björn, Ryan Dale, Andreas Sjödin, Brad A. Chapman, Jillian Rowe, Christopher H. Tomkins-Tinch, Renan Valieris, the Bioconda Team, and Johannes Köster. 2018. Bioconda: Sustainable and Comprehensive Software Distribution for the Life Sciences. Nature Methods, 2018 doi:10.1038/s41592-018-0046-7.
+<!-- conda-env-mod -->
+[^2]: A. K. Maji, L. Gorenstein and G. Lentner, "Demystifying Python Package Installation with conda-env-mod," 2020 IEEE/ACM International Workshop on HPC User Support Tools (HUST) and Workshop on Programming and Performance Visualization Tools (ProTools), GA, USA, 2020, pp. 27-37, doi: 10.1109/HUSTProtools51951.2020.00011.
