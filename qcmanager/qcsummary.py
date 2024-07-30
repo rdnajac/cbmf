@@ -101,7 +101,6 @@ class QCManager:
                     self.reports[filename].modules[m_name] = current_module
             elif line.startswith("#") and current_module:
                 if line.startswith("#Total Deduplicated Percentage"):
-
                     self.reports[filename].performance_metrics[
                         "Total Deduplicated Percentage"
                     ] = line.split("\t")[1]

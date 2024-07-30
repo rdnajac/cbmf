@@ -1,25 +1,20 @@
 # Scripts
 
 The scripts in this directory are all written in `bash`.
+Being explicit about the shell you are using is a good way
+to ensure future compatibility and maintainability.
 
-## About
+`$ bash --version`
 
-`$ bash --version` prints the version of bash:
-
-```plaintext
-GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
-Copyright (C) 2020 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-```
-
-> [!INFO]
-> Being explicit about the shell you are using is a good way
-> to ensure future compatibility and maintainability.
+> ```stdout
+> GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
+> Copyright (C) 2020 Free Software Foundation, Inc.
+> License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+> ```
 
 ### POSIX compatibility
 
 It is safe to assume that we will have at least bash 4.0 available.
-Pretend other shells do not exist and write scripts for `bash` only.
 These scripts have been validated only on the following machine
 (output from `$ uname -a`):
 
@@ -74,8 +69,6 @@ to higher level scripts.
 
 Use `: '` to open and `'` to close.
 
-> [source](https://stackoverflow.com/a/43158193)
-
 ```sh
 : '
 This is a
@@ -84,14 +77,3 @@ in bash
 '
 ```
 
-alias for making md5 checksums for all files of a filetype in a directory:
-
-```sh
-alias md5sums="find . -type f -oname '*.fastq' -exec md5sum {} + > md5sums.txt"
-use ./ instead
-
-function md5sums() {
-  md5sum
-  find . -type f -name '*.fastq' -exec md5sum {} + > md5sums.txt
-}
-```
