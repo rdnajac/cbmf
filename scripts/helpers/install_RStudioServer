@@ -1,20 +1,49 @@
 #!/bin/bash
-#
-## Install base R with apt-get and install RStudio Server manually.
-## Note that RStudio Server starts immediately after installation.
+## 
+## Script to install base R and RStudio Server on Ubuntu
+## Ensure you run this script with sudo privileges.
 
-# update and upgrade existing packages
+set -euo pipefail
+IFS=$'\n\t'
+
+# Define variables
+R_VERSION="r-base r-base-dev"
+PREREQUISITES="libclang-dev libssl-dev libcurl4-openssl-dev libxml2-dev"
+RSTUDIO_VERSION="2024.04.2-764"
+RSTUDIO_DEB="rstudio-server-${RSTUDIO_VERSION}-amd64.deb"
+RSTUDIO_URL="https://download2.rstudio.org/server/jammy/amd64/${RSTUDIO_DEB}"
+export DEBIAN_FRONTEND=noninteractive
+
+# Update and upgrade existing packages
+echo "Updating and upgrading existing packages..."
 sudo apt-get update && sudo apt-get upgrade -y
 
-# install R
-sudo apt-get install -y r-base r-base-dev
+# Install R
+echo "Installing R..."
+sudo apt-get install -y ${R_VERSION}
 
-# install prerequisites
-sudo apt-get install -y libclang-dev libssl-dev libcurl4-openssl-dev libxml2-dev
+# Install prerequisites
+echo "Installing prerequisites..."
+sudo apt-get install -y ${PREREQUISITES}
 
-# download RStudio Server from the RStudio website
-# note the Ubuntu version in the URL!
-wget https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.04.2-764-amd64.deb
+# Download RStudio Server
+echo "Downloading RStudio Server version ${RSTUDIO_VERSION}..."
+wget -q "${RSTUDIO_URL}" -O "${RSTUDIO_DEB}"
 
-# install RStudio Server with dpkg and remove the .deb file
-sudo dpkg -i rstudio-server-2024.04.2-764-amd64.deb && rm -fv rstudio-server-2024.04.2-764-amd64.deb
+# Install RStudio Server
+echo "Installing RStudio Server..."
+sudo dpkg -i "${RSTUDIO_DEB}" && sudo apt-get install -f -y
+
+# Remove the .deb file
+echo "Cleaning up..."
+rm -fv "${RSTUDIO_DEB}"
+# Restore the default behavior for package management
+unset DEBIAN_FRONTEND
+
+
+echo "Installation completed successfully."
+
+# Additional notes
+# RStudio Server starts immediately after installation.
+# Access it via http://<your-server-ip>:8787
+
