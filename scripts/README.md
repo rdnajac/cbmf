@@ -12,7 +12,7 @@ to ensure future compatibility and maintainability.
 > License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 > ```
 
-### POSIX compatibility
+## POSIX compatibility
 
 It is safe to assume that we will have at least bash 4.0 available.
 These scripts have been validated only on the following machine
@@ -76,4 +76,3 @@ very neat comment
 in bash
 '
 ```
-

@@ -40,7 +40,7 @@ download_reference_genome()
 }
 
 # download_reference_genome "$NCBI/$MOUSE/seqs_for_alignment_pipelines.ucsc_ids/"
-download_reference_genome "$NCBI/$HUMAN/seqs_for_alignment_pipelines.ucsc_ids/"
+# download_reference_genome "$NCBI/$HUMAN/seqs_for_alignment_pipelines.ucsc_ids/"
 
 # notably, we get pre-built indexes for bwa, HISAT2, Bowtie2
 # as well as annotation files in .gff and .gtf formats
