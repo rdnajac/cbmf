@@ -13,7 +13,7 @@ export BLU='\033[0;34m'
 export MAG='\033[0;35m'
 export CYN='\033[0;36m'
 export WHT='\033[0;37m'
-export END='\033[0m'
+export RESET='\033[0m'
 
 # Helper functions to print colored messages
 warn()
@@ -33,51 +33,51 @@ bail()
 	exit "${2:-1}"
 }
 
-assert()
-{
-	local condition="$1"
-	shift
-	[[ "$condition" ]] || bail "$@"
-}
+# assert()
+# {
+# 	local condition="$1"
+# 	shift
+# 	[[ "$condition" ]] || bail "$@"
+# }
 
-# Error Codes
-readonly E_COMMAND_NOT_EXECUTABLE=126
-readonly E_COMMAND_NOT_FOUND=127
+# # Error Codes
+# readonly E_COMMAND_NOT_EXECUTABLE=126
+# readonly E_COMMAND_NOT_FOUND=127
 
-# Check if a command is available
-ensure_installed()
-{
-	# [[ -e "$1" ]] || bail "Error: $1 not found" "$E_COMMAND_NOT_FOUND"
-	# check another way
-	[[ -x "$(command -v "$1")" ]] || bail "Error: $1 not found" "$E_COMMAND_NOT_FOUND"
+# # Check if a command is available
+# ensure_installed()
+# {
+# 	# [[ -e "$1" ]] || bail "Error: $1 not found" "$E_COMMAND_NOT_FOUND"
+# 	# check another way
+# 	[[ -x "$(command -v "$1")" ]] || bail "Error: $1 not found" "$E_COMMAND_NOT_FOUND"
 
-	[[ -x "$1" ]] || bail "Error: $1 is not executable" "$E_COMMAND_NOT_EXECUTABLE"
-}
+# 	[[ -x "$1" ]] || bail "Error: $1 is not executable" "$E_COMMAND_NOT_EXECUTABLE"
+# }
 
-# Test
-_test()
-{
-	warn "Running tests... from ${BASH_SOURCE[0]}"
-	ensure_installed "ls" && info "ls is installed and executable"
+# # Test
+# _test()
+# {
+# 	warn "Running tests... from ${BASH_SOURCE[0]}"
+# 	ensure_installed "ls" && info "ls is installed and executable"
 
-	assert [[ -f "$0" ]] "This test should pass"
+# 	assert [[ -f "$0" ]] "This test should pass"
 
-	info "All tests passed"
-}
+# 	info "All tests passed"
+# }
 
 main()
 {
-	_test
+	printf "Hello, World!\n"
 }
 
-# Determine if the script is being sourced or executed (run).
-# See:
-if [ """${BASH_SOURCE[0]}" = """$0" ]; then
+# Determine if the script is being sourced or executed.
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
 	# This script is being run.
 	__name__="__main__"
 else
 	# This script is being sourced.
 	__name__="__source__"
+	info "Sourced ${BASH_SOURCE[0]}"
 fi
 
 # Code entry point. Only run if this script is being **run**, NOT sourced

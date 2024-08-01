@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+## Install base R with apt-get and install RStudio Server manually.
+## Note that RStudio Server starts immediately after installation.
+
+# update and upgrade existing packages
+sudo apt-get update && sudo apt-get upgrade -y
+
+# install R
+sudo apt-get install -y r-base r-base-dev
+
+# install prerequisites
+sudo apt-get install -y libclang-dev libssl-dev libcurl4-openssl-dev libxml2-dev
+
+# download RStudio Server from the RStudio website
+# note the Ubuntu version in the URL!
+wget https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.04.2-764-amd64.deb
+
+# install RStudio Server with dpkg and remove the .deb file
+sudo dpkg -i rstudio-server-2024.04.2-764-amd64.deb && rm -fv rstudio-server-2024.04.2-764-amd64.deb
