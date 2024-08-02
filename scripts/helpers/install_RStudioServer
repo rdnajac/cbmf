@@ -4,20 +4,20 @@
 ## Note that RStudio Server starts immediately after installation.
 ## Access it via http://ec2-xx-xx-xx-xx.eu-central-1.compute.amazonaws.com:8787
  
-# set noninteractive mode
- export DEBIAN_FRONTEND=noninteractive
-
 # update and upgrade existing packages
 sudo apt-get update && sudo apt-get upgrade -y
-
-# install R
-sudo apt-get install -y r-base r-base-dev
 
 # install prerequisites
 sudo apt-get install -y libclang-dev libssl-dev libcurl4-openssl-dev libxml2-dev
 
+# install R
+sudo apt-get install -y r-base r-base-dev
+
 # download RStudio Server from the RStudio website
 # note the Ubuntu version in the URL!
+# version 20
+# wget https://download2.rstudio.org/server/focal/amd64/rstudio-server-2024.04.2-764-amd64.deb
+# version 22
 wget https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.04.2-764-amd64.deb
 
 # install RStudio Server with dpkg and remove the .deb file
