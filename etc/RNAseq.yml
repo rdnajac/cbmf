@@ -1,0 +1,15 @@
+name: RNAseq
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - fastqc
+  - hisat2
+  - bwa
+  - bowtie2
+  - samtools
+  - htslib
+  - bcftools
+  - stringtie
+  - bowtie
+  - subread

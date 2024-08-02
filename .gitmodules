@@ -1,36 +1,36 @@
 [submodule "src/htslib"]
-	path = src/htslib
+	path = lib/htslib
 	url = https://github.com/samtools/htslib
 [submodule "src/samtools"]
-	path = src/samtools
+	path = lib/samtools
 	url = https://github.com/samtools/samtools
 [submodule "src/bwa"]
-	path = src/bwa
+	path = lib/bwa
 	url = https://github.com/lh3/bwa
 [submodule "src/hisat2"]
-	path = src/hisat2
+	path = lib/hisat2
 	url = https://github.com/DaehwanKimLab/hisat2
 [submodule "src/bowtie2"]
-	path = src/bowtie2
+	path = lib/bowtie2
 	url = https://github.com/BenLangmead/bowtie2
 [submodule "src/STAR"]
-	path = src/STAR
+	path = lib/STAR
 	url = https://github.com/alexdobin/STAR
 [submodule "src/DROMPAplus"]
-	path = src/DROMPAplus
+	path = lib/DROMPAplus
 	url = https://github.com/rnakato/DROMPAplus
 [submodule "src/phantompeakqualtools"]
-	path = src/phantompeakqualtools
+	path = lib/phantompeakqualtools
 	url = https://github.com/kundajelab/phantompeakqualtools
 [submodule "src/idr"]
-	path = src/idr
+	path = lib/idr
 	url = https://github.com/nboley/idr
 [submodule "src/MACS"]
-	path = src/MACS
+	path = lib/MACS
 	url = https://github.com/macs3-project/MACS
 [submodule "src/stringtie"]
-	path = src/stringtie
+	path = lib/stringtie
 	url = https://github.com/gpertea/stringtie
 [submodule "src/subread"]
-	path = src/subread
+	path = lib/subread
 	url = https://github.com/ShiLab-Bioinformatics/subread
