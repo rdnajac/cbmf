@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+
+_basespace() {
+	install_directory="${1:-~/.local/bin}"
+	basespace_executable="$install_directory/bs"
+	wget "https://launch.basespace.illumina.com/CLI/latest/amd64-linux/bs" -O "$basespace_executable"
+	chmod +x "$basespace_executable"
+	# add to PATH
+	# echo "export PATH=$install_directory:$PATH" >> ~/.bashrc
+	# authenticate
+	# bs auth
+	# follow link and login with illumina credentials
+	# bs whoami
+}
+
+_basespace "$@"

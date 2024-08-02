@@ -37,167 +37,29 @@ or by following [this link](https://github.com/rdnajac/cbmf/wiki).
 - A POSIX-compliant shell (e.g. `bash`, `zsh`)
 - A text editor (e.g. `vim`, `nano`, `emacs`)
 
-### Code Blocks
-
-If you're reading this on GitHub, you can copy shell commands by clicking
-the on clipboard icon in the top right corner of code blocks like this one:
-
 ```sh
-git clone https://github.com/rdnajac/cbmf.git
+git clone --recursive repo-url
 ```
 
-> [!CAUTION]
-> There is no leading `$` in the code block above,
-> so pasting it may execute the command immediately.
+For additional software, use micromamba for package management:
 
-If you happen to be viewing the plain text version of this document,
-code fences like the one above will note the language of the code block.
-If the language is `console`, the contained text is terminal output.
+```sh
+yes | "$SHELL" <(curl -L micro.mamba.pm/install.sh)
+```
 
-## Installation
-
-[Bioconda](https://bioconda.github.io/index.html) lets you install thousands
-of software packages related to biomedical research using the 
-[conda](https://docs.conda.io/en/latest/) package manager.[^1]
-
-So to use Bioconda to handle dependencies, you need to install `conda` first. 
-Here is the first of many potential pitfalls of streamlining the installation
-process; there are multiple ways to install the package manager that is suppsoed 
-to resolve the issue of having multiple package managers. Bioconda recommends 
-installing conda via the [Miniconda installer](https://docs.anaconda.com/miniconda/),
-among other [installers](https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html).
-
-Installing packages as a non-root user is complicated and often leads to broken
-packages with conflicting dependencies. [^2] Virtual environments are a solution,
-but they can be cumbersome to manage. Tools that aim to streamline and simplify 
-the setup of virtual environments, like [`conda-env-mod`](https://github.com/amaji/conda-env-mod)
-can help, but they come with their own sets of issues. For example,
-`conda-env-mod` allows users to use either `conda` or `pip` to install packages,
-and macOS users will be familiar with warnings like this one:
+Piping `yes` into the script will accept the defaults:
 
 ```console
-error: externally-managed-environment
-
-× This environment is externally managed
-╰─> To install Python packages system-wide, try brew install
-    xyz, where xyz is the package you are trying to
-    install.
-...
+Micromamba binary folder? [~/.local/bin]
+Init shell (bash)? [Y/n]
+Configure conda-forge? [Y/n]
+Prefix location? [~/micromamba]
 ```
 
-For these reasons, we'll use `micromamba` instead of `conda` to install packages
-**AND** to create and manage virtual environments. `micromamba` is a tiny version 
-of the mamba package manager; both of which are drop-in replacements for `conda`,
-with all the same functionality.
-
-### Mamba and Micromamba
-
-[Read the docs!](https://mamba.readthedocs.io/en/latest/index.html)
-
-Hooray for cross-platform installation scripts!
+Activate shell completion and restart the shell:
 
 ```sh
-"${SHELL}" <(curl -L micro.mamba.pm/install.sh)
-```
-
-optionally, enable shell completion
-```sh
-micromamba shell completion
-exec $SHELL # restart the shell
-```
-
-> [!NOTE]
-> If you encounter this:
-> ```console
-> critical libmamba The given prefix does not exist: "/home/ubuntu/micromamba/envs/completion"
-> ```
-> run:
-> ```sh
-> mkdir -p /home/ubuntu/micromamba/envs/completion
-> ```
-
-We can alias `conda` to `micromamba` since it is a drop-in replacement:
-
-```sh
-alias conda=micromamba
-#alias mm=micromamba
-```
-
-#### Example commands
-
-```sh
-micromamba self-update
-micromamba create -n /path/to/env
-```
-
-Creating a new environment places it in the `envs` directory 
-the _root prefix_ set by `$MAMBA_ROOT_PREFIX` environment variable.
-
-`$ micromamba create -n RNAseq` gives us:
-
-```console
-Empty environment created at prefix: /home/ubuntu/micromamba/envs/RNAseq
-```
-
-Now we can add our packages:
-
-```sh
-micromamba install -n RNAseq -c bioconda -c conda-forge fastqc
-```
-
-> micromamba .
-> It is a statically linked C++ executable with a separate command line interface.
-> It does not need a base environment and does not come with a default version of Python.
-
-### Bioconda
-
-Bioconda is a [`channel`](https://mamba.readthedocs.io/en/latest/advanced_usage/more_concepts.html#channel),
-and its documentation recommends the following configuration:
-
-```sh
-conda config --add channels defaults
-conda config --add channels bioconda
-conda config --add channels conda-forge
-conda config --set channel_priority strict
-```
-
-
-However, Mamba documentation recommends against using any of the 
-[Anaconda default channels](https://docs.anaconda.com/working-with-conda/reference/default-repositories/).
-by deactivating them, rather than deprioritizing them... 
-
-Instead of fighting against defaults, write spec files:
-
-```yaml
-name: RNAseq
-channels:
-  - bioconda
-  - conda-forge
-dependencies:
-  - fastqc
-  - hisat2
-  - bwa
-  - bowtie2
-  - samtools
-  - htslib
-  - bcftools
-  - stringtie
-  - bowtie
-  - subread
-```
-
-Then create the environment: 
-
-```sh
-# it doesn't matter if you use .yml or .yaml, but be consistent!
-micromamba env create -f RNAseq.yaml
-```
-
-When you correctly activate the environment, the usual prompt
-will be prefixed with the name of the environment in parentheses:
-
-```console
-(RNAseq) ubuntu@ip-172-31-70-15:~/micromamba/envs$
+micromamba shell completion && exec "$SHELL"
 ```
 
 ### 💾 Data Acquisition
@@ -476,41 +338,10 @@ DNA-associated proteins.
 
 ### DROMPA
 
-## Useful (POSIX-compliant) one-liners
-
-Update and upgrade everything on Ubuntu
-
-```sh
-ys | sudo sh -c 'apt update && apt upgrade && apt dist-upgrade && apt autoremove && apt autoclean && apt clean'
-```
-
-Generate a txt file containing the md5sums of all files in a directory
-
-```sh
-md5sum ./*.fastq.gz > md5sums.txt
-```
-
-Generate a txt file containing the md5sums of all files in all subdirs
-
-```sh
-md5sum ./*/*.fastq.gz > checksums.md5
-```
-
-Check the files against the md5sums in the txt file
-
-```sh
-md5sum -c md5sums.txt
-```
-
-Check the total size of each folder in the current directory
-
-```sh:
-du -sha --max-depth=1
-```
-
 ## Acknowledgements
 
 Shout out to these awesome docs:
+
 - [Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/)
 - [tao-of-tmux](https://tao-of-tmux.readthedocs.io/)
 - [mamba](https://mamba.readthedocs.io/)
@@ -518,6 +349,9 @@ Shout out to these awesome docs:
 <!-- References -->
 
 <!-- Bioconda -->
+
 [^1]: Grüning, Björn, Ryan Dale, Andreas Sjödin, Brad A. Chapman, Jillian Rowe, Christopher H. Tomkins-Tinch, Renan Valieris, the Bioconda Team, and Johannes Köster. 2018. Bioconda: Sustainable and Comprehensive Software Distribution for the Life Sciences. Nature Methods, 2018 doi:10.1038/s41592-018-0046-7.
+
 <!-- conda-env-mod -->
+
 [^2]: A. K. Maji, L. Gorenstein and G. Lentner, "Demystifying Python Package Installation with conda-env-mod," 2020 IEEE/ACM International Workshop on HPC User Support Tools (HUST) and Workshop on Programming and Performance Visualization Tools (ProTools), GA, USA, 2020, pp. 27-37, doi: 10.1109/HUSTProtools51951.2020.00011.

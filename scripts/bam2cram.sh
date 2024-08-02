@@ -12,8 +12,8 @@ set -euo pipefail
 
 # gunzip it and bgzip it
 # gunzip -c GCA_000001405.15_GRCh38_full_analysis_set.fna.gz | bgzip -c > GCA_000001405.15_GRCh38_full_analysis_set.fna.bgz
-
 # index the genome
+
 bam2cram()
 {
 	local bam_file="$1"
