@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 # Class containing functions to print color msgs to the console.
 import sys
 
@@ -62,3 +65,4 @@ class ColorPrinter:
     def error(msg):
         """Prints an error msg in red."""
         ColorPrinter.pr_msg("Error: " + msg, fg.RED)
+
