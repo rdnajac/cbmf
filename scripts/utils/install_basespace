@@ -1,5 +1,4 @@
 #!/bin/bash
-#
 
 _basespace() {
 	install_directory="${1:-~/.local/bin}"
