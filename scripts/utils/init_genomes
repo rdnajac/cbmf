@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+## This script installs the reference genomes for the pipelines
+## and sets up the necessary directories and environment variables.
+set -euo pipefail
+set -x
+
+GENOMES_MIRROR="ftp://ftp.ncbi.nlm.nih.gov/genomes"
+MOUSE="all/GCA/000/001/635/GCA_000001635.9_GRCm39"
+HUMAN="all/GCA/000/001/405/GCA_000001405.15_GRCh38"
+
+# Common wget options
+WGET_OPTS=(
+	--execute robots=off      # Don't respect robots.txt
+    --no-parent             # Don't ascend to the parent directory
+    --no-directories        # Don't create a hierarchy of directories, save all files to the current directory
+)
+
+# Helper function to create directory if it doesn't exist and change to it
+cd_helper() {
+    mkdir -vp "$1"
+    cd "$1" || { echo "Error: Unable to change to directory $1" >&2; exit 1; }
+}
+
+# create the genomes directory and change to it
+GENOMES_DIRECTORY="$HOME/genomes"
+cd_helper "$GENOMES_DIRECTORY"
+
+download_seqs_for_alignment_pipelines()
+{
+    species="$1"
+    case "$species" in
+        mouse) url="$GENOMES_MIRROR/$MOUSE/seqs_for_alignment_pipelines.ucsc_ids" ;;
+        human) url="$GENOMES_MIRROR/$HUMAN/seqs_for_alignment_pipelines.ucsc_ids" ;;
+        *) echo "Error: species must be either mouse or human" >&2; exit 2 ;;
+    esac
+
+    # Create and enter species directory
+    cd_helper "$species"
+
+     # Pipe wget output directly into the loop
+    wget -q -O - "$url" | grep -v 'index.html' | while read -r file; do
+    wget -qO ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids
+        if [[ "$species" == "human" && "$file" == *"hs38d1"* ]]; then
+            continue
+        fi
+        wget "${WGET_OPTS[@]}" "$url/$file" &
+    done
+
+    # Wait for all background jobs to finish
+    wait
+}
+
+# Only run the script if it's being executed, not sourced
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    download_seqs_for_alignment_pipelines mouse
+    # download_seqs_for_alignment_pipelines human
+fi
