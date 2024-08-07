@@ -3,6 +3,8 @@
 # ignore hidden files and directories
 .*
 
+*.rpm
+
 # the wiki has its own repo
 wiki/
 
@@ -10,7 +12,6 @@ data/
 
 # don't track R project files
 .Rproj.user
-
 
 # latex build files
 *.aux
