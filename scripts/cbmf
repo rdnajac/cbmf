@@ -1,0 +1,228 @@
+#!/bin/sh
+
+set -eu
+
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+PATH="$SCRIPT_DIR:$PATH"
+
+VALID_SPECIES="human mouse"
+VALID_ALIGNERS="bwa hisat2 bowtie2 star subread-align subjunct"
+GENOMES_DIR="$HOME/genomes"
+GENOMES_MIRROR="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA"
+WGET_OPTS="--no-verbose --no-parent --no-directories"
+
+# Use strings instead of associative arrays
+GCA_MAP="mouse:000/001/635/GCA_000001635.9_GRCm39 human:000/001/405/GCA_000001405.15_GRCh38"
+PREFIX_MAP="mouse:GCA_000001635.9_GRCm39_full_analysis_set human:GCA_000001405.15_GRCh38_full_analysis_set"
+
+pr_info() { printf "\033[1;34m[INFO] %s\033[0m\n" "$1"; }
+pr_error() { printf "\033[1;31m[ERROR] %s\033[0m\n" "$1" >&2; }
+bail() { pr_error "$1"; exit 1; }
+
+validate() {
+    case " $2 " in
+        *" $1 "*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+success() {
+    if [ -t 1 ]; then
+        colors=$(tput colors 2>/dev/null || echo 8)
+        if [ "$colors" -ge 8 ]; then
+            printf '\033[31mS\033[33mU\033[32mC\033[36mC\033[34mE\033[35mS\033[31mS\033[0m!\n'
+        else
+            echo 'SUCCESS!'
+        fi
+    else
+        echo 'SUCCESS!'
+    fi
+}
+
+get_map_value() {
+    echo "$2" | sed -n "s/.*$1:\([^ ]*\).*/\1/p"
+}
+
+align_reads() {
+    local aligner="$1" r1_fastq="$2" r2_fastq="$3" reference="$4"
+    local align_opts="-p $(nproc) --mm -1 $r1_fastq -2 $r2_fastq -x $reference"
+    case "$aligner" in
+        hisat2) hisat2 $align_opts ;;
+        bowtie2) bowtie2 $align_opts --dta ;;
+        *) bail "Invalid aligner: $aligner" ;;
+    esac
+}
+
+align_to_bam() {
+    local aligner="$1" r1_fastq="$2" r2_fastq="$3" reference="$4"
+    local bam_file="${r1_fastq%_R1*}_sorted_markdup.bam"
+    align_reads "$aligner" "$r1_fastq" "$r2_fastq" "$reference" |
+        samtools sort -n -@ "$(nproc)" - |
+        samtools fixmate -@ "$(nproc)" -m - - |
+        samtools sort -@ "$(nproc)" - |
+        samtools markdup -@ "$(nproc)" - "$bam_file"
+}
+
+download_genome_component() {
+    local species="$1" component="$2" prefix="$3" gca="$4"
+    local url="$GENOMES_MIRROR/$gca/seqs_for_alignment_pipelines.ucsc_ids"
+    case "$component" in
+        fasta)
+            wget $WGET_OPTS "$url/${prefix}.fna.fai"
+            wget $WGET_OPTS -O "${prefix}.fna.gz" "$url/${prefix}.fna.gz"
+            gunzip "${prefix}.fna.gz"
+            ;;
+        bowtie|bwa|hisat2)
+            local file="${prefix}.fna.${component}_index.tar.gz"
+            wget $WGET_OPTS -O "$file" "$url/$file"
+            tar -xzvf "$file" && rm "$file"
+            ;;
+        gff|gtf)
+            wget $WGET_OPTS -O "${prefix}.refseq_annotation.${component}.gz" "$url/${prefix}.refseq_annotation.${component}.gz"
+            gunzip "${prefix}.refseq_annotation.${component}.gz"
+            ;;
+        *) pr_error "Invalid component: $component"; return 1 ;;
+    esac
+    pr_info "${component} for $species downloaded and extracted."
+}
+
+init_genome() {
+    local species="$1"; shift
+    local prefix=$(get_map_value "$species" "$PREFIX_MAP")
+    local gca=$(get_map_value "$species" "$GCA_MAP")
+    [ -z "$prefix" ] || [ -z "$gca" ] && bail "Invalid species. Use 'mouse' or 'human'."
+
+    mkdir -p "$GENOMES_DIR/$species"
+    cd "$GENOMES_DIR/$species" || bail "Failed to change directory"
+
+    local components="$*"
+    [ -z "$components" ] && components="fasta bowtie bwa hisat2 gff gtf"
+
+    for component in $components; do
+        download_genome_component "$species" "$component" "$prefix" "$gca"
+    done
+
+    pr_info "Requested $species genome components downloaded and extracted successfully."
+}
+
+bam_to_cram() {
+    local bam_file="$1"
+    local id=$(basename "$bam_file" .bam)
+    local cram_file="${id}.cram"
+    local reference="/home/ubuntu/genomes/human/GCA_000001405.15_GRCh38_full_analysis_set.fna.bgz"
+    samtools view -@"$(nproc)" --cram -T "$reference" "$bam_file" > "$cram_file"
+    pr_info "Converted $bam_file to $cram_file"
+}
+
+cram_to_bam() {
+    local cram_file="$1"
+    local id=$(basename "$cram_file" .cram)
+    local bam_file="${id}.bam"
+    [ -f "$bam_file" ] && mv "$bam_file" "${bam_file}.bak"
+    samtools view -@"$(nproc)" --bam "$cram_file" > "$bam_file"
+    pr_info "Converted $cram_file to $bam_file"
+}
+
+run_fastqc() {
+    local out_dir=${1:-fastqc}
+    local memsize=4096
+    mkdir -p "$out_dir"
+    fastqc -t "$(nproc)" --memory "$memsize" --noextract -o "$out_dir" ./*
+    pr_info "FastQC analysis completed. Results in $out_dir"
+}
+
+cmd_align() {
+    local species aligner input_dir output_dir
+    while getopts ":s:a:i:o:h" opt; do
+        case $opt in
+            s) species=$OPTARG ;;
+            a) aligner=$OPTARG ;;
+            i) input_dir=$OPTARG ;;
+            o) output_dir=$OPTARG ;;
+            h) cmd_align_help; return 0 ;;
+            \?) bail "Invalid option: -$OPTARG" ;;
+        esac
+    done
+
+    [ -z "$species" ] && bail "Species (-s) is required for alignment"
+    [ -z "$aligner" ] && bail "Aligner (-a) is required for alignment"
+    [ -z "$input_dir" ] && bail "Input directory (-i) is required"
+    [ -z "$output_dir" ] && bail "Output directory (-o) is required"
+
+    validate "$species" "$VALID_SPECIES" || bail "Invalid species: $species"
+    validate "$aligner" "$VALID_ALIGNERS" || bail "Invalid aligner: $aligner"
+
+    local reference="$GENOMES_DIR/${species}/${species}_genome"
+    mkdir -p "$output_dir"
+
+    for r1_fastq in "$input_dir"/*_R1.fastq.gz; do
+        r2_fastq="${r1_fastq/_R1/_R2}"
+        [ -f "$r2_fastq" ] || bail "Paired read file not found: $r2_fastq"
+        align_to_bam "$aligner" "$r1_fastq" "$r2_fastq" "$reference"
+    done
+
+    pr_info "Alignment completed. BAM files are in $output_dir"
+}
+
+cmd_help() {
+    cat << EOF
+Usage: $(basename "$0") <command> [options] [arguments]
+
+Commands:
+  align         Perform sequence alignment
+  init          Initialize genome files
+  qc            Perform quality control
+  convert       Convert between BAM and CRAM formats
+  help          Show this help message
+
+Run '$(basename "$0") help <command>' for more information on a specific command.
+EOF
+}
+
+cmd_align_help() {
+    cat << EOF
+Usage: $(basename "$0") align [options]
+
+Perform sequence alignment.
+
+Options:
+  -s SPECIES    Specify species (human or mouse)
+  -a ALIGNER    Specify aligner ($VALID_ALIGNERS)
+  -i INPUT      Input directory containing FASTQ files
+  -o OUTPUT     Output directory for alignment results
+  -h            Show this help message
+EOF
+}
+
+main() {
+    [ $# -eq 0 ] && { cmd_help; exit 1; }
+
+    local cmd="$1"; shift
+    case "$cmd" in
+        align) cmd_align "$@" ;;
+        init) init_genome "$@" ;;
+        qc) run_fastqc "$@" ;;
+        convert)
+            [ $# -ne 1 ] && bail "Usage: $(basename "$0") convert <file.bam|file.cram>"
+            case "$1" in
+                *.bam) bam_to_cram "$1" ;;
+                *.cram) cram_to_bam "$1" ;;
+                *) bail "Unknown file type: $1" ;;
+            esac
+            ;;
+        help)
+            if [ $# -eq 0 ]; then
+                cmd_help
+            else
+                case "$1" in
+                    align) cmd_align_help ;;
+                    init|qc|convert) pr_info "$1 help not yet implemented" ;;
+                    *) bail "Unknown command: $1" ;;
+                esac
+            fi
+            ;;
+        *) bail "Unknown command: $cmd" ;;
+    esac
+}
+
+main "$@"

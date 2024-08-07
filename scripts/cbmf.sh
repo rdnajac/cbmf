@@ -83,12 +83,14 @@ align_reads()
 	local r2_fastq="$3"
 	local reference="$4"
 
+	local align_opts="-p $(nproc) --mm -1 $r1_fastq -2 $r2_fastq -x $reference"
+
 	case "$aligner" in
 	hisat2)
-		hisat2 -p "$(nproc)" --mm -1 "$r1_fastq" -2 "$r2_fastq" -x "$reference" --dta
+		hisat2 "$align_opts"
 		;;
 	bowtie2)
-		bowtie2 -p "$(nproc)" --mm -1 "$r1_fastq" -2 "$r2_fastq" -x "$reference"
+		bowtie2 "$align_opts" --dta
 		;;
 	*)
 		bail "Invalid aligner: $aligner"
@@ -112,6 +114,13 @@ align_to_bam()
 }
 
 # Genome initialization functions
+download()
+{
+	local url="$1"
+	local file="$2"
+	wget "$WGET_OPTS" -O "$file" "$url"
+}
+
 download_index()
 {
 	local species="$1"
