@@ -6,12 +6,6 @@ Certainly. I've revised the document as requested, removing the software availab
 
 RNA sequencing (RNA-seq) is a technique used to analyze the transcriptome - the complete set of RNA transcripts in a cell. This method involves sequencing RNA molecules after reverse transcription to cDNA, allowing researchers to examine gene expression levels and identify novel transcripts.
 
-## Analysis Workflow
-
-### 1. Quality Control
-
-Before analysis, it's crucial to perform quality control on the raw sequencing data. Tools like FastQC can be used for this purpose (refer to the QC.md document for more details).
-
 ### 2. Read Alignment and Quantification
 
 #### Tuxedo Suite
