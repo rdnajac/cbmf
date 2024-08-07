@@ -1,0 +1,17 @@
+#!/bin/bash
+
+SUCCESS()
+{
+	# check if 256 color support is available
+	if [ "$(tput colors)" -eq 256 ]; then
+		printf '🌈\033[38;5;196mS\033[38;5;208mU\033[38;5;226mC\033[38;5;46mC\033[38;5;21mE\033[38;5;93mS\033[38;5;163mS\033[0m!✨\n'
+	elif [ "$(tput colors)" -ge 8 ]; then
+		printf '🌈\033[31mS\033[33mU\033[32mC\033[36mC\033[34mE\033[35mS\033[31mS\033[0m!✨\n'
+	else
+		printf 'SUCCESS!\n'
+	fi
+}
+
+# If we're being executed, run the function
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && SUCCESS
+

@@ -1,0 +1,50 @@
+#!/bin/bash
+#  Return a list of scripts having a given string in the interpreter directive.
+
+Syntax () {
+  local regexp="$1"
+  echo "Syntax: $0 [<regexp> [<file>|<dir>]...]"
+  echo "        $0 {-h | --help}"
+  echo '  <regexp>   - used to match interpreter directives'
+  echo '  <file>     - report file if <regexp> matches'
+  echo '  <dir>      - report each file in <dir> for which <regexp> matches'
+  echo 'If no <file> or <dir> is given, "." is used as a default.'
+  echo 'Give a <regexp> of "." to use the default ('"$regexp"') with <file>/<dir>.'
+  echo 'NOTE: Only executable files are considered.'
+}
+
+ScanFile () { [ -x "$1" ] && head -1 "$1" | egrep -- -qs "$2" ; }
+
+ScanStuff () {
+  local found=false
+  local regexp="$1" ; shift
+  local thing dir file
+  for thing in "$@" ; do
+    if [ -d "$thing" ] ; then
+      dir="$thing"
+      for file in $(find "$dir" -name . -o -type d -prune -o -type f -print) ; do
+        ScanFile "$file" "$regexp" && echo "$file" && found=true
+      done
+    else
+      file="$thing"
+      ScanFile "$file" "$regexp" && echo "$file" && found=true
+    fi
+  done
+  $found
+}
+
+Main () {
+  local regexp='^#!'
+  case "$1" in
+      --)        shift                          ;;
+      -h|--help) Syntax "$regexp"      ; exit 0 ;;
+      -*)        Syntax "$regexp" 1>&2 ; exit 1 ;;
+  esac
+  [ $# -ge 1 ] && { regexp="$1" ; shift ; }
+  [ $# -eq 0 ] && set .
+  ScanStuff "$regexp" "$@"
+}
+
+Main "$@"
+
+#---eof

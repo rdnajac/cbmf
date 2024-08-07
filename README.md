@@ -1,20 +1,24 @@
 # 🧬 Combinatorial Bioinformatic Meta-Framework
 
-![C](https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white)
-![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
-![LaTeX](https://img.shields.io/badge/latex-%23008080.svg?style=for-the-badge&logo=latex&logoColor=white)
-![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)
-![Perl](https://img.shields.io/badge/perl-%2339457E.svg?style=for-the-badge&logo=perl&logoColor=white)
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-![R](https://img.shields.io/badge/r-%23276DC3.svg?style=for-the-badge&logo=r&logoColor=white)
-![Shell Script](https://img.shields.io/badge/shell_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)
-
 Notes, scripts, and resources to streamline and multiplex the analysis of
 high-throughput sequencing data, from raw reads to biological insights.
 
-## About
+## 📚 Table of Contents
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+- [🔭 Overview](#-overview)
+- [🚀 Getting Started](#-getting-started)
+  - [📦 Package Management](#-package-management)
+- [🧬 Sequencing Workflows](#-sequencing-workflows)
+  - [💾 Data Acquisition](#-data-acquisition)
+  - [🔀 Demultiplexing](#-demultiplexing)
+  - [🔍 Quality Control](#-quality-control)
+  - [🏗️ Alignment](#-alignment)
+  - [🔬 Assembly and Quantification](#-assembly-and-quantification)
+  - [📊 Visualization](#-visualization)
+  - [📈 Differential Expression](#-differential-expression)
+- [📑 Additional Resources](#-additional-resources)
+
+## 🔭 Overview
 
 This repository contains tools to automate key bioinformatic tasks:
 
@@ -23,25 +27,27 @@ This repository contains tools to automate key bioinformatic tasks:
 - Alignment to reference genomes
 - Transcript assembly and quantification
 - Differential expression analysis
-- Visualization of results (work in progress)
+- Visualization of results
+- Package management and dependency resolution
 
 There is also a wiki with additional resources and tutorials.
 You can access the wiki by clicking on the tab at the top of the page
 or by following [this link](https://github.com/rdnajac/cbmf/wiki).
 
-## Usage
+## 🚀 Getting Started
 
-### Prerequisites
-
-- Basic command line knowledge
-- A POSIX-compliant shell (e.g. `bash`, `zsh`)
-- A text editor (e.g. `vim`, `nano`, `emacs`)
+Clone the repository:
 
 ```sh
-git clone --recursive repo-url
+git clone https://github.com/rdnajac/cbmf.git
 ```
 
-For additional software, use micromamba for package management:
+### 📦 Package Management
+
+The only other thing we need to install is `micromamba`, a lightweight package manager
+that can be used to install `conda` environments, like bioconda[^1].
+
+[^1]: Grüning, Björn, Ryan Dale, Andreas Sjödin, Brad A. Chapman, Jillian Rowe, Christopher H. Tomkins-Tinch, Renan Valieris, the Bioconda Team, and Johannes Köster. 2018. Bioconda: Sustainable and Comprehensive Software Distribution for the Life Sciences. Nature Methods, 2018 doi:10.1038/s41592-018-0046-7.
 
 ```sh
 yes | "$SHELL" <(curl -L micro.mamba.pm/install.sh)
@@ -62,11 +68,43 @@ Activate shell completion and restart the shell:
 micromamba shell completion && exec "$SHELL"
 ```
 
+## 🧬 Sequencing Workflows
+
+The following sections outline the steps involved in analyzing high-throughput sequencing data.
+
+A quick note on file formats:
+
+| File Type              | Description                                 | Typical Extension                    | Details                                                        |
+| ---------------------- | ------------------------------------------- | ------------------------------------ | -------------------------------------------------------------- |
+| FASTQ                  | Raw reads from sequencer                    | .fastq, .fastq.gz                    | Human readable; often compressed (.gz)                         |
+| FASTA                  | Sequence data                               | .fasta, .fa, .fasta.gz, .fa.gz       | Human readable; often compressed (.gz)                         |
+| GTF                    | Gene Transfer Format (GFF2 variant)         | .gtf, .gtf.gz                        | Human readable; can be compressed                              |
+| GFF2                   | General Feature Format v2                   | .gff, .gff2, .gff.gz, .gff2.gz       | Human readable; can be compressed                              |
+| GFF3                   | General Feature Format v3                   | .gff3, .gff3.gz                      | Human readable; can be compressed                              |
+| SAM                    | Sequence Alignment/Map                      | .sam, .sam.gz                        | Human readable; can be compressed                              |
+| BAM                    | Binary Alignment/Map                        | .bam                                 | Binary (compressed); not human readable                        |
+| CRAM                   | Compressed Reference-oriented Alignment Map | .cram                                | Binary (compressed); not human readable                        |
+| VCF                    | Variant Call Format                         | .vcf, .vcf.gz                        | Human readable; often compressed                               |
+| BED                    | Browser Extensible Data                     | .bed, .bed.gz                        | Human readable; can be compressed                              |
+| TSV                    | Tab-Separated Values                        | .tsv, .tsv.gz                        | Human readable; can be compressed                              |
+| CSV                    | Comma-Separated Values                      | .csv, .csv.gz                        | Human readable; can be compressed                              |
+| TXT                    | Plain Text                                  | .txt, .txt.gz                        | Human readable; can be compressed                              |
+| Bowtie2 Index          | Bowtie2 aligner index                       | .bt2, .bt2.tar.gz                    | Binary; not human readable; often compressed                   |
+| BWA Index              | BWA aligner index                           | .bwt, .sa, .pac, .ann, .amb, .tar.gz | Binary; not human readable; often compressed                   |
+| HISAT2 Index           | HISAT2 aligner index                        | .ht2, .ht2.tar.gz                    | Binary; not human readable; often compressed                   |
+| Samtools Index         | Samtools index for FASTA                    | .fai                                 | Human readable                                                 |
+| GenBank Assembly (GCA) | Archival record owned by submitter          | .gca                                 | Binary; not human readable                                     |
+| RefSeq Assembly (GCF)  | NCBI-derived copy of GenBank assembly       | .gcf                                 | Binary; not human readable                                     |
+| md5                    | Checksum for file integrity                 | .md5                                 | Human readable; usually plain text output from `md5sum` itself |
+
+Would you like me to explain or elaborate on any part of this table?
+
 ### 💾 Data Acquisition
 
 If you used a core facility, Azenta, or another commercial service for
 sequencing, they will send link to directly download the de-multiplexed
 FASTQ files, usually with corresponding md5 checksums.
+
 For instructions on how to download data from Azenta's sFTP server,
 click [here](https://3478602.fs1.hubspotusercontent-na1.net/hubfs/3478602/13012-M%26G%200222%20sFTP%20Guide-3.pdf).
 
@@ -82,72 +120,9 @@ for the appropriate Illumina sequencer:
 - [MiSeq](https://support.illumina.com/sequencing/sequencing_instruments/miseq/documentation.html)
 - [NextSeq500](https://support.illumina.com/sequencing/sequencing_instruments/nextseq-550/documentation.html)
 
-#### BaseSpace and the `bs` command-line interface
+### 🔀 Demultiplexing
 
-The browser-based interface is useful for small-scale projects, but the
-command-line interface is more efficient for large-scale projects.
-Check out [examples](https://developer.basespace.illumina.com/docs/content/documentation/cli/cli-examples).
-
-Install on macOS using Homebrew:
-
-```sh
-brew tap basespace/basespace && brew install bs-cli
-```
-
-After installation, authenticate with your BaseSpace credentials:
-
-```sh
-bs authenticate
-```
-
-Finally, run 'bs whoami' to verify that you are authenticated:
-
-```text
-+----------------+----------------------------------------------------+
-| Name           | Ryan Najac                                         |
-| Id             | ########                                           |
-| Email          | rdn2108@cumc.columbia.edu                          |
-| DateCreated    | 2021-07-13 15:29:51 +0000 UTC                      |
-| DateLastActive | 2024-06-03 18:59:47 +0000 UTC                      |
-| Host           | https://api.basespace.illumina.com                 |
-| Scopes         | READ GLOBAL, CREATE GLOBAL, BROWSE GLOBAL,         |
-|                | CREATE PROJECTS, CREATE RUNS, START APPLICATIONS,  |
-|                | MOVETOTRASH GLOBAL, WRITE GLOBAL                   |
-+----------------+----------------------------------------------------+
-```
-
-#### AWS S3: Simple Storage Service
-
-s3 uris look like `s3://bucket-name/path/to/file.fastq.gz`
-
-```sh
-URI="s3://lab-aaf-ngs-data-archive/RNAseq/20240409_Tet2Rhoa-S1P1_RA/"
-aws s3 sync "$URI" .
-```
-
-#### Demultiplexing Illumina sequencing data
-
-Illumina instruments will demultiplex the data for you if you provide a valid
-sample sheet prior to sequencing. For more information on how to create a sample
-sheet, consult the [Illumina Support](https://support.illumina.com/) page.
-
-Skip ahead to the [Quality Control](#quality-control) section if the
-FASTQ files are already demultiplexed and ready for analysis, or keep reading
-for instructions on how to demultiplex the data yourself.
-
-Illumina hosts `.rpm` files for CentOS/RedHat Linux distros and the
-source code (which must be compiled) for other distros.
-
-Download bcl2fastq2 Conversion Software v2.20 Installer (Linux rpm) from
-[Illumina](https://support.illumina.com/sequencing/sequencing_software/bcl2fastq-conversion-software.html).
-
-The AWS EC2 instance used for this project is based on Ubuntu, so we will
-have to convert the `.rpm` file to a `.deb` file using the `alien` package,
-as per this [post](https://www.biostars.org/p/266897/).
-
-```sh
-sudo alien -i bcl2fastq2-v2.20.0.422-Linux-x86_64.rpm
-```
+Skip this section if you have already received the demultiplexed FASTQ files.
 
 The following command is the default `bcl2fastq` command for demultiplexing
 on the Nextseq, but with the `--no-lane-splitting` option added to combine
@@ -169,174 +144,115 @@ bcl2fastq --no-lane-splitting \
     --sample-sheet "$sample_sheet" \
 ```
 
+You can copy and paste this command if you set the variables `$run_folder`,
+`$output_folder`, and `$sample_sheet` to the appropriate values.
+
 > [!WARNING]
-> As of (DATE?), `bcl2fastq` is no longer supported; use `bclconvert` instead.\
-> You can install `bclconvert` using the same methods as described above.
+> As of this document's last revision, `bcl2fastq` is no longer supported;
+> use `bclconvert` instead.
 
-Read the docs:
+### 🔍 Quality Control
 
-- [bcl2fastq](https://support.illumina.com/content/dam/illumina-support/documents/documentation/software_documentation/bcl2fastq/bcl2fastq_letterbooklet_15038058brpmi.pdf)
-- [bclconvert](https://support-docs.illumina.com/SW/BCL_Convert_v4.0/Content/SW/BCLConvert/BCLConvert.htm)
+Quality control is an essential step in the analysis of high-throughput sequencing data.
+It allows us to assess the quality of the reads and identify any issues that may
+affect downstream analysis, like adapter contamination or low-quality reads.
+More exciting quality issues include GC bias, mitochondrial contamination, and
+over-representation of certain sequences.
 
-#### Quality Control
+| Tool                                                                     | Description                                               | Source                                                                                                                 |
+| ------------------------------------------------------------------------ | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)[^1] | Generates html reports containing straightforward metrics | [GitHub](https://github.com/s-andrews/FastQC)                                                                          |
+| [GATK](https://gatk.broadinstitute.org/hc/en-us)[^2]                     | Analyzes high-throughput sequencing data                  | [GitHub](https://github.com/broadinstitute/gatk)                                                                       |
+| [Picard Tools](https://broadinstitute.github.io/picard/)[^3]             | Manipulates high-throughput sequencing data               | Comes packaged with [GATK4](https://gatk.broadinstitute.org/hc/en-us/articles/360036194592-Getting-started-with-GATK4) |
+| [MultiQC](https://multiqc.info/)[^4]                                     | Aggregates results from bioinformatics analyses           | [GitHub](https://github.com/ewels/MultiQC)                                                                             |
 
-| Tool                                                                 | Description                                               | Installation                                                                                                           |
-| -------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) | Generates html reports containing straightforward metrics | [source](https://github.com/s-andrews/FastQC)                                                                          |
-| [GATK](https://gatk.broadinstitute.org/hc/en-us)                     | Analyzes high-throughput sequencing data                  | [instructions](https://raw.githubusercontent.com/s-andrews/FastQC/master/INSTALL.txt)                                  |
-| [Picard Tools](https://broadinstitute.github.io/picard/)             | Manipulates high-throughput sequencing data               | comes packaged with [GATK4](https://gatk.broadinstitute.org/hc/en-us/articles/360036194592-Getting-started-with-GATK4) |
+[^2]: Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data. Available online at: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
 
-To run these QC applications, you need a suitable Java Runtime Environment (JRE):
+[^3]: McKenna A, Hanna M, Banks E, et al. The Genome Analysis Toolkit: a MapReduce framework for analyzing next-generation DNA sequencing data. Genome Res. 2010;20(9):1297-1303. [PMID: 20644199](https://pubmed.ncbi.nlm.nih.gov/20644199/)
+
+[^4]: Broad Institute. Picard Tools. http://broadinstitute.github.io/picard/
+
+[^5]: Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016;32(19):3047-8. [PMID: 27312411](https://pubmed.ncbi.nlm.nih.gov/27312411/)
+
+To run these QC applications, you need a suitable Java Runtime Environment (JRE).
+Let `micromamba` handle the installation of the JRE and the tools from bioconda:
 
 ```sh
-sudo apt-get install -y openjdk-11-jdk
+micromamba create -n qc -c conda-forge -c bioconda fastqc gatk4 picard multiqc
+```
+
+Activate the environment and run the tools:
+
+```sh
+micromamba run -n qc fastqc -o <output_dir> <fastq_file>
 ```
 
 > [!TIP]
 > After aligning the reads to the reference genome, these tools can be re-ran on the
-> resulting BAM files to ensure that the alignment was successful or to consolidate
+> resulting SAM/BAM files to ensure that the alignment was successful or to consolidate
 > the results from paired-end sequencing.
+
+### 🏗️ Alignment
+
+Before we can analyze the data, we need to align the reads to a reference genome.
+Before aligning the reads, we need download the reference genome and build the index files.
+The most recent major releases from [NCBI Datasets](https://www.ncbi.nlm.nih.gov/datasets)
+can be found on the [Genome Reference Consortium](https://www.ncbi.nlm.nih.gov/grc) page.
 
 #### Reference Genomes
 
-The reference genome is a digital nucleotide sequence that represents the
-genome of an organism. It is used as a reference for mapping reads from
-high-throughput sequencing experiments.
+<!-- TODO: add dates -->
 
-The most recent major releases from [NCBI Datasets](https://www.ncbi.nlm.nih.gov/datasets):
-
-- [human](https://www.ncbi.nlm.nih.gov/grc/human)
-- [mouse](https://www.ncbi.nlm.nih.gov/grc/mouse)
-
-Link to the [Genome Reference Consortium](https://www.ncbi.nlm.nih.gov/grc)
-
-Download the data from the FTP server:
-
-- [GRCm39 (latest major release) FTP](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/)
-- [GRCh38 (latest major release) FTP](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/)
+| species                                         | assembly | release date | accession        | ftp link                                                                                 |
+| ----------------------------------------------- | -------- | ------------ | ---------------- | ---------------------------------------------------------------------------------------- |
+| [human](https://www.ncbi.nlm.nih.gov/grc/human) | GRCh38   | xxxx-xx-xx   | GCA_000001405.15 | [ftp](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/) |
+| [mouse](https://www.ncbi.nlm.nih.gov/grc/mouse) | GRCm39   | xxxx-xx-xx   | GCA_000001635.9  | [ftp](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/)  |
 
 > [!TIP]
-> Skip building indexes from scratch by using the files
-> provided in the `seqs_for_alignment_pipelines.ucsc_ids` folder.
+> Skip building indexes from scratch and use the pre-built indexes for `bowtie2`,
+> `bwa`, and `hisat2` and `samtools` in the `seqs_for_alignment_pipelines.ucsc_ids`
+> folder. (It even has the 'GTT' and 'GFF' annotation files we'll need later).
 
-| file                     | description            | action     |
-| ------------------------ | ---------------------- | ---------- |
-| fna.bowtie_index.tar.gz  | Bowtie2 index files    | `tar -xvf` |
-| fna.hisat2_index.tar.gz  | HISAT2 index files     | `tar -xvf` |
-| fna.fai                  | Samtools index file    | N/A        |
-| fna.gz                   | FASTA format sequences | ?          |
-| refseq_annotation.gff.gz | GFF3 format annotation | `gunzip`   |
-| refseq_annotation.gtf.gz | GTF format annotation  | `gunzip`   |
+#### Aligners
 
-- [FAQs - NCBI](https://ncbi.nlm.nih.gov/datasets/docs/v2/troubleshooting/faq/)
-- GTF (a specific version of GFF2) and GFF (versions GFF2 and GFF3) are used in
-  gene annotation, with GFF3 being more advanced.
-- GTF uses key-value pairs for
-  attributes, while GFF3 allows hierarchical feature relationships.
-- The GenBank (GCA) assembly is an archival record that is owned by the submitter
-  - may or may not include annotation.
-- A RefSeq (GCF) genome assembly represents an NCBI-derived copy of a submitted GenBank (GCA) assembly.
-  - RefSeq (GCF) assembly records are maintained by [NCBI](https://www.ncbi.nlm.nih.gov/genome/doc/assembly/)
+| Tool                                                                 | Description                                           | Key Features                                                                                                         | Best For                                        | Source                                                     |
+| -------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------- |
+| [BWA](https://bio-bwa.sourceforge.net/)[^6]                          | Maps short DNA sequences to reference genome          | - Uses Burrows-Wheeler Transform (BWT) for indexing<br>- Efficient for short reads<br>- Supports paired-end reads    | Whole Genome Sequencing (WGS), Exome Sequencing | [GitHub](https://github.com/lh3/bwa)                       |
+| [STAR](https://github.com/alexdobin/STAR)[^7]                        | Specialized for RNA-Seq alignment                     | - Uses seed-extension search<br>- Detects novel splice junctions<br>- Fast and accurate for long reads               | RNA-Seq, especially with long reads             | [GitHub](https://github.com/alexdobin/STAR)                |
+| [HISAT2](https://daehwankimlab.github.io/hisat2/)[^8]                | Splice-aware aligner for DNA and RNA sequences        | - Uses graph-based alignment<br>- Memory-efficient<br>- Supports both DNA and RNA alignment                          | RNA-Seq, WGS, particularly for large genomes    | [GitHub](https://github.com/DaehwanKimLab/hisat2)          |
+| [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)[^9] | Efficient short read aligner                          | - Uses FM-index (similar to BWT)<br>- Supports gapped, local, and paired-end alignment<br>- Memory-efficient         | ChIP-seq, WGS                                   | [GitHub](https://github.com/BenLangmead/bowtie2)           |
+| [Subread](https://subread.sourceforge.net/)[^10]                     | Seed-and-vote algorithm-based aligner                 | - Fast and accurate<br>- Supports indel detection<br>- Includes read counting functionality (featureCounts)          | RNA-Seq, DNA-Seq                                | [GitHub](https://github.com/ShiLab-Bioinformatics/subread) |
+| [Subjunc](https://subread.sourceforge.net/subjunc.html)[^11]         | Exon-exon junction detector (part of Subread package) | - Detects novel exon-exon junctions<br>- Uses seed-and-vote algorithm<br>- Can be used independently or with Subread | RNA-Seq, specifically for junction detection    | [GitHub](https://github.com/ShiLab-Bioinformatics/subread) |
 
-### 📑 Additional Resources
+[^6]: Li H. and Durbin R. (2009) Fast and accurate short read alignment with Burrows-Wheeler Transform. Bioinformatics, 25:1754-60. [PMID: 19451168](https://pubmed.ncbi.nlm.nih.gov/19451168/)
+
+[^7]: Dobin A, Davis CA, Schlesinger F, et al. STAR: ultrafast universal RNA-seq aligner. Bioinformatics. 2013;29(1):15-21. [PMID: 23104886](https://pubmed.ncbi.nlm.nih.gov/23104886/)
+
+[^8]: Kim D, Langmead B, Salzberg SL. HISAT: a fast spliced aligner with low memory requirements. Nat Methods. 2015;12(4):357-360. [PMID: 25751142](https://pubmed.ncbi.nlm.nih.gov/25751142/)
+
+[^9]: Langmead B, Salzberg SL. Fast gapped-read alignment with Bowtie 2. Nat Methods. 2012;9(4):357-359. [PMID: 22388286](https://pubmed.ncbi.nlm.nih.gov/22388286/)
+
+[^10]: Liao Y, Smyth GK, Shi W. The Subread aligner: fast, accurate and scalable read mapping by seed-and-vote. Nucleic Acids Research. 2013;41(10):e108. [PMID: 23558742](https://pubmed.ncbi.nlm.nih.gov/23558742/)
+
+[^11]: Liao Y, Smyth GK, Shi W. The R package Rsubread is easier, faster, cheaper and better for alignment and quantification of RNA sequencing reads. Nucleic Acids Research. 2019;47(8):e47. [PMID: 30783653](https://pubmed.ncbi.nlm.nih.gov/30783653/)
+
+#### FASTQ to BAM/CRAM
+
+(Work in progress)
+
+### 🔬 Assembly and Quantification
+
+Read the docs for details on experiment-specific processing and analysis:
+
+- [RNAseq](docs/RNA-Seq.md)
+- [ChIPseq](docs/ChIP-Seq.md)
+
+## 📑 Additional Resources
 
 - [Bioinformatics Stack Exchange](https://bioinformatics.stackexchange.com/)
 - [Biostars](https://www.biostars.org/)
 - [Biopython](https://biopython.org/)
-
-## 🧬 Align reads to a reference genome
-
-> In this study, the algorithmically different mappers...
-> were used to map experimentally generated RNA-Seq data from the...
-> higher plant _Arabidopsis thaliana_ and to quantify the transcripts.[^1]
-
-[^1]: Schaarschmidt et al., 2020
-
-| Tool     | Description                                                                              |
-| -------- | ---------------------------------------------------------------------------------------- |
-| Bwa      | Maps short DNA sequences to reference genome; Uses BWT for indexing                      |
-| STAR     | Specialized for RNA-Seq; uses seed-extension search; detects splice-junctions.           |
-| HISAT2   | Splice-aware; uses graph-based alignment for DNA and RNA sequences.                      |
-| RSEM     | Quantifies transcript abundances; uses expectation-maximization and pre-defined mappers. |
-| salmon   | Uses quasi-mapping; BWT, suffix array and FMD algorithm for shared substring discovery.  |
-| kallisto | Uses pseudo-alignments; maps k-mers to De Bruijn graph for isoform quantification.       |
-| CLC      | Read mapping approach by Mortazavi et al.; only commercial tool with a GUI.              |
-
-Other Aligners:
-
-- [HISAT2](https://daehwankimlab.github.io/hisat2/)
-  - splice-aware and suitable for transcriptome based or RNA-seq alignment
-- [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
-  - suitable for genome based alignment (ChIP-seq/WGS)
-- [Subread](https://subread.sourceforge.net/)[^4], also comes packaged with:
-  - [Subjunc](https://subread.sourceforge.net/subjunc.html)[^5], an exon-exon junction detector
-  - [featureCounts](https://subread.sourceforge.net/featureCounts.html), a read summarization program
-
-[^4]:
-    The Subread aligner: fast, accurate and scalable read mapping by seed-and-vote,
-    **_Y Liao, GK Smyth, W Shi_**, Nucleic acids research, 2013 [PMID:23558742](https://pubmed.ncbi.nlm.nih.gov/23558742/)
-
-[^5]:
-    featureCounts: an efficient general purpose program for assigning sequence reads to genomic features,
-    **_Y Liao, GK Smyth, W Shi_**, Bioinformatics, 2014 [PMID:24227677](https://pubmed.ncbi.nlm.nih.gov/24227677/)
-
-## RNAseq
-
-The transcriptome is the complete set of RNA transcripts in a cell,
-and RNA-seq is used to analyze the transcriptome by sequencing the RNA molecules
-after reverse transcription to cDNA.
-
-### Tuxedo Suite
-
-Transcript-level expression analysis of RNA-seq experiments
-with HISAT, StringTie and Ballgown.[^2]
-
-[^2]: Pertea, M., Kim, D., Pertea, G. M., Leek, J. T., & Salzberg, S. L. (2016). Transcript-level expression analysis of RNA-seq experiments with HISAT, StringTie and Ballgown. Nature Protocols, 11(9), 1650–1667. <https://doi.org/10.1038/nprot.2016.095>
-
-- [Protocol](https://www.nature.com/articles/nprot.2016.095)
-- [Software Availability](https://ccb.jhu.edu/software.shtml)
-
-| Tool      | Description                                                | Manual                                                                      | Source                                             |
-| --------- | ---------------------------------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------- |
-| HISAT2    | Align reads to reference genome                            | [manual](https://daehwankimlab.github.io/hisat2/manual/)                    | [source](htts://github.com/DaehwanKimLab/hisat2)   |
-| StringTie | Assembler of RNA-Seq alignments into potential transcripts | [manual](https://ccb.jhu.edu/software/stringtie/index.shtml)                | [source](https://github.com/gpertea/stringtie)     |
-| Ballgown  | Flexible, isoform-level differential expression analysis   | [manual](https://bioconductor.org/packages/release/bioc/html/ballgown.html) | [source](https://github.com/alyssafrazee/ballgown) |
-
-> [!TIP]
-> StringTie come packaged with `gffcompare` for comparing and evaluating the
-> accuracy of RNA-seq transcript assemblers. Read the
-> [manual](https://ccb.jhu.edu/software/stringtie/gffcompare.shtml) for details.
-
-#### Workflow
-
-The following steps correspond to the workflow described in the protocol:
-
-- Steps 1-2: Align reads to the reference genome and sort to BAM format
-- Steps 3-6: `stringtie`
-- Steps 7-9: `ballgown` setup
-- Steps 10-15: Differential expression analysis
-  - filter to remove low-abundance genes
-  - identify transcripts
-  - identify genes
-  - add gene names
-  - sort by p-value
-  - write to file
-- Steps 16-18: Visualization
-
-Tips:
-
-- Save the bg object to a file for later use: `save(bg, file="bg.rda")`
-- Add log2 fold change and p-value to the gene-level data frame:
-  `log2fc <- log2(gene$mean2/gene$mean1)`
-
-## ChIPseq
-
-Chromatic immunoprecipitation sequencing (ChIP-seq) is a method used to analyze
-protein interactions with DNA. It combines chromatin immunoprecipitation (ChIP)
-with massively parallel DNA sequencing to identify the binding sites of
-DNA-associated proteins.
-
-### DROMPA
+- [FAQs - NCBI](https://ncbi.nlm.nih.gov/datasets/docs/v2/troubleshooting/faq/)
 
 ## Acknowledgements
 
@@ -345,13 +261,4 @@ Shout out to these awesome docs:
 - [Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/)
 - [tao-of-tmux](https://tao-of-tmux.readthedocs.io/)
 - [mamba](https://mamba.readthedocs.io/)
-
-<!-- References -->
-
-<!-- Bioconda -->
-
-[^1]: Grüning, Björn, Ryan Dale, Andreas Sjödin, Brad A. Chapman, Jillian Rowe, Christopher H. Tomkins-Tinch, Renan Valieris, the Bioconda Team, and Johannes Köster. 2018. Bioconda: Sustainable and Comprehensive Software Distribution for the Life Sciences. Nature Methods, 2018 doi:10.1038/s41592-018-0046-7.
-
-<!-- conda-env-mod -->
-
-[^2]: A. K. Maji, L. Gorenstein and G. Lentner, "Demystifying Python Package Installation with conda-env-mod," 2020 IEEE/ACM International Workshop on HPC User Support Tools (HUST) and Workshop on Programming and Performance Visualization Tools (ProTools), GA, USA, 2020, pp. 27-37, doi: 10.1109/HUSTProtools51951.2020.00011.
+- [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/index.html)

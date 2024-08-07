@@ -1,0 +1,114 @@
+#!/bin/bash
+
+## Install R, bspm and RStudio Server on Ubuntu 20.04 or 22.04 (focal or jammy).
+##
+## Install via ssh with:
+## ssh -i "RStudioServerKey.pem" ubuntu@ec2-instance 'sudo bash -s' < $THIS_SCRIPT
+##
+## Note that RStudio Server starts immediately after installation.
+## Access it via http://ec2-xx-xx-xx-xx.eu-central-1.compute.amazonaws.com:8787
+
+# Set strict mode
+set -euo pipefail
+
+# Global variables
+LOG_FILE="/tmp/rstudio_install_$(date +%Y%m%d_%H%M%S).log"
+RSTUDIO_SERVER_VERSION="2024.04.2-764"
+RSTUDIO_SERVER_DEB="rstudio-server-${RSTUDIO_SERVER_VERSION}-amd64.deb"
+
+# Function to log messages
+log()
+{
+	echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+# Quit the script with an error message
+bail()
+{
+	local errormsg="${1:-Unknown error}"
+	log "Error: $errormsg"
+	printf "\033[1;31mError: %s\033[0m\n" "$errormsg" >&2
+	exit 1
+}
+
+# Cleanup function
+cleanup()
+{
+	log "Cleaning up..."
+	rm -f "$RSTUDIO_SERVER_DEB"
+}
+
+# Check internet connectivity
+check_internet()
+{
+	log "Checking internet connectivity..."
+	if ! ping -c 1 google.com &> /dev/null; then
+		bail "No internet connection. Please check your network settings."
+	fi
+}
+
+# Check if script is run as root
+check_root()
+{
+	log "Checking root privileges..."
+	if [ "$EUID" -ne 0 ]; then
+		bail "This script must be run as root"
+	fi
+}
+
+# Check Ubuntu version
+check_ubuntu_version()
+{
+	log "Checking Ubuntu version..."
+	UBUNTU_VERSION=$(lsb_release -cs)
+	if [[ ! "$UBUNTU_VERSION" =~ ^(focal|jammy)$ ]]; then
+		bail "Unsupported Ubuntu version: $UBUNTU_VERSION"
+	fi
+}
+
+# Install R and set up CRAN repository
+install_r_and_cran()
+{
+	log "Installing R and setting up CRAN repository..."
+	bash <(curl -L "https://raw.githubusercontent.com/eddelbuettel/r2u/master/inst/scripts/add_cranapt_${UBUNTU_VERSION}.sh") >> "$LOG_FILE" 2>&1 || bail "Failed to run r2u script"
+}
+
+# Install dependencies
+install_dependencies()
+{
+	log "Installing dependencies..."
+	apt-get update >> "$LOG_FILE" 2>&1 || bail "Failed to update package lists"
+	apt-get install -y libssl3 libssl-dev libclang-dev libclang-14-dev >> "$LOG_FILE" 2>&1 || bail "Failed to install dependencies"
+}
+
+# Install RStudio Server
+install_rstudio_server()
+{
+	log "Installing RStudio Server..."
+	wget --no-verbose "https://download2.rstudio.org/server/${UBUNTU_VERSION}/amd64/${RSTUDIO_SERVER_DEB}" >> "$LOG_FILE" 2>&1 || bail "Failed to download RStudio Server"
+	dpkg -i "$RSTUDIO_SERVER_DEB" >> "$LOG_FILE" 2>&1 || bail "Failed to install RStudio Server"
+}
+
+# Main function
+main()
+{
+	log "Starting installation process..."
+
+	check_root
+	check_internet
+	check_ubuntu_version
+
+	install_r_and_cran
+	install_dependencies
+	install_rstudio_server
+
+	log "Installation completed successfully"
+}
+
+# Set trap for cleanup
+trap cleanup EXIT
+
+# Run main function
+main
+printf '🌈\033[38;5;196mS\033[38;5;208mU\033[38;5;226mC\033[38;5;46mC\033[38;5;21mE\033[38;5;93mS\033[38;5;163mS\033[0m!✨\n'
+exit 0
