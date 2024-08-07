@@ -1,48 +1,122 @@
-#!/bin/sh
+#!/bin/bash
+#
+## This heavily commented Bash script acts as a template for writing Bash scripts
+## while simultaneously setting up an environment for bioinformatics projects.
 
-set -eu
-
-SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
-PATH="$SCRIPT_DIR:$PATH"
-
-VALID_SPECIES="human mouse"
-VALID_ALIGNERS="bwa hisat2 bowtie2 star subread-align subjunct"
-GENOMES_DIR="$HOME/genomes"
-GENOMES_MIRROR="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA"
-WGET_OPTS="--no-verbose --no-parent --no-directories"
-
-# Use strings instead of associative arrays
-GCA_MAP="mouse:000/001/635/GCA_000001635.9_GRCm39 human:000/001/405/GCA_000001405.15_GRCh38"
-PREFIX_MAP="mouse:GCA_000001635.9_GRCm39_full_analysis_set human:GCA_000001405.15_GRCh38_full_analysis_set"
-
-pr_info() { printf "\033[1;34m[INFO] %s\033[0m\n" "$1"; }
-pr_error() { printf "\033[1;31m[ERROR] %s\033[0m\n" "$1" >&2; }
-bail() { pr_error "$1"; exit 1; }
-
-validate() {
-    case " $2 " in
-        *" $1 "*) return 0 ;;
-        *) return 1 ;;
-    esac
+usage()
+{
+	printf "Usage: %s [options]\n" "$0"
+	printf "Options:\n"
+	printf "  -h, --help    Show this help message and exit\n"
+	printf "  -v, --verbose Enable verbose output\n"
+	printf "  -d DIR        Specify a directory\n"
+	# Add more options and their descriptions here
 }
 
-success() {
-    if [ -t 1 ]; then
-        colors=$(tput colors 2>/dev/null || echo 8)
-        if [ "$colors" -ge 8 ]; then
-            printf '\033[31mS\033[33mU\033[32mC\033[36mC\033[34mE\033[35mS\033[31mS\033[0m!\n'
-        else
-            echo 'SUCCESS!'
-        fi
-    else
-        echo 'SUCCESS!'
-    fi
+# Safety first! We can set some options to make the script "safer".
+# Use `set` to set shell options so that invoking the script
+# with `bash <script_name>` does not break the script.
+
+# Exit immediately if a command exits with a non-zero status.
+# This is the same as `set -e`. Append "|| true" if you expect an error.
+set -o errexit
+
+# Do not allow use of undefined variables. Same as `set -u`.
+set -o nounset
+
+# Define functions like this (without the `function` keyword)
+err()
+{
+	printf "Error [%s]: %s\n" "$(date +'%Y-%m-%dT%H:%M:%S%z')" "$*" >&2
 }
 
-get_map_value() {
-    echo "$2" | sed -n "s/.*$1:\([^ ]*\).*/\1/p"
+# Function to print the error and exit with a non-zero status
+bail()
+{
+	err "$*"
+	exit 1
 }
 
+# Catch the error in case a pipeline element fails (returns non-zero)
+# Note that this does not catch every error, but a script that works
+# with `set -o pipefail` will always work without it, while the opposite is not true.
+# Note that `set -o pipefail` is not POSIX-compliant, so we can add a check for POSIX mode.
+if [ "${POSIXLY_CORRECT:-}" != "" ]; then
+	err "POSIXLY_CORRECT is set; some features may be disabled"
+else
+	set -o pipefail
+fi
+
+check_bash_version()
+{
+	if [ "${BASH_VERSINFO[*]}" = "" ] || [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+		bail "Bash version 4 or later is required"
+	fi
+}
+
+# Uncomment to print each command before it is executed. Useful for debugging.
+# This is the same as `set -x` or invoking the script with `bash -x`.
+# set -o xtrace
+
+# Global variables
+SCRIPTS_DIR=$(cd "$(dirname "$0")" && pwd)
+GENOMES_DIR="$SCRIPTS_DIR/../genomes"
+
+# Declare and assign variables separately to avoid masking errors
+export SCRIPTS_DIR
+export GENOMES_DIR
+
+# Optionally, add the script directory to the PATH
+# PATH="${SCRIPTS_DIR}:${PATH}"
+# echo "export PATH=\"${SCRIPTS_DIR}:\$PATH\"" >> "$HOME/.bashrc"
+
+# Or set an alias
+# echo "alias $0='${SCRIPTS_DIR}/$0'" >> "$HOME/.bashrc"
+
+# Set up genomes: download files with wget
+init_mouse_genome() {
+    URL="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/seqs_for_alignment_pipelines.ucsc_ids"
+    FILES=$(curl -s "$URL/" | grep -oP '(?<=href=")[^"]*' | grep -v '/$')
+
+    mkdir -p "$GENOMES_DIR/mouse"
+
+    for f in $FILES; do
+	wget -q --no-parent --no-directories -P "$GENOMES_DIR/mouse" "$URL/$f" &
+    done
+    echo "Downloading mouse genome. This may take a while..."
+    wait
+    "$SCRIPTS_DIR"/SUCCESS
+
+    # TODO: Extract the files
+    # TODO: compress the fai with bgzip
+}
+
+# demultplex Illumina sequencing data with bcl2fastq
+# assumes that the run folder contains ## a valid SampleSheet.csv
+# TODO: copy the binary to aws s3 so that it can be downloaded if unavailable
+demultiplex_bcl2fastq()
+{
+	local run_folder=$1
+	local output_folder=$2
+
+	# run bcl2fastq with the same flags as a default NextSeq run
+	bcl2fastq --no-lane-splitting \
+		--ignore-missing-bcls \
+		--ignore-missing-filter \
+		--ignore-missing-positions \
+		--ignore-missing-controls \
+		--auto-set-to-zero-barcode-mismatches \
+		--find-adapters-with-sliding-window \
+		--adapter-stringency 0.9 \
+		--mask-short-adapter-reads 35 \
+		--minimum-trimmed-read-length 35 \
+		-R "$run_folder" \
+		-o "$output_folder"
+	# --sample-sheet "$sample_sheet" \
+	echo "Demultiplexing complete"
+}
+
+# Call main function
 align_reads() {
     local aligner="$1" r1_fastq="$2" r2_fastq="$3" reference="$4"
     local align_opts="-p $(nproc) --mm -1 $r1_fastq -2 $r2_fastq -x $reference"
@@ -61,48 +135,6 @@ align_to_bam() {
         samtools fixmate -@ "$(nproc)" -m - - |
         samtools sort -@ "$(nproc)" - |
         samtools markdup -@ "$(nproc)" - "$bam_file"
-}
-
-download_genome_component() {
-    local species="$1" component="$2" prefix="$3" gca="$4"
-    local url="$GENOMES_MIRROR/$gca/seqs_for_alignment_pipelines.ucsc_ids"
-    case "$component" in
-        fasta)
-            wget $WGET_OPTS "$url/${prefix}.fna.fai"
-            wget $WGET_OPTS -O "${prefix}.fna.gz" "$url/${prefix}.fna.gz"
-            gunzip "${prefix}.fna.gz"
-            ;;
-        bowtie|bwa|hisat2)
-            local file="${prefix}.fna.${component}_index.tar.gz"
-            wget $WGET_OPTS -O "$file" "$url/$file"
-            tar -xzvf "$file" && rm "$file"
-            ;;
-        gff|gtf)
-            wget $WGET_OPTS -O "${prefix}.refseq_annotation.${component}.gz" "$url/${prefix}.refseq_annotation.${component}.gz"
-            gunzip "${prefix}.refseq_annotation.${component}.gz"
-            ;;
-        *) pr_error "Invalid component: $component"; return 1 ;;
-    esac
-    pr_info "${component} for $species downloaded and extracted."
-}
-
-init_genome() {
-    local species="$1"; shift
-    local prefix=$(get_map_value "$species" "$PREFIX_MAP")
-    local gca=$(get_map_value "$species" "$GCA_MAP")
-    [ -z "$prefix" ] || [ -z "$gca" ] && bail "Invalid species. Use 'mouse' or 'human'."
-
-    mkdir -p "$GENOMES_DIR/$species"
-    cd "$GENOMES_DIR/$species" || bail "Failed to change directory"
-
-    local components="$*"
-    [ -z "$components" ] && components="fasta bowtie bwa hisat2 gff gtf"
-
-    for component in $components; do
-        download_genome_component "$species" "$component" "$prefix" "$gca"
-    done
-
-    pr_info "Requested $species genome components downloaded and extracted successfully."
 }
 
 bam_to_cram() {

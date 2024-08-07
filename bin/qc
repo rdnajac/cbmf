@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Check if input directory is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <input_dir> [output_dir]"
+    exit 1
+fi
+
+# Define variables
+ENV_NAME="qc"
+MEMSIZE=4096
+INPUT_DIR="$1"
+OUT_DIR="${2:-$(dirname "$INPUT_DIR")/fastqc}"
+
+# Function to create and install tools in the micromamba environment
+setup_environment() {
+    micromamba create -n "$ENV_NAME" -c conda-forge -c bioconda fastqc gatk4 picard multiqc -y
+}
+
+# Function to run FastQC on all appropriate files
+run_fastqc() {
+    local input_dir="$1"
+    local out_dir="$2"
+
+    # Create output directory
+    mkdir -vp "$out_dir"
+
+    # Run FastQC with these flags:
+    # -t            Number of threads (pass nproc to use all available cores)
+    # --memory      Memory limit for java processes
+    # --noextract   Do not extract the results
+    # -o            Output directory
+    micromamba run -n "$ENV_NAME" fastqc -t "$(nproc)" --memory "$MEMSIZE" --noextract -o "$out_dir" "$input_dir"/*
+}
+
+# Main script execution
+# setup_environment
+# if the environment does not exist, create it
+if ! micromamba env list | grep -q "$ENV_NAME"; then
+    setup_environment
+fi
+run_fastqc "$INPUT_DIR" "$OUT_DIR"

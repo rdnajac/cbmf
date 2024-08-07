@@ -15,35 +15,6 @@ export CYN='\033[0;36m'
 export WHT='\033[0;37m'
 export RESET='\033[0m'
 
-# Helper functions to print colored messages
-warn()
-{
-	printf "${RED}%s${RESET}\n" "$1" >&2
-}
-
-info()
-{
-	printf "${BLU}%s${RESET}\n" "$1" >&2
-}
-
-# Quit with an error message and optional exit status
-bail()
-{
-	warn "$1"
-	exit "${2:-1}"
-}
-
-# assert()
-# {
-# 	local condition="$1"
-# 	shift
-# 	[[ "$condition" ]] || bail "$@"
-# }
-
-# # Error Codes
-# readonly E_COMMAND_NOT_EXECUTABLE=126
-# readonly E_COMMAND_NOT_FOUND=127
-
 # # Check if a command is available
 # ensure_installed()
 # {
