@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 # Default values
 GENOMES_MIRROR="https://ftp.ncbi.nlm.nih.gov/genomes/all"
-ALIGNMENT_DIR="seqs_for_alignment_pipelines.ucsc_ids"
+PIPELINE_DIR="seqs_for_alignment_pipelines.ucsc_ids"
+
 GENOMES_DIRECTORY="$HOME/genomes"
 SPECIES=""
 INDEX=""
@@ -20,58 +21,52 @@ usage() {
 	exit 1
 }
 
+usage_and_exit() {
+	usage
+	exit 1
+}
+
 # Parse command-line options
 while [[ "$1" != "" ]]; do
 	case $1 in
-		-s | --species)
-			shift
-			SPECIES=$1
-			;;
-		-i | --index)
-			shift
-			INDEX=$1
-			;;
-		-r | --refseq)
-			shift
-			REFSEQ=$1
-			;;
-		-h | --help)
-			usage
-			;;
-		*)
-			echo "Invalid option: $1" >&2
-			usage
-			;;
+		-s | --species) shift; SPECIES=$1 ;;
+		-i | --index)   shift; INDEX=$1 ;;
+		-r | --refseq)  shift; REFSEQ=$1 ;;
+		-h | --help)    usage ;;
+		*) echo "Invalid option: $1" >&2; usage ;;
 	esac
 	shift
 done
 
-# Check for required parameters
-if [[ -z "$SPECIES" ]]; then
-	echo "Species is required." >&2
-	usage
+# Check for required arguments
+if [ -z "$SPECIES" ]; then
+	usage_and_exit
 fi
 
 # Define species-specific variables
-if [[ "$SPECIES" == "mouse" ]]; then
+if [ "$SPECIES" = "mouse" ]; then
 	LATEST="GCA_000001635.9_GRCm39"
 	URL="${GENOMES_MIRROR}/GCA/000/001/635/${LATEST}/${ALIGNMENT_DIR}"
-elif [[ "$SPECIES" == "human" ]]; then
+elif [ "$SPECIES" = "human" ]; then
 	LATEST="GCA_000001405.15_GRCh38"
 	URL="${GENOMES_MIRROR}/GCA/000/001/405/${LATEST}/${ALIGNMENT_DIR}"
 else
 	echo "Invalid species: $SPECIES" >&2
-	usage
+	exit 1
 fi
 
-# Create directory for species
-mkdir -p "$GENOMES_DIRECTORY/$SPECIES"
+mkdir -p "${GENOMES_DIRECTORY}/${SPECIES}"
+
+wget_file_to_stdout() {
+	local url=$1
+	wget -q -O - "$url"
+}
 
 # Functions for downloading files
 download_file() {
-	local suffix=$1
-	local url="${URL}/${LATEST}_full_analysis_set${suffix}"
-	local dest="${GENOMES_DIRECTORY}/${SPECIES}/${LATEST}_full_analysis_set${suffix}"
+	suffix=$1
+	url="${URL}/${LATEST}_full_analysis_set${suffix}"
+	dest="${GENOMES_DIRECTORY}/${SPECIES}/${LATEST}_full_analysis_set${suffix}"
 
 	echo "Downloading ${suffix}..."
 	wget -e robots=off --no-parent --cut-dirs=9 -q -O "$dest" "$url"

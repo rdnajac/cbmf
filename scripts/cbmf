@@ -1,19 +1,7 @@
 #!/bin/bash
-# -*- tab-width: 8; encoding: utf-8; -*-
-#==============================================================================
-## @file cbmf
-## @author Ryan Najac <ryan.najac@columbia.edu>
-## @copyright Public Domain
-## @version 0.9
-## @brief Command-line Bioinformatics Meta-Framework
-## @details Configures an extensible framework for bioinformatics projects
-## @par URL
-## https://github.com/rdnajac/cbmf
-#===============================================================================
+# CBMF - Command-line Bioinformatics Meta-Framework
 
-# Safety first!
-set -eu
-#===============================================================================
+set -eu # Safety first!
 
 # This is the same invoking both `set -o errexit` and `set -o nounset`.
 # It causes the script to exit immediately if a command exits with a 
@@ -52,25 +40,28 @@ CBMF_DIR=$(cd "$(dirname "$0")" && pwd)
 # when we invoke this script across ssh like ssh user@host 'bash -s' < script,
 # the script is executed in the home directory of the user, and that is
 # correctly captured by the script
-
+# todo add_init that sets the CBMF_DIR to the current directory
+# reads from user input 
 export BIN_DIR="${CBMF_DIR}/bin"
 export GENOMES_DIR="${CBMF_DIR}/genomes"
 export SCRIPTS_DIR="${CBMF_DIR}/scripts"
 export MAMBA_EXE="${BIN_DIR}/micromamba"
 export MAMBA_ROOT_PREFIX="${CBMF_DIR}/mamba_root"
 
+# This is only env variable relevant if you are using R with reticulate,
+# an R package that allows you to run Python code in R.
+export RETICULATE_MINICONDA_ENABLED=FALSE
+# Test this by running the following in R:
+# > library(reticulate)
+# > os <- import("os")
+#
+# R should NOT prompt you to install miniconda
+
 # micromamba configuration:
 # micromamba config append channels bioconda
 # micromamba config append channels conda-forge
 # micromamba config append channels nodefaults
 # micromamba config set channel_priority strict
-
-RETICULATE_MINICONDA_ENABLED=FALSE
-# This is only env variable relevant if you are using R with reticulate,
-# an R package that allows you to run Python code in R.
-# > library(reticulate)
-# > os <- import("os")
-# R should NOT prompt you to install miniconda
 
 main() {
 	# parse command line arguments
@@ -83,7 +74,7 @@ main "$@"
 
 
 # Call main function
-align_reads() {
+align_PE_reads() {
 	local aligner="$1" r1_fastq="$2" r2_fastq="$3" reference="$4"
 	local align_opts="-p $(nproc) --mm -1 $r1_fastq -2 $r2_fastq -x $reference"
 	case "$aligner" in
@@ -121,15 +112,7 @@ cram_to_bam() {
 	pr_info "Converted $cram_file to $bam_file"
 }
 
-run_fastqc() {
-	local out_dir=${1:-fastqc}
-	local memsize=4096
-	mkdir -p "$out_dir"
-	fastqc -t "$(nproc)" --memory "$memsize" --noextract -o "$out_dir" ./*
-	pr_info "FastQC analysis completed. Results in $out_dir"
-}
-
-cmd_align() {
+_align() {
 	local species aligner input_dir output_dir
 	while getopts ":s:a:i:o:h" opt; do
 		case $opt in
@@ -165,10 +148,12 @@ cmd_align() {
 	pr_info "Alignment completed. BAM files are in $output_dir"
 }
 
-
+# RStudio
+# ==============================================================================
 # TODO: if [ -n "$RSTUDIO" ] or if [ -n "$RSTUDIO_CONSOLE" ]
 # note: this is how R sets the prompt: declare a variable, echo it, then unset it
 # PROMPT_COMMAND=(_RS_PWD=$(dirs +0); echo -ne "\033]0;${_RS_PWD}\007"; unset _RS_PWD)
+
 # cmd_align_help() {
 # 	cat << EOF
 # Usage: $(basename "$0") align [options]
