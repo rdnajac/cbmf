@@ -1,7 +1,8 @@
-name: RNAseq
+name: QC
 channels:
   - bioconda
   - conda-forge
 dependencies:
-  - bowtie2
-  - subread
+  - fastqc
+  - multiqc
+  - GATK4

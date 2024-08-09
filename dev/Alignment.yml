@@ -1,7 +1,11 @@
-name: RNAseq
+name: Alignment
 channels:
   - bioconda
   - conda-forge
 dependencies:
+  - samtools
+  - bwa
   - bowtie2
+  - hisat2
+  - STAR
   - subread
