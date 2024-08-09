@@ -1,5 +1,4 @@
 #!/bin/bash
-
 SUCCESS()
 {
 	# check if 256 color support is available
@@ -12,6 +11,7 @@ SUCCESS()
 	fi
 }
 
-# If we're being executed, run the function
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] && SUCCESS
+# print U+2639 with escape valies
+printf '\u8726\n'
+printf '\U0001F609\n'
 

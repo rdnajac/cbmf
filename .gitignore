@@ -3,14 +3,9 @@
 # ignore hidden files and directories
 .*
 
-# the wiki has its own repo
-wiki/
-
-data/
-
-# don't track R project files
-.Rproj.user
-
+# ignore build files and generated files
+bin/
+genomes/
 
 # latex build files
 *.aux

@@ -1,36 +1,3 @@
-[submodule "htslib"]
-	path = lib/htslib
-	url = https://github.com/samtools/htslib
-[submodule "samtools"]
-	path = lib/samtools
-	url = https://github.com/samtools/samtools
-[submodule "bwa"]
-	path = lib/bwa
-	url = https://github.com/lh3/bwa
-[submodule "hisat2"]
-	path = lib/hisat2
-	url = https://github.com/DaehwanKimLab/hisat2
-[submodule "bowtie2"]
-	path = lib/bowtie2
-	url = https://github.com/BenLangmead/bowtie2
-[submodule "STAR"]
-	path = lib/STAR
-	url = https://github.com/alexdobin/STAR
-[submodule "DROMPAplus"]
-	path = lib/DROMPAplus
-	url = https://github.com/rnakato/DROMPAplus
-[submodule "phantompeakqualtools"]
-	path = lib/phantompeakqualtools
-	url = https://github.com/kundajelab/phantompeakqualtools
-[submodule "idr"]
-	path = lib/idr
-	url = https://github.com/nboley/idr
-[submodule "MACS"]
-	path = lib/MACS
-	url = https://github.com/macs3-project/MACS
-[submodule "stringtie"]
-	path = lib/stringtie
-	url = https://github.com/gpertea/stringtie
-[submodule "subread"]
-	path = lib/subread
-	url = https://github.com/ShiLab-Bioinformatics/subread
+[submodule "wiki"]
+	path = wiki
+	url = https://github.com/rdnajac/cbmf/wiki

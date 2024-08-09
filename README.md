@@ -1,34 +1,40 @@
 # 🧬 Combinatorial Bioinformatic Meta-Framework
 
-Notes, scripts, and resources to streamline and multiplex the analysis of
-high-throughput sequencing data, from raw reads to biological insights.
-
-## 📚 Table of Contents
-
-- [🔭 Overview](#-overview)
-- [🚀 Getting Started](#-getting-started)
-  - [📦 Package Management](#-package-management)
-- [🧬 Sequencing Workflows](#-sequencing-workflows)
-  - [💾 Data Acquisition](#-data-acquisition)
-  - [🔀 Demultiplexing](#-demultiplexing)
-  - [🔍 Quality Control](#-quality-control)
-  - [🏗️ Alignment](#-alignment)
-  - [🔬 Assembly and Quantification](#-assembly-and-quantification)
-  - [📊 Visualization](#-visualization)
-  - [📈 Differential Expression](#-differential-expression)
-- [📑 Additional Resources](#-additional-resources)
+A single point of access to thousands of biomedical research software packages.
 
 ## 🔭 Overview
 
-This repository contains tools to automate key bioinformatic tasks:
+The Combinatorial Bioinformatic Meta-Framework (CBMF) is a collection of tools
+and resources for analyzing high-throughput sequencing data. It leverages the
+power of the `micromamba` package manager to install software and manage
+dependencies. The framework is designed to be modular, allowing users to
+select the tools they need for their specific analysis. The CBMF is intended
+to be a one-stop-shop for bioinformatics analysis, providing a unified interface
+to a wide range of software packages.
 
-- Data acquisition and storage
-- Quality control
-- Alignment to reference genomes
-- Transcript assembly and quantification
-- Differential expression analysis
-- Visualization of results
-- Package management and dependency resolution
+## 📦 Package Management
+
+Bundled with the CBMF is the lightweight package manager
+[`micromamba`](https://mamba.readthedocs.io/en/latest/index.html)
+with access to the entire suite of bioinformatics software available on
+[Bioconda](https://bioconda.github.io/index.html), a channel for the
+[conda](https://docs.conda.io/en/latest/) package manager.[^1]
+
+Micromamba is not a `conda` distribution, but a statically linked C++ executable
+that can be used to install `conda` environments. It is a lightweight binary
+that handles the installation of conda environments without root privileges,
+or the need for a base environment or a Python installation, making it ideal
+for use in high-performance computing clusters.
+
+CBMF comes with some sensible defaults and pre-configured environments for
+common bioinformatics tasks, but users can easily create their own environments
+using the [`Mamba` API](https://mamba.readthedocs.io/en/latest/index.html).
+
+## 📚 Documentation
+
+CBMF is designed to be user-friendly, with detailed documentation and tutorials
+to help users get started. The documentation is organized into sections based
+on the type of analysis being performed, such as RNA-Seq, ChIP-Seq, and WGS.
 
 There is also a wiki with additional resources and tutorials.
 You can access the wiki by clicking on the tab at the top of the page
@@ -36,36 +42,16 @@ or by following [this link](https://github.com/rdnajac/cbmf/wiki).
 
 ## 🚀 Getting Started
 
-Clone the repository:
+Clone the repository, navigate to the directory, and run the `init.sh` script:
 
 ```sh
-git clone https://github.com/rdnajac/cbmf.git
+git clone https://github.com/rdnajac/cbmf && cd cbmf && ./init.sh
 ```
 
-### 📦 Package Management
-
-The only other thing we need to install is `micromamba`, a lightweight package manager
-that can be used to install `conda` environments, like bioconda[^1].
-
-[^1]: Grüning, Björn, Ryan Dale, Andreas Sjödin, Brad A. Chapman, Jillian Rowe, Christopher H. Tomkins-Tinch, Renan Valieris, the Bioconda Team, and Johannes Köster. 2018. Bioconda: Sustainable and Comprehensive Software Distribution for the Life Sciences. Nature Methods, 2018 doi:10.1038/s41592-018-0046-7.
+or simply run the init script:
 
 ```sh
-yes | "$SHELL" <(curl -L micro.mamba.pm/install.sh)
-```
-
-Piping `yes` into the script will accept the defaults:
-
-```console
-Micromamba binary folder? [~/.local/bin]
-Init shell (bash)? [Y/n]
-Configure conda-forge? [Y/n]
-Prefix location? [~/micromamba]
-```
-
-Activate shell completion and restart the shell:
-
-```sh
-micromamba shell completion && exec "$SHELL"
+"$SHELL" <(curl -s https://raw.githubusercontent.com/rdnajac/cbmf/main/init.sh)
 ```
 
 ## 🧬 Sequencing Workflows
@@ -98,27 +84,6 @@ A quick note on file formats:
 | md5                    | Checksum for file integrity                 | .md5                                 | Human readable; usually plain text output from `md5sum` itself |
 
 Would you like me to explain or elaborate on any part of this table?
-
-### 💾 Data Acquisition
-
-If you used a core facility, Azenta, or another commercial service for
-sequencing, they will send link to directly download the de-multiplexed
-FASTQ files, usually with corresponding md5 checksums.
-
-For instructions on how to download data from Azenta's sFTP server,
-click [here](https://3478602.fs1.hubspotusercontent-na1.net/hubfs/3478602/13012-M%26G%200222%20sFTP%20Guide-3.pdf).
-
-> [!NOTE]
-> sFTP (Secure File Transfer Protocol) provides an encrypted channel for data transfer.\
-> The md5 checksum is a unique character sequence that is computed from the
-> contents of a file and changes if the file is modified.
-> Read the original [RFC 1321](https://www.ietf.org/rfc/rfc1321.txt).
-
-Otherwise, consult the [documentation](https://developer.basespace.illumina.com/docs)
-for the appropriate Illumina sequencer:
-
-- [MiSeq](https://support.illumina.com/sequencing/sequencing_instruments/miseq/documentation.html)
-- [NextSeq500](https://support.illumina.com/sequencing/sequencing_instruments/nextseq-550/documentation.html)
 
 ### 🔀 Demultiplexing
 
@@ -166,13 +131,12 @@ over-representation of certain sequences.
 | [Picard Tools](https://broadinstitute.github.io/picard/)[^3]             | Manipulates high-throughput sequencing data               | Comes packaged with [GATK4](https://gatk.broadinstitute.org/hc/en-us/articles/360036194592-Getting-started-with-GATK4) |
 | [MultiQC](https://multiqc.info/)[^4]                                     | Aggregates results from bioinformatics analyses           | [GitHub](https://github.com/ewels/MultiQC)                                                                             |
 
-[^2]: Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data. Available online at: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+[^2]: Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data. Available online at: <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>
 
 [^3]: McKenna A, Hanna M, Banks E, et al. The Genome Analysis Toolkit: a MapReduce framework for analyzing next-generation DNA sequencing data. Genome Res. 2010;20(9):1297-1303. [PMID: 20644199](https://pubmed.ncbi.nlm.nih.gov/20644199/)
 
-[^4]: Broad Institute. Picard Tools. http://broadinstitute.github.io/picard/
+[^4]: Broad Institute. Picard Tools. <http://broadinstitute.github.io/picard/>
 
-[^5]: Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016;32(19):3047-8. [PMID: 27312411](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 
 To run these QC applications, you need a suitable Java Runtime Environment (JRE).
 Let `micromamba` handle the installation of the JRE and the tools from bioconda:
@@ -262,3 +226,7 @@ Shout out to these awesome docs:
 - [tao-of-tmux](https://tao-of-tmux.readthedocs.io/)
 - [mamba](https://mamba.readthedocs.io/)
 - [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/index.html)
+
+Thank you to my labmates in the [Palomero Lab](http://palomerolab.org/) 
+for their feedback and guidance.
+

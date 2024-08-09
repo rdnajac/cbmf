@@ -1,0 +1,23 @@
+#!/bin/sh
+for cmd in tar bzip2 curl; do
+	if ! command -v "$cmd" > /dev/null 2>&1; then
+		err_exit "$cmd is required but not found"
+	fi
+done
+
+# Determine platform and architecture
+case "$(uname)-$(uname -m)" in
+	Linux-x86_64)   PLATFORM_ARCH="linux-64" ;;
+	Linux-aarch64)   PLATFORM_ARCH="linux-aarch64" ;;
+	Linux-ppc64le)   PLATFORM_ARCH="linux-ppc64le" ;;
+	Darwin-x86_64)   PLATFORM_ARCH="osx-64" ;;
+	Darwin-arm64)   PLATFORM_ARCH="osx-arm64" ;;
+	*)   err_exit "Unsupported platform-architecture combination" ;;
+esac
+
+# The following magic URL always returns the latest available version of micromamba,
+# and the bin/micromamba part is automatically extracted using tar.
+RELEASE_URL="https://micro.mamba.pm/api/micromamba/$PLATFORM_ARCH/latest"
+
+# Create directory, download and extract micromamba
+curl -Ls "$RELEASE_URL" | tar -xj bin/micromamba && chmod +x bin/micromamba
