@@ -4,13 +4,19 @@ A single point of access to thousands of biomedical research software packages.
 
 ## 🔭 Overview
 
-The Combinatorial Bioinformatic Meta-Framework (CBMF) is a collection of tools
-and resources for analyzing high-throughput sequencing data. It leverages the
-power of the `micromamba` package manager to install software and manage
-dependencies. The framework is designed to be modular, allowing users to
-select the tools they need for their specific analysis. The CBMF is intended
-to be a one-stop-shop for bioinformatics analysis, providing a unified interface
-to a wide range of software packages.
+The Combinatorial Bioinformatic Meta-Framework (CBMF) is a collection of
+tools and resources for analyzing high-throughput sequencing data. It
+leverages the power of the `micromamba` package manager to install software
+and manage dependencies. The framework is designed to be modular, allowing
+users to select the tools they need for their specific analyses.
+
+## 🚀 Getting Started
+
+Clone the repository...
+
+```sh
+git clone https://github.com/rdnajac/cbmf
+```
 
 ## 📦 Package Management
 
@@ -26,6 +32,12 @@ that handles the installation of conda environments without root privileges,
 or the need for a base environment or a Python installation, making it ideal
 for use in high-performance computing clusters.
 
+If you want to install it on your own, skip the init scripts and run:
+
+```
+"$SHELL" <(curl -L micro.mamba.pm/install.sh)
+```
+
 CBMF comes with some sensible defaults and pre-configured environments for
 common bioinformatics tasks, but users can easily create their own environments
 using the [`Mamba` API](https://mamba.readthedocs.io/en/latest/index.html).
@@ -40,19 +52,12 @@ There is also a wiki with additional resources and tutorials.
 You can access the wiki by clicking on the tab at the top of the page
 or by following [this link](https://github.com/rdnajac/cbmf/wiki).
 
-## 🚀 Getting Started
-
-Clone the repository, navigate to the directory, and run the `init.sh` script:
-
-```sh
-git clone https://github.com/rdnajac/cbmf && cd cbmf && ./init.sh
-```
-
-or simply run the init script:
-
-```sh
-"$SHELL" <(curl -s https://raw.githubusercontent.com/rdnajac/cbmf/main/init.sh)
-```
+> [!TIP]
+> These files are written using [GitHub Flavored Markdown \(GFM\)](https://github.github.com/gfm/),
+> a superset of the [original](https://daringfireball.net/projects/markdown/syntax)
+> lightweight markup language with plain text formatting syntax.  GFM gives us
+> additional features (like tables, footnotes, and alerts like this)
+> while maintaining readability in plain text.
 
 ## 🧬 Sequencing Workflows
 
@@ -65,8 +70,7 @@ A quick note on file formats:
 | FASTQ                  | Raw reads from sequencer                    | .fastq, .fastq.gz                    | Human readable; often compressed (.gz)                         |
 | FASTA                  | Sequence data                               | .fasta, .fa, .fasta.gz, .fa.gz       | Human readable; often compressed (.gz)                         |
 | GTF                    | Gene Transfer Format (GFF2 variant)         | .gtf, .gtf.gz                        | Human readable; can be compressed                              |
-| GFF2                   | General Feature Format v2                   | .gff, .gff2, .gff.gz, .gff2.gz       | Human readable; can be compressed                              |
-| GFF3                   | General Feature Format v3                   | .gff3, .gff3.gz                      | Human readable; can be compressed                              |
+| GFF                    | General Feature Format (v                   | .gff3, .gff3.gz                      | Human readable; can be compressed                              |
 | SAM                    | Sequence Alignment/Map                      | .sam, .sam.gz                        | Human readable; can be compressed                              |
 | BAM                    | Binary Alignment/Map                        | .bam                                 | Binary (compressed); not human readable                        |
 | CRAM                   | Compressed Reference-oriented Alignment Map | .cram                                | Binary (compressed); not human readable                        |
@@ -75,15 +79,7 @@ A quick note on file formats:
 | TSV                    | Tab-Separated Values                        | .tsv, .tsv.gz                        | Human readable; can be compressed                              |
 | CSV                    | Comma-Separated Values                      | .csv, .csv.gz                        | Human readable; can be compressed                              |
 | TXT                    | Plain Text                                  | .txt, .txt.gz                        | Human readable; can be compressed                              |
-| Bowtie2 Index          | Bowtie2 aligner index                       | .bt2, .bt2.tar.gz                    | Binary; not human readable; often compressed                   |
-| BWA Index              | BWA aligner index                           | .bwt, .sa, .pac, .ann, .amb, .tar.gz | Binary; not human readable; often compressed                   |
-| HISAT2 Index           | HISAT2 aligner index                        | .ht2, .ht2.tar.gz                    | Binary; not human readable; often compressed                   |
-| Samtools Index         | Samtools index for FASTA                    | .fai                                 | Human readable                                                 |
-| GenBank Assembly (GCA) | Archival record owned by submitter          | .gca                                 | Binary; not human readable                                     |
-| RefSeq Assembly (GCF)  | NCBI-derived copy of GenBank assembly       | .gcf                                 | Binary; not human readable                                     |
 | md5                    | Checksum for file integrity                 | .md5                                 | Human readable; usually plain text output from `md5sum` itself |
-
-Would you like me to explain or elaborate on any part of this table?
 
 ### 🔀 Demultiplexing
 
@@ -136,7 +132,6 @@ over-representation of certain sequences.
 [^3]: McKenna A, Hanna M, Banks E, et al. The Genome Analysis Toolkit: a MapReduce framework for analyzing next-generation DNA sequencing data. Genome Res. 2010;20(9):1297-1303. [PMID: 20644199](https://pubmed.ncbi.nlm.nih.gov/20644199/)
 
 [^4]: Broad Institute. Picard Tools. <http://broadinstitute.github.io/picard/>
-
 
 To run these QC applications, you need a suitable Java Runtime Environment (JRE).
 Let `micromamba` handle the installation of the JRE and the tools from bioconda:
@@ -213,12 +208,30 @@ Read the docs for details on experiment-specific processing and analysis:
 
 ## 📑 Additional Resources
 
+Writing guides:
+
+- [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
+- [About READMEs](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes)
+- [Art of README](https://github.com/hackergrrl/art-of-readme)
+
+Nerd stuff:
+
+- [Write a Good Technical Report](https://ieeexplore.ieee.org/document/6448763)
+- [Code Documentation](https://ieeexplore.ieee.org/abstract/document/5484109)
+- [Semantic line breaks](https://sembr.org/)
+- [Semantic Versioning](https://semver.org/)
+
+Message boards:
+
 - [Bioinformatics Stack Exchange](https://bioinformatics.stackexchange.com/)
 - [Biostars](https://www.biostars.org/)
 - [Biopython](https://biopython.org/)
+
+FAQs:
+
 - [FAQs - NCBI](https://ncbi.nlm.nih.gov/datasets/docs/v2/troubleshooting/faq/)
 
-## Acknowledgements
+## 👍 Acknowledgements
 
 Shout out to these awesome docs:
 
@@ -227,6 +240,5 @@ Shout out to these awesome docs:
 - [mamba](https://mamba.readthedocs.io/)
 - [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/index.html)
 
-Thank you to my labmates in the [Palomero Lab](http://palomerolab.org/) 
+Thank you to my labmates in the [Palomero Lab](http://palomerolab.org/)
 for their feedback and guidance.
-
