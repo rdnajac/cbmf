@@ -5,6 +5,7 @@
 
 # ignore build files and generated files
 bin/
+dat/
 genomes/
 
 # latex build files

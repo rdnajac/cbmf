@@ -10,6 +10,7 @@ SUCCESS()
 		printf 'SUCCESS!\n'
 	fi
 }
+SUCCESS
 
 # print U+2639 with escape valies
 printf '\u8726\n'

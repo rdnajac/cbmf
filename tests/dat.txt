@@ -1,2 +1,0 @@
-~/cbmf/lib/samtools/test/dat
-
