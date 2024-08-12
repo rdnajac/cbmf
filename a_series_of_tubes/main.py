@@ -1,80 +1,120 @@
 import sys
 import argparse
+from typing import List, Optional, Callable, Dict
+from pathlib import Path
 from .utils.colorprinter import ColorPrinter as pr
-from .utils.genomemanager import download_genome_file
+from .utils.genomemanager import download_genome_file, PIPELINE_FILES
 from .tests.test_colorprinter import smoke_test
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(
-        description="Combinatorial Bioinformatic Meta-Framework (CBMF) Command-Line Interface",
-    )
-
-    parser.add_argument("-V", "--version", action="version", version="CBMF v0.9")
-
-
-    command = parser.add_mutually_exclusive_group(required=True)
-    command.add_argument("--init", action="store_true")
-    command.add_argument("--qc", action="store_true")
-    command.add_argument("--test", action="store_true")
-    command.add_argument("-d", "--download", choices=["bwa_index", "samtools_index", "fasta", "hisat2_index", "refseq_gff", "refseq_gtf"])
-
-    parser.add_argument("-i", "--input")
-    parser.add_argument("-o", "--output")
-    parser.add_argument("-r", "--reference")
-
-    species = parser.add_mutually_exclusive_group()
-    species.add_argument("--human", action="store_true")
-    species.add_argument("--mouse", action="store_true")
-
+def create_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog='cbmf', description="Combinatorial Bioinformatic Meta-Framework (CBMF)")
     
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
-    group.add_argument("-q", "--quiet", action="store_true", help="suppress all output")
-
-    return parser.parse_args()
-
-def download_helper(options):
-    try:
-        if options.human:
-            species = "human"
-        elif options.mouse:
-            species = "mouse"
-        else:
-            raise ValueError("Species not specified. Use --human or --mouse.")
-        pr.info(f"Initializing {options.download} for {species}.")
-        download_genome_file(species, options.download)
-        pr.success(f"{options.download} initialization completed.")
-    except ValueError as e:
-        raise ValueError(f"Error: {str(e)}")
-    except Exception as e:
-        raise Exception(f"An unexpected error occurred: {str(e)}")
-
-def run_quality_control(options):
-    pr.info(
-        f"Running quality control on {options.input} and saving results to {options.output}."
+    # Species selection
+    parser.add_argument(
+        '--species', 
+        choices=['human', 'mouse'], 
+        help='Species to use (human or mouse)'
+    )
+    parser.add_argument(
+        '--hu', '--human', 
+        action='store_const', 
+        dest='species', 
+        const='human', 
+        help='Shortcut for human species'
+    )
+    parser.add_argument(
+        '--mo', '--mouse', 
+        action='store_const', 
+        dest='species', 
+        const='mouse', 
+        help='Shortcut for mouse species'
     )
 
-def run_test_suite():
-    smoke_test()
+    # Parent parser for common arguments
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    parent_parser.add_argument("-i", "--input-directory", type=Path, help="Input directory path")
+    parent_parser.add_argument("-o", "--output-directory", type=Path, help="Output directory path")
 
-def main():
+    # Subparsers
+    subparsers = parser.add_subparsers(dest='command', required=True)
+    
+    # Align subcommand
+    parser_align = subparsers.add_parser('align', parents=[parent_parser], help='Run alignment')
+    align_method = parser_align.add_mutually_exclusive_group(required=True)
+    align_method.add_argument('--bwa', action='store_true', help='Use BWA aligner')
+    align_method.add_argument('--hisat2', action='store_true', help='Use HISAT2 aligner')
+    align_method.add_argument('--bowtie', action='store_true', help='Use Bowtie aligner')
+
+    # QC subcommand
+    subparsers.add_parser('qc', parents=[parent_parser], help='Run quality control')
+
+    # Test subcommand
+    subparsers.add_parser('test', help='Run test suite')
+
+    # Download subcommand
+    parser_download = subparsers.add_parser('download', help='Download genome files')
+    parser_download.add_argument('--file', required=True, help='File to download')
+
+    return parser
+
+def download_helper(args: argparse.Namespace) -> None:
     try:
-        args = parse_arguments()
-        
-        if args.download:
-            download_helper(args)
-        elif args.qc:
-            run_quality_control(args)
-        elif args.test:
-            run_test_suite()
-
+        species = args.species
+        if not species:
+            raise ValueError("Species not specified. Use --species, --hu, or --human for human, or --mo, or --mouse for mouse.")
+        pr.info(f"Initializing download for {args.file} for {species}.")
+        download_genome_file(species, args.file)
+        pr.success(f"{args.file} download completed.")
     except ValueError as e:
         pr.error(f"Error: {str(e)}")
-        return 1
+        raise
     except Exception as e:
         pr.error(f"An unexpected error occurred: {str(e)}")
-        return 2
+        raise
 
+def run_quality_control(args: argparse.Namespace) -> None:
+    pr.info(f"Running quality control on {args.input_directory} and saving results to {args.output_directory}.")
+    # Implement the actual QC logic here
+
+def run_alignment(args: argparse.Namespace) -> None:
+    pr.info(f"Aligning {args.input_directory} to {args.reference} and saving results to {args.output_directory}.")
+    
+    # Dictionary of aligners
+    aligners: Dict[str, Callable[[Path, Path, Path], None]] = {
+        'bwa': "align_with_bwa",
+        'hisat2': "align_with_hisat2",
+        'bowtie': "align_with_bowtie"
+    }
+    pr.info(f"Using {args.command} aligner.")
+
+def run_test_suite(args: argparse.Namespace) -> None:
+    pr.info("Running test suite")
+    smoke_test()
+
+COMMAND_HANDLERS: Dict[str, Callable[[argparse.Namespace], None]] = {
+    "download": download_helper,
+    "qc": run_quality_control,
+    "align": run_alignment,
+    "test": run_test_suite,
+}
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = create_parser()
+    args = parser.parse_args(argv)
+    
+    if not args.command:
+        parser.print_help()
+        return 0
+
+    try:
+        handler = COMMAND_HANDLERS.get(args.command)
+        if handler:
+            handler(args)
+        else:
+            raise ValueError(f"Unknown command: {args.command}")
+    except Exception as e:
+        pr.error(str(e))
+        return 1
     return 0
 
 if __name__ == "__main__":

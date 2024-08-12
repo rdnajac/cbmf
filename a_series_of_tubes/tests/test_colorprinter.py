@@ -1,5 +1,6 @@
-# tests/test_colorprinter.py    
+# tests/test_colorprinter.py
 from ..utils import ColorPrinter as pr
+
 
 def smoke_test():
     for status in ["success", "info", "warning", "error"]:

@@ -79,4 +79,3 @@ class ColorPrinter:
     def error(cls, msg: str):
         """Prints an error message in red."""
         cls.print_status("error", msg)
-

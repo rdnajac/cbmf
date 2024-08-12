@@ -10,12 +10,18 @@ leverages the power of the `micromamba` package manager to install software
 and manage dependencies. The framework is designed to be modular, allowing
 users to select the tools they need for their specific analyses.
 
-## 🚀 Getting Started
-
+## 🚀 Quick Start
+ 
 Clone the repository...
 
 ```sh
 git clone https://github.com/rdnajac/cbmf
+```
+
+and the initialization script.
+
+```sh
+cd cbmf && chmod +x INSTALL && ./INSTALL
 ```
 
 ## 📦 Package Management

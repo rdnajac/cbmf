@@ -1,13 +1,8 @@
-#!/bin/bash
-set -euo pipefail
-IFS=$'\n\t'
-
-set -x
-
+#!/bin/sh
+set -eu
 
 # TODO: add micromamba wrappers
 # TODO: add stringtie
-REF_GTF="${GENOMES_DIR}/mouse/GCA_000001635.9_GRCm39_full_analysis_set.refseq_annotation.gtf"
 featureCounts -T "$NUM_THREADS" --verbose -t exon -g gene_id --countReadPairs \
 		-a "$REF_GTF" -p -P -C -B -o "${OUT_DIR}/${OUT_PREFIX}.tsv" ./*.bam
 

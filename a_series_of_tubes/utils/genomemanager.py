@@ -75,4 +75,3 @@ def download_genome_file(
 
     except subprocess.CalledProcessError as e:
         raise subprocess.CalledProcessError(f"Error downloading {file}: {str(e)}")
-
