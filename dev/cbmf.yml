@@ -1,11 +1,12 @@
-name: Alignment
+name: cbmf
 channels:
   - bioconda
   - conda-forge
 dependencies:
+  - fastqc
   - samtools
   - bwa
   - bowtie2
   - hisat2
-  - STAR
   - subread
+  - stringtie
