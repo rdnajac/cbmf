@@ -1,8 +1,9 @@
 import sys
-from .utils.cli import parse_arguments, validate_options
+from .utils.cli import parse_arguments
 from .utils.colorprinter import ColorPrinter as pr
 # from .utils.genomemanager import download_genome_file
 from .tests.test_colorprinter import smoke_test
+from .tests.test_cli import print_parsed_args
 
 
 def run_quality_control(options):
@@ -24,11 +25,20 @@ def download_genome_files(options):
     # TODO: Implement genome file download logic here
 
 
+def run_test_suite():
+    smoke_test()
+    print_parsed_args()
+
+
 def main():
     try:
         args = parse_arguments()
+        if args.test:
+            run_test_suite()
+        else :
+            pr.error("No test flag found")
+        # if test in args run  
         # options = validate_options(args)
-        print(args)
 
 #         if options["init"]:
 #             download_genome_files(options)
