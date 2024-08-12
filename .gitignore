@@ -16,3 +16,7 @@ genomes/
 *.synctex.gz
 *.out
 
+# python build files
+*.pyc
+*.pyo
+__pycache__/
