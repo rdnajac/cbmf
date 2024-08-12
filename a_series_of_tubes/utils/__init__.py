@@ -1,10 +1,8 @@
 # utils/__init__.py
 from .colorprinter import ColorPrinter
-from .cli import parse_arguments
-# from .genomemanager import download_genome_file
+from .genomemanager import download_genome_file
 
 __all__ = [
     "ColorPrinter",
-    "parse_arguments",
-    # "download_genome_file",
+    "download_genome_file",
 ]
