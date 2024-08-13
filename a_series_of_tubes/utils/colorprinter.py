@@ -34,7 +34,7 @@ class ColorPrinter:
 
     _color_map: Dict[str, Color] = {
         "success": Color.BLUE,
-        "info": Color.GREEN,
+        "info": Color.MAGENTA,
         "warning": Color.YELLOW,
         "error": Color.RED,
     }

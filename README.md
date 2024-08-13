@@ -18,7 +18,7 @@ Clone the repository...
 git clone https://github.com/rdnajac/cbmf
 ```
 
-and the initialization script.
+and run initialization script.
 
 ```sh
 cd cbmf && chmod +x INSTALL && ./INSTALL

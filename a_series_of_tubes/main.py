@@ -5,43 +5,63 @@ from pathlib import Path
 
 from .utils.cli import create_parser
 from .utils.colorprinter import ColorPrinter as pr
-from .utils.genomemanager import download_genome_file, download_all_files_for_species
+from .utils.genomemanager import (
+    download_genome_file,
+    download_all_files_for_species,
+    decompress_files,
+)
+
 # call this with human or mouse based on args
 from .tests.test_colorprinter import smoke_test
 
+
 def run_quality_control(args):
-    pr.info(f"Running quality control on {args.input_directory} and saving results to {args.output_directory}.")
+    pr.info(
+        f"Running quality control on {args.input_directory} and saving results to {args.output_directory}."
+    )
     # TODO: Implement actual QC logic
 
+
+# dict mapping human/mouse to full release name
+REFERENCE = {"human": "GRCh38", "mouse": "GRCm38"}
+
+
 def run_alignment(args):
-    pr.info(f"Running {args.aligner} alignment for {args.species} genome.")
+    pr.info(f"Running {args.aligner} alignment for {args.species}.")
     pr.info(f"Input directory: {args.input_directory}")
     pr.info(f"Output directory: {args.output_directory}")
     # TODO: Implement actual alignment logic
 
+
 def initialize_pipeline(args):
-    pr.info("Initializing pipeline files for {args.species}")
-    download_all_files_for_species(args.species)
+    genome_dir = Path.home() / "cbmf" / "genomes" / args.species
+    genome_dir.mkdir(parents=True, exist_ok=True)
+    pr.info(f"Downloading genome files for {args.species} to {genome_dir}")
+    # download_all_files_for_species(args.species)
+    decompress_files(genome_dir)
+
 
 def check_pipeline_status(args):
     pr.info("Checking pipeline status...")
     # TODO: Implement status check
 
+
 def run_test_suite(args):
     pr.info("Running test suite")
     smoke_test()
+
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = create_parser()
     args = parser.parse_args(argv)
 
     command_handlers = {
-        'download': lambda args: download_genome_file(args.species, args.file),
-        'init': initialize_pipeline,
-        'qc': run_quality_control,
-        'align': run_alignment,
-        'status': check_pipeline_status,
-        'test': run_test_suite
+        "download": lambda args: download_genome_file(args.species, args.file),
+        "init": initialize_pipeline,
+        "qc": run_quality_control,
+        "align": run_alignment,
+        "status": check_pipeline_status,
+        "test": run_test_suite,
     }
 
     try:
@@ -64,6 +84,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 1
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
