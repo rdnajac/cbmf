@@ -1,45 +1,46 @@
-# from https://github.com/tmux-python/tmuxp/blob/master/src/tmuxp/util.py
-import os
+import subprocess
 import pathlib
 import shlex
-import subprocess
-import sys
-import typing as t
+import os
+from typing import Union, Optional
 
-
-def run_before_script(
-    script_file: t.Union[str, pathlib.Path],
-    cwd: t.Optional[pathlib.Path] = None,
+def run_script(
+    script_file: Union[str, pathlib.Path],
+    cwd: Optional[pathlib.Path] = None,
 ) -> int:
-    """Execute a shell script, wraps :meth:`subprocess.check_call()` in a try/catch."""
+    """
+    Execute a shell script and handle errors.
+
+    Args:
+        script_file: Path to the script file to be executed.
+        cwd: Directory to change to before executing the script.
+
+    Returns:
+        The return code of the script execution.
+
+    Raises:
+        subprocess.CalledProcessError: If the script exits with a non-zero status.
+        FileNotFoundError: If the script file does not exist.
+    """
+    # Expand the user's home directory if the path starts with ~
+    script_file_str = os.path.expanduser(str(script_file))
+    
     try:
-        proc = subprocess.Popen(
-            shlex.split(str(script_file)),
-            stderr=subprocess.PIPE,
-            stdout=subprocess.PIPE,
+        result = subprocess.run(
+            shlex.split(script_file_str),
             cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
         )
-        if proc.stdout is not None:
-            for line in iter(proc.stdout.readline, b""):
-                sys.stdout.write(console_to_str(line))
-        proc.wait()
-
-        if proc.returncode and proc.stderr is not None:
-            stderr = proc.stderr.read()
-            proc.stderr.close()
-            stderr_strlist = console_to_str(stderr).split("\n")
-            stderr_str = "\n".join(list(filter(None, stderr_strlist)))  # filter empty
-
-            raise exc.BeforeLoadScriptError(
-                proc.returncode,
-                os.path.abspath(script_file),  # NOQA: PTH100
-                stderr_str,
-            )
-    except OSError as e:
-        if e.errno == 2:
-            raise exc.BeforeLoadScriptNotExists(
-                e,
-                os.path.abspath(script_file),  # NOQA: PTH100
-            ) from e
+        print(result.stdout)
+        return result.returncode
+    except subprocess.CalledProcessError as e:
+        print(f"Script execution failed with return code {e.returncode}")
+        print(f"Error output:\n{e.stderr}")
         raise
-    return proc.returncode
+    except FileNotFoundError:
+        print(f"Script file not found: {script_file_str}")
+        raise
+

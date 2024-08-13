@@ -11,8 +11,3 @@ SUCCESS()
 	fi
 }
 SUCCESS
-
-# print U+2639 with escape valies
-printf '\u8726\n'
-printf '\U0001F609\n'
-

@@ -10,15 +10,14 @@ from .utils.genomemanager import (
     download_all_files_for_species,
     decompress_files,
 )
+from .utils.run_script import run_script
 
 # call this with human or mouse based on args
 from .tests.test_colorprinter import smoke_test
 
 
 def run_quality_control(args):
-    pr.info(
-        f"Running quality control on {args.input_directory} and saving results to {args.output_directory}."
-    )
+    pr.info(f" QC in: {args.input_directory}, QC out: {args.output_directory}")
     # TODO: Implement actual QC logic
 
 
@@ -34,11 +33,11 @@ def run_alignment(args):
 
 
 def initialize_pipeline(args):
-    genome_dir = Path.home() / "cbmf" / "genomes" / args.species
-    genome_dir.mkdir(parents=True, exist_ok=True)
-    pr.info(f"Downloading genome files for {args.species} to {genome_dir}")
-    # download_all_files_for_species(args.species)
-    decompress_files(genome_dir)
+    spec_genome_dir = Path.home() / "cbmf" / "genomes" / args.species
+    spec_genome_dir.mkdir(parents=True, exist_ok=True)
+    pr.info(f"Downloading genome files for {args.species} to {spec_genome_dir}")
+    download_all_files_for_species(args.species)
+    decompress_files(spec_genome_dir)
 
 
 def check_pipeline_status(args):
@@ -52,6 +51,12 @@ def run_test_suite(args):
 
 
 def main(argv: Optional[List[str]] = None) -> int:
+
+    # if no args are passed, print help
+    if len(sys.argv) == 1:
+        run_script("~/cbmf/scripts/SUCCESS")
+        return 0
+
     parser = create_parser()
     args = parser.parse_args(argv)
 
@@ -67,7 +72,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     try:
         handler = command_handlers.get(args.command)
         if handler:
-            pr.info(f"Executing {args.command}:")
+            pr.warning(f"{args}")
             handler(args)
             pr.success(f"{args.command} completed successfully.")
         else:
