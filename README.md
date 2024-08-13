@@ -11,7 +11,7 @@ and manage dependencies. The framework is designed to be modular, allowing
 users to select the tools they need for their specific analyses.
 
 ## 🚀 Quick Start
- 
+
 Clone the repository...
 
 ```sh
@@ -23,6 +23,10 @@ and the initialization script.
 ```sh
 cd cbmf && chmod +x INSTALL && ./INSTALL
 ```
+
+Then skip ahead to the [Sequencing Workflows](#-sequencing-workflows) section.
+Otherwise, read on for more information about the CBMF, how it works,
+and how to use it.
 
 ## 📦 Package Management
 
@@ -61,39 +65,51 @@ or by following [this link](https://github.com/rdnajac/cbmf/wiki).
 > [!TIP]
 > These files are written using [GitHub Flavored Markdown \(GFM\)](https://github.github.com/gfm/),
 > a superset of the [original](https://daringfireball.net/projects/markdown/syntax)
-> lightweight markup language with plain text formatting syntax.  GFM gives us
+> lightweight markup language with plain text formatting syntax. GFM gives us
 > additional features (like tables, footnotes, and alerts like this)
 > while maintaining readability in plain text.
 
 ## 🧬 Sequencing Workflows
 
-The following sections outline the steps involved in analyzing high-throughput sequencing data.
+The following sections outline the steps involved in analyzing
+high-throughput sequencing data:
 
-A quick note on file formats:
+1. [Demultiplexing](#-demultiplexing)
+2. [Quality Control](#-quality-control)
+3. [Alignment](#-alignment)
+4. [Assembly and Quantification](#-assembly-and-quantification)
 
-| File Type              | Description                                 | Typical Extension                    | Details                                                        |
-| ---------------------- | ------------------------------------------- | ------------------------------------ | -------------------------------------------------------------- |
-| FASTQ                  | Raw reads from sequencer                    | .fastq, .fastq.gz                    | Human readable; often compressed (.gz)                         |
-| FASTA                  | Sequence data                               | .fasta, .fa, .fasta.gz, .fa.gz       | Human readable; often compressed (.gz)                         |
-| GTF                    | Gene Transfer Format (GFF2 variant)         | .gtf, .gtf.gz                        | Human readable; can be compressed                              |
-| GFF                    | General Feature Format (v                   | .gff3, .gff3.gz                      | Human readable; can be compressed                              |
-| SAM                    | Sequence Alignment/Map                      | .sam, .sam.gz                        | Human readable; can be compressed                              |
-| BAM                    | Binary Alignment/Map                        | .bam                                 | Binary (compressed); not human readable                        |
-| CRAM                   | Compressed Reference-oriented Alignment Map | .cram                                | Binary (compressed); not human readable                        |
-| VCF                    | Variant Call Format                         | .vcf, .vcf.gz                        | Human readable; often compressed                               |
-| BED                    | Browser Extensible Data                     | .bed, .bed.gz                        | Human readable; can be compressed                              |
-| TSV                    | Tab-Separated Values                        | .tsv, .tsv.gz                        | Human readable; can be compressed                              |
-| CSV                    | Comma-Separated Values                      | .csv, .csv.gz                        | Human readable; can be compressed                              |
-| TXT                    | Plain Text                                  | .txt, .txt.gz                        | Human readable; can be compressed                              |
-| md5                    | Checksum for file integrity                 | .md5                                 | Human readable; usually plain text output from `md5sum` itself |
+But first, a quick note on file types and formats:
+
+> [!CAUTION]
+> This table is a work in progress and may not be complete.
+
+| File Type | Description                                 | Typical Extension |
+| --------- | ------------------------------------------- | ----------------- |
+| FASTQ     | Raw reads from sequencer (often compressed) | .fastq, .fastq.gz |
+| FASTA     | Sequence data                               | .fasta, .fa, .fna |
+| GTF       | Gene Transfer Format (GFF2 variant)         | .gtf, .gtf.gz     |
+| GFF       | General Feature Format                      | .gff3, .gff3.gz   |
+| SAM       | Sequence Alignment/Map                      | .sam, .sam.gz     |
+| BAM       | Binary Alignment/Map                        | .bam              |
+| CRAM      | Compressed Reference-oriented Alignment Map | .cram             |
+| VCF       | Variant Call Format                         | .vcf,             |
+| BED       | Browser Extensible Data                     | .bed,             |
+| TSV       | Tab-Separated Values                        | .tsv,             |
+| CSV       | Comma-Separated Values                      | .csv,             |
+| JSON      | JavaScript Object Notation                  | .json,            |
+| Markdown  | Markup language for documentation           | .md, .markdown    |
+| TXT       | Plain Text                                  | .txt,             |
+| md5       | Checksum for file integrity                 | .md5, .txt        |
 
 ### 🔀 Demultiplexing
 
-Skip this section if you have already received the demultiplexed FASTQ files.
+Skip this section and read about [Quality Control](#-quality-control)
+if you have already received the demultiplexed FASTQ files.
 
-The following command is the default `bcl2fastq` command for demultiplexing
-on the Nextseq, but with the `--no-lane-splitting` option added to combine
-the reads from all four lanes into a single FASTQ file:
+The following command is the default [`bcl2fastq`](https://support.illumina.com/sequencing/sequencing_software/bcl2fastq-conversion-software.html)
+command for demultiplexing on the Nextseq, but with the `--no-lane-splitting`
+option added to combine the reads from all four lanes into a single FASTQ file:
 
 ```sh
 bcl2fastq --no-lane-splitting \
@@ -116,40 +132,37 @@ You can copy and paste this command if you set the variables `$run_folder`,
 
 > [!WARNING]
 > As of this document's last revision, `bcl2fastq` is no longer supported;
-> use `bclconvert` instead.
+> use [`bclconvert`](https://emea.support.illumina.com/downloads/bcl-convert-user-guide.html)
+> if you have a used recent Illumina sequencer (NovaSeq, NextSeq 1000/2000, etc.).
 
 ### 🔍 Quality Control
 
-Quality control is an essential step in the analysis of high-throughput sequencing data.
-It allows us to assess the quality of the reads and identify any issues that may
-affect downstream analysis, like adapter contamination or low-quality reads.
-More exciting quality issues include GC bias, mitochondrial contamination, and
-over-representation of certain sequences.
+Quality control is an essential step in the analysis of high-throughput sequencing
+data. It allows us to assess the quality of the reads and identify any issues
+that may affect downstream analysis, like adapter contamination or low-quality
+reads. More interesting quality issues include GC bias, mitochondrial
+contamination, and over-representation of certain sequences.
 
-| Tool                                                                     | Description                                               | Source                                                                                                                 |
-| ------------------------------------------------------------------------ | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)[^1] | Generates html reports containing straightforward metrics | [GitHub](https://github.com/s-andrews/FastQC)                                                                          |
-| [GATK](https://gatk.broadinstitute.org/hc/en-us)[^2]                     | Analyzes high-throughput sequencing data                  | [GitHub](https://github.com/broadinstitute/gatk)                                                                       |
-| [Picard Tools](https://broadinstitute.github.io/picard/)[^3]             | Manipulates high-throughput sequencing data               | Comes packaged with [GATK4](https://gatk.broadinstitute.org/hc/en-us/articles/360036194592-Getting-started-with-GATK4) |
-| [MultiQC](https://multiqc.info/)[^4]                                     | Aggregates results from bioinformatics analyses           | [GitHub](https://github.com/ewels/MultiQC)                                                                             |
-
-[^2]: Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data. Available online at: <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>
-
-[^3]: McKenna A, Hanna M, Banks E, et al. The Genome Analysis Toolkit: a MapReduce framework for analyzing next-generation DNA sequencing data. Genome Res. 2010;20(9):1297-1303. [PMID: 20644199](https://pubmed.ncbi.nlm.nih.gov/20644199/)
-
-[^4]: Broad Institute. Picard Tools. <http://broadinstitute.github.io/picard/>
+| Tool                                                                          | Description                                               | Source                                                                                                                 |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)[^fastqc] | Generates html reports containing straightforward metrics | [GitHub](https://github.com/s-andrews/FastQC)                                                                          |
+| [GATK](https://gatk.broadinstitute.org/hc/en-us)[^gatk]                       | Analyzes high-throughput sequencing data                  | [GitHub](https://github.com/broadinstitute/gatk)                                                                       |
+| [Picard Tools](https://broadinstitute.github.io/picard/)                      | Manipulates high-throughput sequencing data               | Comes packaged with [GATK4](https://gatk.broadinstitute.org/hc/en-us/articles/360036194592-Getting-started-with-GATK4) |
+| [MultiQC](https://multiqc.info/)[^4]                                          | Aggregates results from bioinformatics analyses           | [GitHub](https://github.com/ewels/MultiQC)                                                                             |
 
 To run these QC applications, you need a suitable Java Runtime Environment (JRE).
 Let `micromamba` handle the installation of the JRE and the tools from bioconda:
 
 ```sh
 micromamba create -n qc -c conda-forge -c bioconda fastqc gatk4 picard multiqc
+micromamba run -n qc fastqc -o <output_dir> <fastq_file>
 ```
 
-Activate the environment and run the tools:
+You can also use the qc configuration file in the `dev` folder to create the environment:
 
 ```sh
-micromamba run -n qc fastqc -o <output_dir> <fastq_file>
+micromamba env create -f dev/qc.yml
+micromamba activate qc
 ```
 
 > [!TIP]
@@ -180,26 +193,14 @@ can be found on the [Genome Reference Consortium](https://www.ncbi.nlm.nih.gov/g
 
 #### Aligners
 
-| Tool                                                                 | Description                                           | Key Features                                                                                                         | Best For                                        | Source                                                     |
-| -------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------- |
-| [BWA](https://bio-bwa.sourceforge.net/)[^6]                          | Maps short DNA sequences to reference genome          | - Uses Burrows-Wheeler Transform (BWT) for indexing<br>- Efficient for short reads<br>- Supports paired-end reads    | Whole Genome Sequencing (WGS), Exome Sequencing | [GitHub](https://github.com/lh3/bwa)                       |
-| [STAR](https://github.com/alexdobin/STAR)[^7]                        | Specialized for RNA-Seq alignment                     | - Uses seed-extension search<br>- Detects novel splice junctions<br>- Fast and accurate for long reads               | RNA-Seq, especially with long reads             | [GitHub](https://github.com/alexdobin/STAR)                |
-| [HISAT2](https://daehwankimlab.github.io/hisat2/)[^8]                | Splice-aware aligner for DNA and RNA sequences        | - Uses graph-based alignment<br>- Memory-efficient<br>- Supports both DNA and RNA alignment                          | RNA-Seq, WGS, particularly for large genomes    | [GitHub](https://github.com/DaehwanKimLab/hisat2)          |
-| [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)[^9] | Efficient short read aligner                          | - Uses FM-index (similar to BWT)<br>- Supports gapped, local, and paired-end alignment<br>- Memory-efficient         | ChIP-seq, WGS                                   | [GitHub](https://github.com/BenLangmead/bowtie2)           |
-| [Subread](https://subread.sourceforge.net/)[^10]                     | Seed-and-vote algorithm-based aligner                 | - Fast and accurate<br>- Supports indel detection<br>- Includes read counting functionality (featureCounts)          | RNA-Seq, DNA-Seq                                | [GitHub](https://github.com/ShiLab-Bioinformatics/subread) |
-| [Subjunc](https://subread.sourceforge.net/subjunc.html)[^11]         | Exon-exon junction detector (part of Subread package) | - Detects novel exon-exon junctions<br>- Uses seed-and-vote algorithm<br>- Can be used independently or with Subread | RNA-Seq, specifically for junction detection    | [GitHub](https://github.com/ShiLab-Bioinformatics/subread) |
-
-[^6]: Li H. and Durbin R. (2009) Fast and accurate short read alignment with Burrows-Wheeler Transform. Bioinformatics, 25:1754-60. [PMID: 19451168](https://pubmed.ncbi.nlm.nih.gov/19451168/)
-
-[^7]: Dobin A, Davis CA, Schlesinger F, et al. STAR: ultrafast universal RNA-seq aligner. Bioinformatics. 2013;29(1):15-21. [PMID: 23104886](https://pubmed.ncbi.nlm.nih.gov/23104886/)
-
-[^8]: Kim D, Langmead B, Salzberg SL. HISAT: a fast spliced aligner with low memory requirements. Nat Methods. 2015;12(4):357-360. [PMID: 25751142](https://pubmed.ncbi.nlm.nih.gov/25751142/)
-
-[^9]: Langmead B, Salzberg SL. Fast gapped-read alignment with Bowtie 2. Nat Methods. 2012;9(4):357-359. [PMID: 22388286](https://pubmed.ncbi.nlm.nih.gov/22388286/)
-
-[^10]: Liao Y, Smyth GK, Shi W. The Subread aligner: fast, accurate and scalable read mapping by seed-and-vote. Nucleic Acids Research. 2013;41(10):e108. [PMID: 23558742](https://pubmed.ncbi.nlm.nih.gov/23558742/)
-
-[^11]: Liao Y, Smyth GK, Shi W. The R package Rsubread is easier, faster, cheaper and better for alignment and quantification of RNA sequencing reads. Nucleic Acids Research. 2019;47(8):e47. [PMID: 30783653](https://pubmed.ncbi.nlm.nih.gov/30783653/)
+| Tool                                                                       | Description                                           | Key Features                                                                                                         | Best For                                        | Source                                                     |
+| -------------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------- |
+| [BWA](https://bio-bwa.sourceforge.net/)[^bwa]                              | Maps short DNA sequences to reference genome          | - Uses Burrows-Wheeler Transform (BWT) for indexing<br>- Efficient for short reads<br>- Supports paired-end reads    | Whole Genome Sequencing (WGS), Exome Sequencing | [GitHub](https://github.com/lh3/bwa)                       |
+| [STAR](https://github.com/alexdobin/STAR)[^star]                           | Specialized for RNA-Seq alignment                     | - Uses seed-extension search<br>- Detects novel splice junctions<br>- Fast and accurate for long reads               | RNA-Seq, especially with long reads             | [GitHub](https://github.com/alexdobin/STAR)                |
+| [HISAT2](https://daehwankimlab.github.io/hisat2/)[^hisat2]                 | Splice-aware aligner for DNA and RNA sequences        | - Uses graph-based alignment<br>- Memory-efficient<br>- Supports both DNA and RNA alignment                          | RNA-Seq, WGS, particularly for large genomes    | [GitHub](https://github.com/DaehwanKimLab/hisat2)          |
+| [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)[^bowtie2] | Efficient short read aligner                          | - Uses FM-index (similar to BWT)<br>- Supports gapped, local, and paired-end alignment<br>- Memory-efficient         | ChIP-seq, WGS                                   | [GitHub](https://github.com/BenLangmead/bowtie2)           |
+| [Subread](https://subread.sourceforge.net/)[^subread]                      | Seed-and-vote algorithm-based aligner                 | - Fast and accurate<br>- Supports indel detection<br>- Includes read counting functionality (featureCounts)          | RNA-Seq, DNA-Seq                                | [GitHub](https://github.com/ShiLab-Bioinformatics/subread) |
+| [Subjunc](https://subread.sourceforge.net/subjunc.html)[^subjunc]          | Exon-exon junction detector (part of Subread package) | - Detects novel exon-exon junctions<br>- Uses seed-and-vote algorithm<br>- Can be used independently or with Subread | RNA-Seq, specifically for junction detection    | [GitHub](https://github.com/ShiLab-Bioinformatics/subread) |
 
 #### FASTQ to BAM/CRAM
 
@@ -248,3 +249,38 @@ Shout out to these awesome docs:
 
 Thank you to my labmates in the [Palomero Lab](http://palomerolab.org/)
 for their feedback and guidance.
+
+<!-- Refereneces -->
+
+[^fastqc]:
+    Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data.
+    Available online at: <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>
+
+[^gatk]:
+    McKenna A, Hanna M, Banks E, et al. The Genome Analysis Toolkit: a MapReduce framework for analyzing
+    next-generation DNA sequencing data. Genome Res. 2010;20(9):1297-1303. [PMID: 20644199](https://pubmed.ncbi.nlm.nih.gov/20644199/)
+
+[^bwa]:
+    Li H. and Durbin R. (2009) Fast and accurate short read alignment with Burrows-Wheeler Transform.
+    Bioinformatics, 25:1754-60. [PMID: 19451168](https://pubmed.ncbi.nlm.nih.gov/19451168/)
+
+[^star]:
+    Dobin A, Davis CA, Schlesinger F, et al. STAR: ultrafast universal RNA-seq aligner.
+    Bioinformatics. 2013;29(1):15-21. [PMID: 23104886](https://pubmed.ncbi.nlm.nih.gov/23104886/)
+
+[^hisat2]:
+    Kim D, Langmead B, Salzberg SL. HISAT: a fast spliced aligner with low memory requirements.
+    Nat Methods. 2015;12(4):357-360. [PMID: 25751142](https://pubmed.ncbi.nlm.nih.gov/25751142/)
+
+[^bowtie2]:
+    Langmead B, Salzberg SL. Fast gapped-read alignment with Bowtie 2.
+    Nat Methods. 2012;9(4):357-359. [PMID: 22388286](https://pubmed.ncbi.nlm.nih.gov/22388286/)
+
+[^subread]:
+    Liao Y, Smyth GK, Shi W. The Subread aligner: fast, accurate and scalable read
+    mapping by seed-and-vote. Nucleic Acids Research. 2013;41(10):e108. [PMID: 23558742](https://pubmed.ncbi.nlm.nih.gov/23558742/)
+
+[^subjunc]:
+    Liao Y, Smyth GK, Shi W. The R package Rsubread is easier, faster, cheaper and
+    better for alignment and quantification of RNA sequencing reads.
+    Nucleic Acids Research. 2019;47(8):e47. [PMID: 30783653](https://pubmed.ncbi.nlm.nih.gov/30783653/)
