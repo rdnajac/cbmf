@@ -71,7 +71,33 @@ def download_genome_file(
 
     try:
         subprocess.run(["curl", "-O", file_url], cwd=genomes_dir, check=True)
-        # TODO decmoress files
+        # TODO decompress files
 
     except subprocess.CalledProcessError as e:
         raise subprocess.CalledProcessError(f"Error downloading {file}: {str(e)}")
+
+
+def download_all_files_for_species(species: Literal["mouse", "human"]) -> None:
+    """
+    Download all genome files for a given species.
+
+    This function downloads all specified genome files for either mouse or human
+    from the NCBI FTP server.
+
+    :param species: The species for which to download all genome files.
+    :type species: Literal['mouse', 'human']
+    :return: None
+    :raises ValueError: If an invalid species is provided.
+    """
+    if species not in SPECIES_INFO:
+        raise ValueError(f"Invalid species: {species}")
+
+    for file in PIPELINE_FILES.keys():
+        try:
+            print(f"Downloading {file} for {species}...")
+            download_genome_file(species, file)
+            print(f"Successfully downloaded {file} for {species}")
+        except subprocess.CalledProcessError as e:
+            print(f"Error downloading {file} for {species}: {str(e)}")
+        except Exception as e:
+            print(f"Unexpected error downloading {file} for {species}: {str(e)}")
