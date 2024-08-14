@@ -1,5 +1,6 @@
 import sys
 import subprocess
+import importlib
 from typing import List, Optional, Callable, Dict
 from pathlib import Path
 
@@ -11,9 +12,12 @@ from .utils.genomemanager import (
     decompress_files,
 )
 from .utils.run_script import run_script
+from .utils.progressbar import ProgressBar
 
-# call this with human or mouse based on args
 from .tests.test_colorprinter import smoke_test
+from .tests.test_progressbar import *
+
+from .aligners import align_reads
 
 
 def run_quality_control(args):
@@ -26,10 +30,29 @@ REFERENCE = {"human": "GRCh38", "mouse": "GRCm38"}
 
 
 def run_alignment(args):
-    pr.info(f"Running {args.aligner} alignment for {args.species}.")
+    pr.info(f"Running {args.aligner} alignment for {args.species} genome.")
     pr.info(f"Input directory: {args.input_directory}")
     pr.info(f"Output directory: {args.output_directory}")
-    # TODO: Implement actual alignment logic
+
+    # Get the list of FASTQ files in the input directory
+    # fastq_files = sorted(Path(args.input_directory).glob("*.fastq.gz"))
+    # if len(fastq_files) < 2:
+    #     pr.error("Not enough FASTQ files found. Need at least a pair of files.")
+    #     return
+
+    # Assume the first two files are the paired-end reads
+    r1_fastq, r2_fastq = ["r1.fastq.gz", "r2.fastq.gz"]
+    reference = "ref"
+    should_be_none = align_reads(args.aligner, r1_fastq, r2_fastq, reference)
+    if should_be_none is not None:
+        print('huh?')
+
+        # Save the aligned output to a file
+        # output_sam = Path(args.output_directory) / f"{args.species}_{args.aligner}_aligned.sam"
+        # with output_sam.open('w') as f:
+        #     f.write(aligned_output)
+
+        # pr.success(f"Alignment completed. Output saved to {output_sam}")
 
 
 def initialize_pipeline(args):
@@ -46,8 +69,39 @@ def check_pipeline_status(args):
 
 
 def run_test_suite(args):
-    pr.info("Running test suite")
-    smoke_test()
+    if not args.tests:
+        smoke_test()
+        # print(args)
+        # pr.info("Running all tests")
+        # Implement logic to run all tests
+    else:
+        # test_progressbar()
+        # test_two_progressbars()
+        exit()
+        pr.info(f"Running specified tests: {', '.join(args.tests)}")
+        for test in args.tests:
+            run_single_test(test)
+
+
+def run_single_test(test_name):
+    test_file = f"test_{test_name}.py"
+    test_path = Path(__file__).parent / "tests" / test_file
+
+    if not test_path.exists():
+        pr.error(f"Test file {test_file} not found in path {test_path}")
+        return
+
+    try:
+        module_name = f"tests.{test_file[:-3]}"
+        module = importlib.import_module(module_name)
+        if hasattr(module, "main"):
+            module.main()
+        else:
+            pr.error(f"No main function found in {test_file}")
+    except ImportError as e:
+        pr.error(f"Error importing test module: {str(e)}")
+    except Exception as e:
+        pr.error(f"Error running test: {str(e)}")
 
 
 def main(argv: Optional[List[str]] = None) -> int:

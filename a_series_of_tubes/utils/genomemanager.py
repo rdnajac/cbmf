@@ -6,7 +6,7 @@ import threading
 import subprocess
 from typing import Literal, Dict
 from .colorprinter import ColorPrinter as pr
-from .progressbar import print_progress_bar
+from .progressbar import ProgressBar
 
 # Constants
 GENOMES_MIRROR = "ftp://ftp.ncbi.nlm.nih.gov"
@@ -35,11 +35,14 @@ PIPELINE_FILES: Dict[str, str] = {
 
 # Type aliases
 Species = Literal["mouse", "human"]
-PipelineFile = Literal["bwa_index", "samtools_index", "fasta", "hisat2_index", "refseq_gff", "refseq_gtf"]
+PipelineFile = Literal[
+    "bwa_index", "samtools_index", "fasta", "hisat2_index", "refseq_gff", "refseq_gtf"
+]
 
 
 def download_genome_file(
-    species: Species, file: PipelineFile, show_progress: bool = True) -> None:
+    species: Species, file: PipelineFile, show_progress: bool = True
+) -> None:
     if species not in SPECIES_INFO:
         raise ValueError(f"Invalid species: {species}")
     if file not in PIPELINE_FILES:
@@ -61,21 +64,24 @@ def download_genome_file(
 
             last_update_time = 0
 
-            with open(file_path, "wb") as out_file:
-                while True:
-                    buffer = response.read(8192)
-                    if not buffer:
-                        break
-                    downloaded_size += len(buffer)
-                    out_file.write(buffer)
-                    if show_progress and total_size > 0:
-                        current_time = time.time()
-                        if current_time - last_update_time >= 2.5:
-                            print_progress_bar(
-                                downloaded_size, total_size, prefix=f"{file:<15} ({total_size})", length=30
-                            )
-                            last_update_time = current_time
-        pr.success(f"Successfully downloaded {file} for {species}")
+        with open(file_path, "wb") as out_file:
+            progress_bar = ProgressBar(
+                total_size, prefix=f"{file:<15} ({total_size})", length=30
+            )
+            while True:
+                buffer = response.read(8192)
+                if not buffer:
+                    break
+                downloaded_size += len(buffer)
+                out_file.write(buffer)
+                if show_progress and total_size > 0:
+                    current_time = time.time()
+                    if current_time - last_update_time >= 2:
+                        progress_bar.update(downloaded_size)
+                        last_update_time = current_time
+
+                progress_bar.finish()
+                pr.success(f"Successfully downloaded {file} for {species}")
 
     except Exception as e:
         pr.error(f"Error downloading {file} for {species}: {str(e)}")

@@ -8,9 +8,13 @@ def create_parser() -> argparse.ArgumentParser:
     )
 
     parent_parser = argparse.ArgumentParser(add_help=False)
-    parent_parser.add_argument("-i", "--input-directory", type=Path, metavar="DIR", required=True)
+    parent_parser.add_argument(
+        "-i", "--input-directory", type=Path, metavar="DIR", required=True
+    )
     # parent_parser.add_argument("-o", "--output-directory", type=Path, metavar="DIR")
-    parent_parser.add_argument("-o", "--output-directory", type=Path, metavar="DIR", default=Path("."))
+    parent_parser.add_argument(
+        "-o", "--output-directory", type=Path, metavar="DIR", default=Path(".")
+    )
 
     species_parser = argparse.ArgumentParser(add_help=False)
     species_group = species_parser.add_mutually_exclusive_group()
@@ -65,5 +69,7 @@ def create_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("qc", parents=[parent_parser], help="run quality control")
     subparsers.add_parser("status", help="check pipeline status")
 
-    subparsers.add_parser("test", help="run test suite")
+    test_parser = subparsers.add_parser("test", help="run test suite")
+    test_parser.add_argument("tests", nargs="*", help="list of tests to run")
+
     return parser

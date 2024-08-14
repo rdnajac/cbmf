@@ -1,4 +1,3 @@
-# tests/test_colorprinter.py
 from ..utils import ColorPrinter as pr
 
 

@@ -4,6 +4,7 @@ import shlex
 import os
 from typing import Union, Optional
 
+
 def run_script(
     script_file: Union[str, pathlib.Path],
     cwd: Optional[pathlib.Path] = None,
@@ -24,7 +25,7 @@ def run_script(
     """
     # Expand the user's home directory if the path starts with ~
     script_file_str = os.path.expanduser(str(script_file))
-    
+
     try:
         result = subprocess.run(
             shlex.split(script_file_str),
@@ -32,7 +33,7 @@ def run_script(
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            check=True
+            check=True,
         )
         print(result.stdout)
         return result.returncode
@@ -43,4 +44,3 @@ def run_script(
     except FileNotFoundError:
         print(f"Script file not found: {script_file_str}")
         raise
-

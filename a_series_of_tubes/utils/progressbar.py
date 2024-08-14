@@ -1,60 +1,36 @@
 import sys
 
-def print_progress_bar(
-    iteration,
-    total,
-    prefix="",
-    suffix="",
-    decimals=1,
-    length=50,
-    fillchar="█",
+class ProgressBar:
+    def __init__(self, total, prefix="", suffix="", decimals=1, length=50, fill="█"):
+        self.total = total
+        self.prefix = prefix
+        self.suffix = suffix
+        self.decimals = decimals
+        self.length = length
+        self.fill = fill
+        self.iteration = 0
 
-):
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-    filled = int(length * iteration // total)
-    progress = fillchar * filled + "-" * (length - filled)
-
-    progress_bar = f'\r{prefix} |{progress}| {percent}% {suffix}'
-    
-    # Print the progress bar and end with carriage return
-    sys.stdout.write(progress_bar)
-    sys.stdout.flush()
-
-    # Print a new line once the progress bar is complete
-    if iteration == total:
-        # print a complete prog 
-        progress=100
-        filled = length
-        progress = fillchar * length 
-        progress_bar = f'\r{prefix} |{progress}| {percent}% {suffix}\n'
-        sys.stdout.write(progress_bar)
+    def update(self, iteration=None):
+        self.iteration = iteration if iteration is not None else self.iteration + 1
+        sys.stdout.write(str(self))
         sys.stdout.flush()
 
+    def finish(self):
+        self.update(self.total)
+        print()
 
-# def create_progress_bar(
-#     total, prefix="", suffix="", decimals=1, length=50, fill="█", print_end="\r"
-# ):
-#     def print_progress_bar(iteration):
-#         percent = ("{0:." + str(decimals) + "f}").format(
-#             100 * (iteration / float(total))
-#         )
-#         filled_length = int(length * iteration // total)
-#         bar = fill * filled_length + "-" * (length - filled_length)
-#         pr.print_color(
-#             f"\r{prefix} |{bar}| {percent}% {suffix}", fg=Color.CYAN, end=print_end
-#         )
+    def __str__(self):
+        percent = f"{100 * (self.iteration / float(self.total)):.{self.decimals}f}"
+        filled = int(self.length * self.iteration // self.total)
+        bar = self.fill * filled + "-" * (self.length - filled)
+        return f'\r{self.prefix} |{bar}| {percent}% {self.suffix}'
 
-#     return print_progress_bar
+    @classmethod
+    def create(cls, total, prefix="", suffix="", decimals=1, length=50, fill="█"):
+        bar = cls(total, prefix, suffix, decimals, length, fill)
+        return bar.update
 
-
-# class ProgressBar:
-#     def __init__(self, total, prefix="", suffix="", decimals=1, length=50, fill="█"):
-#         self.progress_bar = create_progress_bar(
-#             total, prefix, suffix, decimals, length, fill
-#         )
-
-#     def update(self, iteration):
-#         self.progress_bar(iteration)
-
-#     def finish(self):
-#         print()  # New line after progress bar is complete
+class ProgresBarArray:
+    """A class to manage multiple progress bars."""
+    pass
+    # TODO
