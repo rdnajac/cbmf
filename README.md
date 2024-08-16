@@ -209,10 +209,7 @@ can be found on the [Genome Reference Consortium](https://www.ncbi.nlm.nih.gov/g
 
 ### 🔬 Assembly and Quantification
 
-Read the docs for details on experiment-specific processing and analysis:
-
-- [RNAseq](docs/RNA-Seq.md)
-- [ChIPseq](docs/ChIP-Seq.md)
+Read the wiki for details on experiment-specific processing and analysis.
 
 ## 📑 Additional Resources
 
