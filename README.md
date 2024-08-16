@@ -21,20 +21,38 @@ git clone https://github.com/rdnajac/cbmf
 and run initialization script.
 
 ```sh
-cd cbmf && chmod +x INSTALL && ./INSTALL
+cd cbmf && $SHELL <INSTALL
 ```
 
 Then skip ahead to the [Sequencing Workflows](#-sequencing-workflows) section.
 Otherwise, read on for more information about the CBMF, how it works,
 and how to use it.
 
+## 📚 Documentation
+
+CBMF is designed to be user-friendly, with detailed documentation and tutorials
+to help users get started. The documentation is organized into sections based
+on the type of analysis being performed, such as RNA-Seq, ChIP-Seq, and WGS.
+
+There is also a Jira-style wiki with additional resources and tutorials.
+You can access the wiki by clicking on the tab at the top of the page
+or by following [this link](https://github.com/rdnajac/cbmf/wiki).
+
+> [!TIP]
+> These files are written using [GitHub Flavored Markdown \(GFM\)](https://github.github.com/gfm/),
+> a superset of the [original](https://daringfireball.net/projects/markdown/syntax)
+> lightweight markup language with plain text formatting syntax.
+> GFM gives us additional features (like tables, footnotes, and  
+> like this) while maintaining readability in plain text.
+
 ## 📦 Package Management
 
 Bundled with the CBMF is the lightweight package manager
 [`micromamba`](https://mamba.readthedocs.io/en/latest/index.html)
 with access to the entire suite of bioinformatics software available on
-[Bioconda](https://bioconda.github.io/index.html), a channel for the
-[conda](https://docs.conda.io/en/latest/) package manager.[^1]
+[Bioconda](https://bioconda.github.io/index.html)[^bioconda], a channel for the
+[conda](https://docs.conda.io/en/latest/) package manager (including
+all available Bioconductor[^bioconductor] software.
 
 Micromamba is not a `conda` distribution, but a statically linked C++ executable
 that can be used to install `conda` environments. It is a lightweight binary
@@ -50,24 +68,7 @@ If you want to install it on your own, skip the init scripts and run:
 
 CBMF comes with some sensible defaults and pre-configured environments for
 common bioinformatics tasks, but users can easily create their own environments
-using the [`Mamba` API](https://mamba.readthedocs.io/en/latest/index.html).
-
-## 📚 Documentation
-
-CBMF is designed to be user-friendly, with detailed documentation and tutorials
-to help users get started. The documentation is organized into sections based
-on the type of analysis being performed, such as RNA-Seq, ChIP-Seq, and WGS.
-
-There is also a wiki with additional resources and tutorials.
-You can access the wiki by clicking on the tab at the top of the page
-or by following [this link](https://github.com/rdnajac/cbmf/wiki).
-
-> [!TIP]
-> These files are written using [GitHub Flavored Markdown \(GFM\)](https://github.github.com/gfm/),
-> a superset of the [original](https://daringfireball.net/projects/markdown/syntax)
-> lightweight markup language with plain text formatting syntax. GFM gives us
-> additional features (like tables, footnotes, and alerts like this)
-> while maintaining readability in plain text.
+using the [Mamba API](https://mamba.readthedocs.io/en/latest/index.html).
 
 ## 🧬 Sequencing Workflows
 
@@ -252,13 +253,24 @@ for their feedback and guidance.
 
 <!-- Refereneces -->
 
+[^bioconda]:
+    Grüning, B., Dale, R., Sjödin, A. et al. Bioconda: sustainable and comprehensive
+    software distribution for the life sciences. Nat Methods 15, 475–476 (2018).
+    https://doi.org/10.1038/s41592-018-0046-7
+
+[^bioconductor]:
+    Gentleman, R.C., Carey, V.J., Bates, D.M. et al. Bioconductor: open software
+    development for computational biology and bioinformatics.
+    Genome Biol 5, R80 (2004). https://doi.org/10.1186/gb-2004-5-10-r80
+
 [^fastqc]:
     Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data.
     Available online at: <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>
 
 [^gatk]:
-    McKenna A, Hanna M, Banks E, et al. The Genome Analysis Toolkit: a MapReduce framework for analyzing
-    next-generation DNA sequencing data. Genome Res. 2010;20(9):1297-1303. [PMID: 20644199](https://pubmed.ncbi.nlm.nih.gov/20644199/)
+    McKenna A, Hanna M, Banks E, et al. The Genome Analysis Toolkit: a MapReduce
+    framework for analyzing next-generation DNA sequencing data.
+    Genome Res. 2010;20(9):1297-1303. [PMID: 20644199](https://pubmed.ncbi.nlm.nih.gov/20644199/)
 
 [^bwa]:
     Li H. and Durbin R. (2009) Fast and accurate short read alignment with Burrows-Wheeler Transform.
@@ -277,8 +289,8 @@ for their feedback and guidance.
     Nat Methods. 2012;9(4):357-359. [PMID: 22388286](https://pubmed.ncbi.nlm.nih.gov/22388286/)
 
 [^subread]:
-    Liao Y, Smyth GK, Shi W. The Subread aligner: fast, accurate and scalable read
-    mapping by seed-and-vote. Nucleic Acids Research. 2013;41(10):e108. [PMID: 23558742](https://pubmed.ncbi.nlm.nih.gov/23558742/)
+    Liao Y, Smyth GK, Shi W. The Subread aligner: fast, accurate and scalable
+    read mapping by seed-and-vote. Nucleic Acids Research. 2013;41(10):e108. [PMID: 23558742](https://pubmed.ncbi.nlm.nih.gov/23558742/)
 
 [^subjunc]:
     Liao Y, Smyth GK, Shi W. The R package Rsubread is easier, faster, cheaper and

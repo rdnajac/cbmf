@@ -11,6 +11,15 @@ and identify novel transcripts.
 is a program for counting reads mapped to genomic features, such as genes, exons,and promoters.[^1]
 It is part of the [Subread](https://subread.sourceforge.net) package and is widely used for RNA-seq data analysis.
 
+> featureCounts takes as input SAM/BAM files and an annotation file including 
+> chromosomal coordinates of features. It outputs numbers of reads assigned to features 
+> (or meta-features). It also outputs stat info for the overall summrization results, 
+> including number of successfully assigned reads and number of reads that failed to be 
+> assigned due to various reasons (these reasons are included in the stat info).
+
+Use FeatureCounts to count the number of reads that map to each gene in a GTF
+file and summarize the results for downstream analysis (i.e., differential expression).
+
 [^1]: Liao Y, Smyth GK, Shi W. featureCounts: an efficient general purpose program for assigning sequence reads to genomic features. Bioinformatics. 2014;30(7):923-30. [PMID: 24227677](https://pubmed.ncbi.nlm.nih.gov/24227677/)
 
 ### Input
@@ -33,6 +42,23 @@ statistical software for further analysis.
 Feature counts also provide a summary of the number of reads that were
 assigned to features, as well as the number of reads that were not assigned
 to any feature.
+
+## Downstream Analysis using R
+
+Export the results from `featureCounts` to R for further analysis, such as
+differential expression analysis using packages like DESeq2 or edgeR.
+
+### DESeq2
+
+[DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) is an
+R package for differential gene expression analysis based on the negative
+binomial distribution.
+
+> DESeq2 provides methods to test for differential expression by use of negative
+> binomial generalized linear models. The models use the raw counts as input and
+> perform regularized log transformation and variance stabilizing
+> transformation. The package also provides functions to visualize the data and
+> results.
 
 ## Tuxedo Suite
 

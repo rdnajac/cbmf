@@ -19,7 +19,7 @@ fi
 
 # Uncomment to print each command before it is executed. Useful for debugging.
 # This is the same as `set -o xtrace` or invoking the script with `bash -x`.
-# set -x
+set -x
 
 # ==============================================================================
 # Constants
@@ -35,7 +35,8 @@ export SCRIPTS_DIR="${CBMF_DIR}/scripts"
 
 mkdir -p "$BIN_DIR" "$GENOMES_DIR" "$SCRIPTS_DIR"
 
-# export MAMBA_EXE="${BIN_DIR}/micromamba"
+export MAMBA_ROOT_PREFIX="${HOME}/cbmf/micromamba"
+export MAMBA_EXE="${HOME}/cbmf/bin/micromamba"
 
 # This is only env variable relevant if you are using R with reticulate,
 # an R package that allows you to run Python code in R.
@@ -48,9 +49,8 @@ export RETICULATE_MINICONDA_ENABLED=FALSE
 # Utility functions
 #===============================================================================
 err() { printf "Error: %s\n" "$1" >&2; }
-err_exit() { err "$1"; exit "${2:-1}"; }
 
-pr_info() { printf "INFO: %s\n" "$1"; }
+err_exit() { err "$1"; exit "${2:-1}"; }
 
 #===============================================================================
 # Check for required commands
@@ -83,19 +83,13 @@ RELEASE_URL="https://micro.mamba.pm/api/micromamba/$PLATFORM_ARCH/latest"
 
 # Create directory, download and extract micromamba
 # If we already have a micromamba executable, we skip this step
-if [ -x "$MAMBA_EXE" ]; then
-	pr_info "micromamba already installed"
-else
-	pr_info "Downloading micromamba"
-	curl -Ls "$RELEASE_URL" | tar -xvj bin/micromamba && chmod +x bin/micromamba
-	export MAMBA_ROOT_PREFIX="${CBMF_DIR}/mamba_root"
-	eval "$(./bin/micromamba shell hook)"
-
-fi
-
-if [ ! -x "$MAMBA_EXE" ]; then
-	err_exit "Failed to download micromamba"
-fi
+curl -Ls "$RELEASE_URL" | tar -xvj bin/micromamba
+chmod +x "$MAMBA_EXE"
+printf "Downloaded micromamba to %s\n" "$MAMBA_EXE"
+./bin/micromamba shell init -s "${SHELL##*/}" -p "$MAMBA_ROOT_PREFIX"
+printf "Initialized micromamba shell settings. Restarting shell...\n"
+exec "$SHELL"
+# $MAMBA_EXE shell init --shell bash --root-prefix "$MAMBA_ROOT_PREFIX"
 
 
 # ==============================================================================
@@ -106,17 +100,20 @@ fi
 # However, CLI options take precedence over settings in the ~/.condarc file,
 # so a more reliable way to set these options is to use wrapper scripts to
 # manually set the options before calling micromamba.
+#
+# Rather, just use the .yaml file to specify the channels and channel_priority.
 # ==============================================================================
-micromamba config append channels bioconda
-micromamba config append channels conda-forge
-micromamba config append channels nodefaults
-micromamba config set channel_priority strict
+# micromamba config append channels bioconda
+# micromamba config append channels conda-forge
+# micromamba config append channels nodefaults
+# micromamba config set channel_priority strict
 
 # ==============================================================================
 # Install the default environment
 # ==============================================================================
-micromamba create -n cbmf -f "${DEV_DIR}/cbmf.yml"
-micromamba activate cbmf
+# micromamba create -n cbmf -f "${DEV_DIR}/cbmf.yml"
+# micromamba create -n analysis -f ./dev/analysis.yml
+# micromamba activate cbmf
 
 # RStudio
 # TODO: if [ -n "$RSTUDIO" ] or if [ -n "$RSTUDIO_CONSOLE" ]
