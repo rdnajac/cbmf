@@ -1,23 +1,52 @@
 import sys
 import subprocess
 import importlib
-from typing import List, Optional, Callable, Dict
 from pathlib import Path
 
-from .utils.cli import create_parser
-from .utils.colorprinter import ColorPrinter as pr
-from .utils.genomemanager import (
-    download_genome_file,
-    download_all_files_for_species,
-    decompress_files,
-)
-from .utils.run_script import run_script
-from .utils.progressbar import ProgressBar
-
-from .tests.test_colorprinter import smoke_test
-from .tests.test_progressbar import *
-
 from .aligners import align_reads
+
+from .utils import parse_args, pr, run_script, download_helper
+
+
+def main(argv=None) -> int:
+    if argv is None:
+        argv = sys.argv[1:]  # Skip the script name
+
+    if len(argv) == 0:
+        run_script("~/cbmf/scripts/SUCCESS")
+        return 0
+
+    args = parse_args(argv)
+    # print(args)
+
+    subcommands = {
+        "download": lambda args: download_helper(args.species, args.files),
+        # "init": initialize_pipeline,
+        # "qc": run_quality_control,
+        # "align": run_alignment,
+        # "status": check_pipeline_status,
+        # "test": run_test_suite,
+    }
+
+    try:
+        handler = subcommands.get(args.command)
+        if handler:
+            pr.warning(f"{args}")
+            handler(args)
+        else:
+            pr.error(f"Unknown command: {args.command}")
+            return 1
+    except ValueError as e:
+        pr.error(f"Error: {str(e)}")
+        return 1
+    except subprocess.CalledProcessError as e:
+        pr.error(f"Command failed: {str(e)}")
+        return 1
+    except Exception as e:
+        pr.error(f"An unexpected error occurred: {str(e)}")
+        return 1
+
+    return 0
 
 
 def run_quality_control(args):
@@ -45,7 +74,7 @@ def run_alignment(args):
     reference = "ref"
     should_be_none = align_reads(args.aligner, r1_fastq, r2_fastq, reference)
     if should_be_none is not None:
-        print('huh?')
+        print("huh?")
 
         # Save the aligned output to a file
         # output_sam = Path(args.output_directory) / f"{args.species}_{args.aligner}_aligned.sam"
@@ -102,47 +131,6 @@ def run_single_test(test_name):
         pr.error(f"Error importing test module: {str(e)}")
     except Exception as e:
         pr.error(f"Error running test: {str(e)}")
-
-
-def main(argv: Optional[List[str]] = None) -> int:
-
-    # if no args are passed, print help
-    if len(sys.argv) == 1:
-        run_script("~/cbmf/scripts/SUCCESS")
-        return 0
-
-    parser = create_parser()
-    args = parser.parse_args(argv)
-
-    command_handlers = {
-        "download": lambda args: download_genome_file(args.species, args.file),
-        "init": initialize_pipeline,
-        "qc": run_quality_control,
-        "align": run_alignment,
-        "status": check_pipeline_status,
-        "test": run_test_suite,
-    }
-
-    try:
-        handler = command_handlers.get(args.command)
-        if handler:
-            pr.warning(f"{args}")
-            handler(args)
-            pr.success(f"{args.command} completed successfully.")
-        else:
-            pr.error(f"Unknown command: {args.command}")
-            return 1
-    except ValueError as e:
-        pr.error(f"Error: {str(e)}")
-        return 1
-    except subprocess.CalledProcessError as e:
-        pr.error(f"Command failed: {str(e)}")
-        return 1
-    except Exception as e:
-        pr.error(f"An unexpected error occurred: {str(e)}")
-        return 1
-
-    return 0
 
 
 if __name__ == "__main__":

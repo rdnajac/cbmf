@@ -1,15 +1,15 @@
 # utils/__init__.py
-from .cli import create_parser
-from .colorprinter import ColorPrinter
-from .genomemanager import download_genome_file, download_all_files_for_species
+from .cli import parse_args
+from .colorprinter import ColorPrinter as pr
+from .genomemanager import download_helper
 from .progressbar import ProgressBar
 from .run_script import run_script
 
 __all__ = [
-    "create_parser",
+    "parse_args",
+    "pr",
+    "download_helper",
     "ColorPrinter",
-    "download_genome_file",
-    "download_all_files_for_species",
     "ProgressBar",
     "create_progress_bar",
     "run_script",
