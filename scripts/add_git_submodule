@@ -1,0 +1,12 @@
+#!/bin/sh
+# Add a git submodule to the repository
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+SUBMODULE_PATH="$REPO_ROOT/opt"
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 <submodule_url>"
+  exit 1
+fi
+
+git submodule add "$1" "$SUBMODULE_PATH"
