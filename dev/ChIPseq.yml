@@ -1,8 +1,9 @@
-name: RNAseq
+name: ChIPseq
 channels:
   - bioconda
   - conda-forge
 dependencies:
-  - bowtie2
+  - hisat2
   - samtools
-  - subread
+  - bedtools
+  - macs2

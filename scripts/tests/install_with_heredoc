@@ -1,0 +1,15 @@
+# Download and run the installation script with a heredoc
+BIN_DIR=~/bin
+
+bash <(curl -L micro.mamba.pm/install.sh) << EOF
+${BIN_DIR}
+Y
+n
+EOF
+
+# Optionally, you can add a check to see if the installation was successful
+if [ -f "${BIN_DIR}/micromamba" ]; then
+    echo "micromamba has been successfully installed in ${BIN_DIR}"
+else
+    echo "Installation of micromamba may have failed. Please check ${BIN_DIR}"
+fi

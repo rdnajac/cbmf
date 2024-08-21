@@ -1,0 +1,10 @@
+name: analysis
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - pandas
+  - numpy
+  - scipy
+  - matplotlib
+
