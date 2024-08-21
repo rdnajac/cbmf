@@ -35,10 +35,10 @@ def create_parser() -> argparse.ArgumentParser:
         help='shorthand for "--species mouse"',
     )
     # Add more species as needed...
-    
+
     # Create subparsers for each command and add them to the main parser
     subparsers = parser.add_subparsers(dest="command", required=True)
-    
+
     # Download a specific genome file from the NCBI seqs for pipelines
     subparser_download = subparsers.add_parser(
         "download",
@@ -63,29 +63,33 @@ def create_parser() -> argparse.ArgumentParser:
 
     # Align reads to a reference genome
     subparser_align = subparsers.add_parser(
-        "align",  help="run alignment"
+        "align",
+        help="run alignment",
         # "align", parents=[species_parser], help="run alignment"
     )
     subparser_align.add_argument(
         "aligner", choices=["bwa", "hisat2", "bowtie2"], help="choose aligner"
     )
     subparser_align.add_argument(
-        "-i", "--input-directory",
+        "-i",
+        "--input-directory",
         type=lambda p: Path(p).expanduser().resolve(),
         required=True,
-        help="Input directory containing FASTQ files"
+        help="Input directory containing FASTQ files",
     )
     subparser_align.add_argument(
-        "-o", "--output-directory",
+        "-o",
+        "--output-directory",
         type=lambda p: Path(p).expanduser().resolve(),
         default=Path.cwd(),
-        help="Output directory for SAM files (default: current directory)"
+        help="Output directory for SAM files (default: current directory)",
     )
     subparser_align.add_argument(
-        "-r", "--reference",
+        "-r",
+        "--reference",
         type=lambda p: Path(p).expanduser().resolve(),
         # TODO attempt to resolve from the species and aligner
-        help="Path to the reference genome index"
+        help="Path to the reference genome index",
     )
 
     test_parser = subparsers.add_parser("test", help="run test suite")
@@ -122,5 +126,3 @@ def parse_args(argv=None) -> argparse.Namespace:
     args = parser.parse_args(argv)
     validate_args(args)
     return args
-
-

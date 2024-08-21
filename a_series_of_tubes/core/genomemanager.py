@@ -11,6 +11,7 @@ from ..config import GENOMES_MIRROR, REFERENCE, FILES
 Species = Literal[tuple(REFERENCE.keys())]
 Files = Literal[tuple(FILES.keys())]
 
+
 class GenomeManager:
     def __init__(self):
         self.lock = threading.Lock()
@@ -20,7 +21,7 @@ class GenomeManager:
             raise ValueError(f"Invalid species: {species}")
         if file not in FILES:
             raise ValueError(f"Invalid file type: {file}")
-        
+
         species_data = REFERENCE[species]
         file_suffix = FILES[file]
         return f"{GENOMES_MIRROR}/{species_data['uri']}/seqs_for_alignment_pipelines.ucsc_ids/{species_data['ref']}_full_analysis_set.{file_suffix}"
@@ -41,7 +42,13 @@ class GenomeManager:
                 downloaded_size = 0
 
                 with open(file_path, "wb") as out_file:
-                    progress_bar = ProgressBar(total_size, prefix=f"{file:<15} ({total_size})", length=30) if show_progress and total_size > 0 else None
+                    progress_bar = (
+                        ProgressBar(
+                            total_size, prefix=f"{file:<15} ({total_size})", length=30
+                        )
+                        if show_progress and total_size > 0
+                        else None
+                    )
 
                     while True:
                         buffer = response.read(8192)
@@ -68,17 +75,23 @@ class GenomeManager:
             if files == "ALL":
                 files = list(FILES.keys())
             else:
-                raise ValueError("Invalid string input for files. Use 'ALL' to download all files or provide a list of files.")
+                raise ValueError(
+                    "Invalid string input for files. Use 'ALL' to download all files or provide a list of files."
+                )
 
         if not isinstance(files, list):
-            raise ValueError("Invalid input for files parameter. Must be a list or 'ALL'.")
+            raise ValueError(
+                "Invalid input for files parameter. Must be a list or 'ALL'."
+            )
 
         if len(files) == 1:
             self._fetch_file(species, files[0], show_progress=True)
         else:
             threads = []
             for file in files:
-                thread = threading.Thread(target=self._fetch_file, args=(species, file, False))
+                thread = threading.Thread(
+                    target=self._fetch_file, args=(species, file, False)
+                )
                 threads.append(thread)
                 thread.start()
 

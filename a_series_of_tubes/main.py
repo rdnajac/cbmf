@@ -1,8 +1,20 @@
 import sys
+import unittest
 from pathlib import Path
 from .core import GenomeManager
-from .config import SCRIPTS_DIR
 from .utils import parse_args, ColorPrinter as pr, run_script
+from .config import SCRIPTS_DIR
+
+
+def run_tests():
+    loader = unittest.TestLoader()
+    start_dir = Path(__file__).parent / "tests"
+    suite = loader.discover(start_dir, pattern="test_*.py")
+
+    runner = unittest.TextTestRunner(verbosity=2)
+    result = runner.run(suite)
+    return 0 if result.wasSuccessful() else 1
+
 
 def main(argv=None) -> int:
     if argv is None:
@@ -15,10 +27,9 @@ def main(argv=None) -> int:
         if args.command == "download":
             GenomeManager.download(args.species, args.files)
         elif args.command == "test":
-            # Implement test logic here
-            pr.info("Running tests...")
-            # You might want to implement a test runner or use a testing framework
+            return run_tests()
         else:
+            # For all other commands, use run_script
             script_path = SCRIPTS_DIR / f"{args.command}.sh"
             return run_script(script_path)
     except ValueError as e:
@@ -32,6 +43,7 @@ def main(argv=None) -> int:
         return 1
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
