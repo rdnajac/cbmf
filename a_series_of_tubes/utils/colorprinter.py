@@ -56,7 +56,7 @@ class ColorPrinter:
         """Prints a status message with predefined color."""
         color = cls._color_map.get(status.lower())
         if color:
-            cls.print_color(f"{status.capitalize()}: {msg}", fg=color, file=sys.stderr)
+            cls.print_color(f"[{status.capitalize()}]: {msg}\n", fg=color, file=sys.stderr)
         else:
             print(f"{status.capitalize()}: {msg}", file=sys.stderr)
 
