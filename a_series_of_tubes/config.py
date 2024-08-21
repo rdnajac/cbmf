@@ -1,4 +1,4 @@
-# config.py
+from pathlib import Path
 
 # FTP server for genome downloads
 GENOMES_MIRROR = "ftp://ftp.ncbi.nlm.nih.gov"

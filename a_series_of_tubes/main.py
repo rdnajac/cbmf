@@ -33,9 +33,9 @@ def main(argv=None) -> int:
         #     align_reads(args)
         elif args.command == "test":
             return run_tests()
-        else:
-            script_path = SCRIPTS_DIR / f"{args.command}.sh"
-            return run_script(script_path)
+        # else:
+        # script_path = SCRIPTS_DIR / f"{args.command}.sh"
+        # return run_script(script_path)
     except ValueError as e:
         logger.error(f"Error: {str(e)}")
         return 1
