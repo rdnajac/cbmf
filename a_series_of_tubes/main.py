@@ -1,8 +1,9 @@
 import sys
 import unittest
 from pathlib import Path
-from .core import GenomeManager
-from .utils import parse_args, ColorPrinter as pr, run_script
+from .core import align_reads, GenomeManager
+from .utils import parse_args, run_script
+from .utils.logger import logger, setup_logger
 from .config import SCRIPTS_DIR
 
 
@@ -21,25 +22,28 @@ def main(argv=None) -> int:
         argv = sys.argv[1:]  # Skip the script name
 
     args = parse_args(argv)
-    pr.info(f"Received command: {args.command}")
+    setup_logger(level=args.log_level)
+    logger.info(f"Received command: {args.command}")
 
     try:
         if args.command == "download":
             GenomeManager.download(args.species, args.files)
+        # TODO
+        # elif args.command == "align":
+        #     align_reads(args)
         elif args.command == "test":
             return run_tests()
         else:
-            # For all other commands, use run_script
             script_path = SCRIPTS_DIR / f"{args.command}.sh"
             return run_script(script_path)
     except ValueError as e:
-        pr.error(f"Error: {str(e)}")
+        logger.error(f"Error: {str(e)}")
         return 1
     except FileNotFoundError as e:
-        pr.error(f"Script not found: {str(e)}")
+        logger.error(f"Script not found: {str(e)}")
         return 1
     except Exception as e:
-        pr.error(f"An unexpected error occurred: {str(e)}")
+        logger.error(f"An unexpected error occurred: {str(e)}")
         return 1
 
     return 0

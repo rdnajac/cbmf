@@ -52,7 +52,7 @@ def combine_run_csvs(run_folders, output_csv):
     all_data = []
     for run_folder in run_folders:
         bowtie_data = BowtieOutputDictionary()
-        bowtie_data.reata.parse_output())
+        bowtie_data.reata.parse_output()
 
     bowtie_data.write_to_csv(output_csv, all_data)
 

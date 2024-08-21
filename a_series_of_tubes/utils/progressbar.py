@@ -1,4 +1,5 @@
 import sys
+from .logger import logger
 
 
 class ProgressBar:
@@ -10,6 +11,7 @@ class ProgressBar:
         self.length = length
         self.fill = fill
         self.iteration = 0
+        logger.debug(f"ProgressBar created with total={total}, prefix={prefix}, suffix={suffix}, decimals={decimals}, length={length}, fill={fill}")
 
     def update(self, iteration=None):
         self.iteration = iteration if iteration is not None else self.iteration + 1
@@ -34,6 +36,14 @@ class ProgressBar:
 
 class ProgresBarArray:
     """A class to manage multiple progress bars."""
+   
+    def __init__(self, lock):
+       self.lock = lock
+       self.bars = []
 
-    pass
-    # TODO
+    def create(self, total, prefix="", suffix="", decimals=1, length=50, fill="█"):
+        bar = ProgressBar(total, prefix, suffix, decimals, length, fill)
+        self.bars.append(bar)
+        return bar.update
+
+    # TODO: Implement the update and finish methods

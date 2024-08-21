@@ -4,7 +4,7 @@ import urllib.request
 import threading
 from pathlib import Path
 from typing import Literal, Union, List
-from ..utils import ColorPrinter as pr
+from ..utils.logger import logger
 from ..utils import ProgressBar
 from ..config import GENOMES_MIRROR, REFERENCE, FILES
 
@@ -27,15 +27,11 @@ class GenomeManager:
         return f"{GENOMES_MIRROR}/{species_data['uri']}/seqs_for_alignment_pipelines.ucsc_ids/{species_data['ref']}_full_analysis_set.{file_suffix}"
 
     def _fetch_file(self, species: Species, file: Files, show_progress: bool) -> None:
-        try:
-            file_url = self._resolve_url(species, file)
-        except ValueError as e:
-            pr.error(str(e))
-            return
+        """Download a file for a given species."""
 
+        file_url = self._resolve_url(species, file)
         file_path = Path(f"~/cbmf/genomes/{species}/{FILES[file]}").expanduser()
 
-        pr.info(f"Downloading {species} {file} from {file_url}...")
         try:
             with urllib.request.urlopen(file_url) as response:
                 total_size = int(response.info().get("Content-Length", -1))
@@ -61,14 +57,14 @@ class GenomeManager:
                             progress_bar.update(downloaded_size)
 
             with self.lock:
-                pr.success(f"Downloaded {species} {file} to {file_path}")
+                logger.success(f"Downloaded {file} for {species}")
 
         except urllib.error.URLError as e:
             with self.lock:
-                pr.error(f"Error downloading {file} for {species}: {str(e)}")
+                logger.error(f"Failed to download {file} for {species}: {str(e)}")
         except IOError as e:
             with self.lock:
-                pr.error(f"Error writing {file} for {species}: {str(e)}")
+                logger.error(f"Failed to write {file} for {species}: {str(e)}")
 
     def download(self, species: Species, files: Union[List[Files], str]) -> None:
         if isinstance(files, str):
@@ -98,8 +94,6 @@ class GenomeManager:
             for thread in threads:
                 thread.join()
 
-        pr.success(f"All specified downloads completed for {species}")
-
     @staticmethod
     def decompress(path: str):
         files = os.listdir(path)
@@ -107,18 +101,14 @@ class GenomeManager:
         for file in files:
             file_path = os.path.join(path, file)
             if file.endswith("index.tar.gz"):
-                pr.info(f"Decompressing {file} with tar...")
                 try:
                     subprocess.run(["tar", "-xvzf", file_path, "-C", path], check=True)
-                    pr.success(f"Successfully extracted {file}")
                 except subprocess.CalledProcessError as e:
-                    pr.error(f"Failed to extract {file}: {e}")
+                    logger.error(f"Failed to decompress {file}: {str(e)}")
             elif file.endswith(".gz"):
-                pr.info(f"Decompressing {file} with gunzip...")
                 try:
                     subprocess.run(["gunzip", "-v", file_path], check=True)
-                    pr.success(f"Successfully decompressed {file}")
                 except subprocess.CalledProcessError as e:
-                    pr.error(f"Failed to decompress {file}: {e}")
+                    logger.error(f"Failed to decompress {file}: {str(e)}")
             else:
-                pr.info(f"Skipping {file}.")
+                logger.warning(f"Skipping {file} as it is not a compressed file.")

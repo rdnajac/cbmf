@@ -1,38 +1,37 @@
-# core/aligners.py
-
 import subprocess
-from ..utils import ColorPrinter as pr
+from ..utils.logger import logger
 
-# Function that takes in arguments and aligns reads to a reference genome
-# args = 
+
 def align_PE_reads(aligner, reference, r1fastq, r2fastq, threads):
-    """
+    """Align paired-end reads to a reference genome."""
+    # TODO
+    pass
 
-    """
 
 def align_reads(aligner, input_dir, PE=True, reference=None, species=None, threads=1):
     """
     Align reads to reference genome
 
     :param aligner: str, aligner to use (bwa, bowtie2, hisat2)
-    :input_dir: Path, input directory containing FASTQ files
+    :param input_dir: Path, input directory containing FASTQ files
+    :param PE: bool, whether reads are paired-end
     :param reference: Path, path to reference genome index (optional if species is provided)
     :param species: str, species name (optional if reference is provided)
     :param threads: int, number of threads to use
     """
-
     if not PE:
         raise ValueError("Only paired-end reads are supported")
-    
-    pr.info(f"Starting read alignment with {aligner}")
+
+    logger.info(f"Starting read alignment with {aligner}")
 
     if reference is None and species is None:
         raise ValueError("Either reference or species must be provided")
     elif reference is None:
-        # TODO write this function
+        from .genomemanager import GenomeManager
+
         reference = GenomeManager.get_genome_index(species, aligner)
-     elif reference.exists():
-        pr.info(f"Using reference genome index: {reference}")
+    elif reference.exists():
+        logger.info(f"Using reference genome index: {reference}")
     else:
         raise FileNotFoundError(f"Reference genome index not found: {reference}")
 
@@ -63,13 +62,9 @@ def align_PE_reads_from_dir(aligner, input_dir, reference, threads):
         if aligner == "bwa":
             raise NotImplementedError("BWA alignment not implemented yet")
         elif aligner == "bowtie2":
-            _bowtie2(r1fastq, r2fastq, output_file, reference, threads)
+            _bowtie2(r1fastq, r2fastq, reference, threads)
         elif aligner == "hisat2":
-            _hisat2(r1fastq, r2fastq, output_file, reference, threads)
-
-        pr.success(
-            f"Alignment completed for {r1fastq.name} and {r2fastq.name}. Output saved to {output_file}"
-        )
+            _hisat2(r1fastq, r2fastq, reference, threads)
 
 
 def _bwa(reference, r1fastq, r2fastq, output_file, threads):
@@ -83,6 +78,7 @@ def _bwa(reference, r1fastq, r2fastq, output_file, threads):
         str(r2fastq),
     ]
     _run_command(cmd)
+
 
 def _bowtie2(reference, r1fastq, r2fastq, threads):
     cmd = [
@@ -118,5 +114,4 @@ def _run_command(cmd):
     try:
         subprocess.run(" ".join(cmd), shell=True, check=True)
     except subprocess.CalledProcessError as e:
-        pr.error(f"Alignment command failed: {e}")
-        raise
+        raise ValueError(f"Error running command: {' '.join(cmd)}") from e

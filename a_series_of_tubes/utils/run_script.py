@@ -3,6 +3,7 @@ import pathlib
 import shlex
 import os
 from typing import Union, Optional
+from .logger import logger
 
 
 def run_script(
@@ -27,6 +28,7 @@ def run_script(
     script_file_str = os.path.expanduser(str(script_file))
 
     try:
+        logger.info(f"Executing script: {script_file_str}")
         result = subprocess.run(
             shlex.split(script_file_str),
             cwd=cwd,
@@ -37,10 +39,11 @@ def run_script(
         )
         print(result.stdout)
         return result.returncode
+    except FileNotFoundError:
+        print(f"Script file {script_file_str} does not exist")
+        logger.error(f"Script file {script_file_str} does not exist")
+        raise
     except subprocess.CalledProcessError as e:
         print(f"Script execution failed with return code {e.returncode}")
         print(f"Error output:\n{e.stderr}")
-        raise
-    except FileNotFoundError:
-        print(f"Script file not found: {script_file_str}")
-        raise
+        logger.error(f"Script execution failed with return code {e.returncode}")
