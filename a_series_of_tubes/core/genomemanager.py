@@ -3,30 +3,28 @@ import subprocess
 import urllib.request
 import threading
 from pathlib import Path
-from typing import Literal, Union, List
+from typing import Union, List
 from ..utils.logger import logger
 from ..utils import ProgressBar
 from ..config import GENOMES_MIRROR, REFERENCE, FILES
-
-Species = Literal[tuple(REFERENCE.keys())]
-Files = Literal[tuple(FILES.keys())]
 
 
 class GenomeManager:
     def __init__(self):
         self.lock = threading.Lock()
 
-    def _resolve_url(self, species: Species, file: Files) -> str:
-        if species not in REFERENCE:
+    def _resolve_url(self, species: str, file: str) -> str:
+        valid_species = ["mouse", "human"]
+        if species not in valid_species:
             raise ValueError(f"Invalid species: {species}")
-        if file not in FILES:
+        if file not in FILES.keys():
             raise ValueError(f"Invalid file type: {file}")
 
         species_data = REFERENCE[species]
         file_suffix = FILES[file]
         return f"{GENOMES_MIRROR}/{species_data['uri']}/seqs_for_alignment_pipelines.ucsc_ids/{species_data['ref']}_full_analysis_set.{file_suffix}"
 
-    def _fetch_file(self, species: Species, file: Files, show_progress: bool) -> None:
+    def _fetch_file(self, species: str, file: str, show_progress: bool) -> None:
         """Download a file for a given species."""
 
         file_url = self._resolve_url(species, file)
@@ -66,7 +64,7 @@ class GenomeManager:
             with self.lock:
                 logger.error(f"Failed to write {file} for {species}: {str(e)}")
 
-    def download(self, species: Species, files: Union[List[Files], str]) -> None:
+    def download(self, species: str, files: Union[List[str], str]) -> None:
         if isinstance(files, str):
             if files == "ALL":
                 files = list(FILES.keys())
@@ -85,6 +83,8 @@ class GenomeManager:
         else:
             threads = []
             for file in files:
+                if file not in FILES:
+                    raise ValueError(f"Invalid file type: {file}")
                 thread = threading.Thread(
                     target=self._fetch_file, args=(species, file, False)
                 )
