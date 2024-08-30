@@ -34,15 +34,14 @@ CBMF is designed to be user-friendly, with detailed documentation and tutorials
 to help users get started. The documentation is organized into sections based
 on the type of analysis being performed, such as RNA-Seq, ChIP-Seq, and WGS.
 
-There is also a Jira-style wiki with additional resources and tutorials.
-You can access the wiki by clicking on the tab at the top of the page
+Check out the wiki by clicking on the tab at the top of the page
 or by following [this link](https://github.com/rdnajac/cbmf/wiki).
 
 > [!TIP]
 > These files are written using [GitHub Flavored Markdown \(GFM\)](https://github.github.com/gfm/),
 > a superset of the [original](https://daringfireball.net/projects/markdown/syntax)
 > lightweight markup language with plain text formatting syntax.
-> GFM gives us additional features (like tables, footnotes, and  
+> GFM gives us additional features (like tables, footnotes, and alerts
 > like this) while maintaining readability in plain text.
 
 ## 📦 Package Management
