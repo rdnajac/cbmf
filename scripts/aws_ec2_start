@@ -41,3 +41,6 @@ echo "Hostname in $config_file has been updated to $new_hostname."
 
 # Display the last 4 lines of the SSH config file
 tail -n 4 "$config_file"
+
+
+# aws ec2 stop-instances --instance-ids "$MY_EC2_ID"

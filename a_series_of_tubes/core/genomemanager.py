@@ -17,7 +17,7 @@ class GenomeManager:
         valid_species = ["mouse", "human"]
         if species not in valid_species:
             raise ValueError(f"Invalid species: {species}")
-        if file not in FILES.keys():
+        if file not in FILES:
             raise ValueError(f"Invalid file type: {file}")
 
         species_data = REFERENCE[species]
@@ -28,7 +28,7 @@ class GenomeManager:
         """Download a file for a given species."""
 
         file_url = self._resolve_url(species, file)
-        file_path = Path(f"~/cbmf/genomes/{species}/{FILES[file]}").expanduser()
+        file_path = Path(f"~/genomes/{species}/{FILES[file]}").expanduser()
 
         try:
             with urllib.request.urlopen(file_url) as response:
@@ -55,7 +55,7 @@ class GenomeManager:
                             progress_bar.update(downloaded_size)
 
             with self.lock:
-                logger.success(f"Downloaded {file} for {species}")
+                print(f"Downloaded {file} for {species}")
 
         except urllib.error.URLError as e:
             with self.lock:
@@ -65,6 +65,13 @@ class GenomeManager:
                 logger.error(f"Failed to write {file} for {species}: {str(e)}")
 
     def download(self, species: str, files: Union[List[str], str]) -> None:
+        """Download files for a given species."""
+
+        # Validate species
+        if species not in REFERENCE:
+            raise ValueError(f"Invalid species: {species}")
+
+        # Determine files to download
         if isinstance(files, str):
             if files == "ALL":
                 files = list(FILES.keys())
@@ -78,24 +85,39 @@ class GenomeManager:
                 "Invalid input for files parameter. Must be a list or 'ALL'."
             )
 
+        # Validate each file type
+        invalid_files = [file for file in files if file not in FILES]
+        if invalid_files:
+            raise ValueError(f"Invalid file types: {', '.join(invalid_files)}")
+
+        # Download files
         if len(files) == 1:
             self._fetch_file(species, files[0], show_progress=True)
         else:
             threads = []
             for file in files:
-                if file not in FILES:
-                    raise ValueError(f"Invalid file type: {file}")
+                # if the file exists, skip it
+                if os.path.exists(f"~/genomes/{species}/{FILES[file]}"):
+                    logger.warning(f"Skipping {file} as it already exists.")
+                    continue
+
                 thread = threading.Thread(
                     target=self._fetch_file, args=(species, file, False)
                 )
                 threads.append(thread)
                 thread.start()
 
+            # Wait for all threads to complete
             for thread in threads:
                 thread.join()
 
+        # Decompress files
+        self.decompress(f"~/genomes/{species}")
+
     @staticmethod
     def decompress(path: str):
+        """Decompress files in the given path."""
+
         files = os.listdir(path)
 
         for file in files:

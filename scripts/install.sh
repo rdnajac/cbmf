@@ -1,5 +1,5 @@
 #!/bin/bash
-# cbmf/INSTALL - cross-platform installation script for CBMF 
+# cross-platform installation script
 
 set -eu # Safety first!
 # This is the same invoking both `set -o errexit` and `set -o nounset`.

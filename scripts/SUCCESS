@@ -10,10 +10,43 @@ SUCCESS() {
 	fi
 }
 
-SUCCESS
+micromamba run -n "$ENV_NAME" fastqc -t "$(nproc)" --memory "$MEMSIZE" --noextract -o "$out_dir" "$input_dir"/*
+featureCounts -T "$NUM_THREADS" --verbose -t exon -g gene_id --countReadPairs \
+		-a "$REF_GTF" -p -P -C -B -o "${OUT_DIR}/${OUT_PREFIX}.tsv" ./*.bam
 
-hello() { 
-	echo "Hello, World!"
+featureCounts -T "$(nproc)" --verbose -t exon -g gene_id --countReadPairs -a "$HOME/genomes/mouse/$REF_GTF" -p -P -C -B -o fin_dmso.tsv ./F*.bam ./DM*.bam
+	# Run StringTie on each sample to assemble and quantify expressed genes and transcripts
+		stringtie -p "$NPROC" -G "$reference_gff" "$bamfile" > "${bamfile%.bam}_ref.gtf" &
+	        stringtie --merge -p "$NPROC" -G "$reference_gff" ./*_ref.gtf > "$MERGED_GTF"
+		gffcompare "$reference_gff" "$MERGED_GTF" -V 2> gffcmp.log
+		stringtie -p "$NPROC" -G "$MERGED_GTF" -e -b "$folder" -o "${id}_stringtie.gtf" "$bamfile" &
+
+
+align_to_bam() {
+	local aligner="$1" r1_fastq="$2" r2_fastq="$3" reference="$4"
+	local bam_file="${r1_fastq%_R1*}_sorted_markdup.bam"
+	align_reads "$aligner" "$r1_fastq" "$r2_fastq" "$reference" \
+		| samtools sort -n -@ "$(nproc)" - \
+		| samtools fixmate -@ "$(nproc)" -m - - \
+		| samtools sort -@ "$(nproc)" - \
+		| samtools markdup -@ "$(nproc)" - "$bam_file"
 }
 
-hello
+bam_to_cram() {
+	local bam_file="$1"
+	local id=$(basename "$bam_file" .bam)
+	local cram_file="${id}.cram"
+	local reference="/home/ubuntu/genomes/human/GCA_000001405.15_GRCh38_full_analysis_set.fna.bgz"
+	samtools view -@"$(nproc)" --cram -T "$reference" "$bam_file" > "$cram_file"
+	pr_info "Converted $bam_file to $cram_file"
+}
+
+cram_to_bam() {
+	local cram_file="$1"
+	local id=$(basename "$cram_file" .cram)
+	local bam_file="${id}.bam"
+	[ -f "$bam_file" ] && mv "$bam_file" "${bam_file}.bak"
+	samtools view -@"$(nproc)" --bam "$cram_file" > "$bam_file"
+	pr_info "Converted $cram_file to $bam_file"
+}
+

@@ -1,8 +1,0 @@
-name: QC
-channels:
-  - bioconda
-  - conda-forge
-dependencies:
-  - fastqc
-  - multiqc
-  - GATK4

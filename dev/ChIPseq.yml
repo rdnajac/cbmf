@@ -1,9 +1,0 @@
-name: ChIPseq
-channels:
-  - bioconda
-  - conda-forge
-dependencies:
-  - hisat2
-  - samtools
-  - bedtools
-  - macs2

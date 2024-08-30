@@ -1,0 +1,5 @@
+# Docker
+
+
+docker buildx create --use
+docker buildx build --platform linux/amd64 -t rdn2108/cbmf:v1.0 .

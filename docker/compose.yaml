@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  micromamba:
+    image: mambaorg/micromamba:latest
+    container_name: micromamba_env
+    volumes:
+      - shared_data:/home/ubuntu/work
+    user: ubuntu
+    working_dir: /home/ubuntu/work
+    command: /bin/bash
+    tty: true
+
+  jupyter:
+    image: quay.io/jupyter/datascience-notebook:latest
+    container_name: jupyter_notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - shared_data:/home/ubuntu/work
+    user: ubuntu
+    working_dir: /home/ubuntu/work
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - NB_USER=ubuntu
+      - NB_PASSWORD=Palomero1!
+
+  r-base:
+    image: r-base:latest
+    container_name: r_environment
+    volumes:
+      - shared_data:/home/ubuntu/work
+    user: ubuntu
+    working_dir: /home/ubuntu/work
+    command: R
+
+volumes:
+  shared_data:

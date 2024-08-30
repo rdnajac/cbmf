@@ -1,6 +1,7 @@
 import argparse
 import logging
 from pathlib import Path
+from config import FILES
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -46,7 +47,7 @@ def create_parser() -> argparse.ArgumentParser:
     # Create subparsers for each command and add them to the main parser
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    # Download a specific genome file from the NCBI seqs for pipelines
+# Download a specific genome file from the NCBI seqs for pipelines
     subparser_download = subparsers.add_parser(
         "download",
         aliases=["dl"],
@@ -56,15 +57,7 @@ def create_parser() -> argparse.ArgumentParser:
     subparser_download.add_argument(
         "files",
         nargs="+",
-        choices=[
-            "bowtie_index",
-            "bwa_index",
-            "samtools_index",
-            "fasta",
-            "hisat2_index",
-            "refseq_gff",
-            "refseq_gtf",
-        ],
+        choices=list(FILES.keys()) + ["ALL"],
         help="choose file(s) to download",
     )
 
