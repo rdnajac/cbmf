@@ -1,14 +1,30 @@
 # 🧬 Combinatorial Bioinformatic Meta-Framework
 
-A single point of access to thousands of biomedical research software packages.
+Efficient Bioinformatics Workflows for High-Throughput Sequence Analysis
 
 ## 🔭 Overview
 
-The Combinatorial Bioinformatic Meta-Framework (CBMF) is a collection of
-tools and resources for analyzing high-throughput sequencing data. It
-leverages the power of the `micromamba` package manager to install software
-and manage dependencies. The framework is designed to be modular, allowing
-users to select the tools they need for their specific analyses.
+The Combinatorial Bioinformatic Meta-Framework (CBMF) is a single point 
+of access to thousands of biomedical research software packages with additional
+tools and resources for analyzing high-throughput sequencing data. By leveraging 
+the power of the `micromamba` package manager to create `conda` environments, 
+install software and manage dependencies. The framework is designed to be
+modular, allowing users to select the tools they need for their specific analyses.
+
+## 📄 Abstract
+
+The rapid growth of next-generation sequencing technologies has generated an 
+unprecedented volume of biological data, posing significant challenges for
+bioinformatics analysis. Traditional scripting approaches often lack
+reproducibility and can be complex for users without extensive programming 
+expertise. This project introduces a collection of Linux shell scripts designed
+to address these challenges. These scripts implement standardized workflows for
+quality control, alignment, and report generation tasks across diverse datasets.
+By automating these processes, the scripts ensure reproducibility, minimize 
+human error, and promote consistent data processing.  This suite offers a
+scalable and reliable solution for comprehensive bioinformatics analysis,
+representing an important advancement in making high-throughput sequencing 
+data more accessible and manageable for the broader research community.
 
 ## 🚀 Quick Start
 
@@ -18,31 +34,17 @@ Clone the repository...
 git clone https://github.com/rdnajac/cbmf
 ```
 
-and run initialization script.
+and run initialization script in the `cbmf` directory...
 
 ```sh
-cd cbmf && $SHELL <INSTALL
+cd cbmf && cbmf init
 ```
 
 Then skip ahead to the [Sequencing Workflows](#-sequencing-workflows) section.
 Otherwise, read on for more information about the CBMF, how it works,
 and how to use it.
 
-## 📚 Documentation
 
-CBMF is designed to be user-friendly, with detailed documentation and tutorials
-to help users get started. The documentation is organized into sections based
-on the type of analysis being performed, such as RNA-Seq, ChIP-Seq, and WGS.
-
-Check out the wiki by clicking on the tab at the top of the page
-or by following [this link](https://github.com/rdnajac/cbmf/wiki).
-
-> [!TIP]
-> These files are written using [GitHub Flavored Markdown \(GFM\)](https://github.github.com/gfm/),
-> a superset of the [original](https://daringfireball.net/projects/markdown/syntax)
-> lightweight markup language with plain text formatting syntax.
-> GFM gives us additional features (like tables, footnotes, and alerts
-> like this) while maintaining readability in plain text.
 
 ## 📦 Package Management
 
