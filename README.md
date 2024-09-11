@@ -28,22 +28,16 @@ data more accessible and manageable for the broader research community.
 
 ## 🚀 Quick Start
 
-Clone the repository...
+Clone the repository
+and run initialization script in the `cbmf` directory:
 
 ```sh
-git clone https://github.com/rdnajac/cbmf
-```
-
-and run initialization script in the `cbmf` directory...
-
-```sh
-cd cbmf && cbmf init
+git clone https://github.com/rdnajac/cbmf && cd cbmf && cbmf init
 ```
 
 Then skip ahead to the [Sequencing Workflows](#-sequencing-workflows) section.
 Otherwise, read on for more information about the CBMF, how it works,
 and how to use it.
-
 
 
 ## 📦 Package Management
