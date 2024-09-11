@@ -1,0 +1,57 @@
+PREFIX := $(PWD)
+BINDIR := $(PREFIX)/bin
+LIBDIR := $(PREFIX)/lib
+INCLUDEDIR := $(PREFIX)/include
+SHAREDIR := $(PREFIX)/share
+
+SUBMODULES := htslib samtools hisat2 bwa bowtie2 subread bedtools2
+SUBDIRS := $(addprefix submodules/,$(SUBMODULES))
+
+NPROC := $(shell nproc || echo 1)
+
+$(shell mkdir -p $(BINDIR) $(LIBDIR) $(INCLUDEDIR) $(SHAREDIR))
+
+.PHONY: all clean install $(SUBMODULES)
+
+all: $(SUBMODULES)
+
+htslib:
+	cd submodules/$@ && autoreconf -i && ./configure --prefix=$(PREFIX) --libdir=$(LIBDIR) && $(MAKE) -j$(NPROC)
+
+samtools: htslib
+	cd submodules/$@ && autoreconf -i && ./configure --prefix=$(PREFIX) --bindir=$(BINDIR) --with-htslib=$(PWD)/submodules/htslib && $(MAKE) -j$(NPROC)
+
+hisat2 bwa bowtie2 bedtools:
+	$(MAKE) -C submodules/$@ -j$(NPROC)
+
+subread:
+	$(MAKE) -C submodules/$@/src -f Makefile.Linux
+
+install: $(addprefix install-,$(SUBMODULES))
+
+install-htslib install-samtools:
+	$(MAKE) -C submodules/$(@:install-%=%) install
+
+install-hisat2: hisat2
+	cp submodules/$(@:install-%=%)/hisat2 submodules/$(@:install-%=%)/hisat2-* $(BINDIR)/
+
+install-bwa: bwa
+	cp submodules/$(@:install-%=%)/bwa $(BINDIR)/
+
+install-bowtie2: bowtie2
+	cp submodules/$(@:install-%=%)/{bowtie2,bowtie2-align-l,bowtie2-align-s,bowtie2-build,bowtie2-build-l,bowtie2-build-s,bowtie2-inspect,bowtie2-inspect-l,bowtie2-inspect-s} $(BINDIR)/
+
+install-subread: subread
+	cp submodules/$(@:install-%=%)/src/{subread-align,subjunc,featureCounts,subindel,exactSNP,subread-buildindex,sublong,cellCounts,utilities/*} $(BINDIR)/
+
+install-bedtools: bedtools
+	cp submodules/$(@:install-%=%)/bin/* $(BINDIR)/
+
+clean: $(addprefix clean-,$(SUBMODULES))
+	rm -rf $(BINDIR) $(LIBDIR) $(INCLUDEDIR) $(SHAREDIR)
+
+clean-htslib clean-samtools clean-hisat2 clean-bwa clean-bowtie2 clean-bedtools2:
+	$(MAKE) -C submodules/$(@:clean-%=%) clean
+
+clean-subread:
+	$(MAKE) -C submodules/$(@:clean-%=%)/src -f Makefile.Linux clean
