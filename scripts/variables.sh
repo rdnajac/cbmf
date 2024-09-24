@@ -14,15 +14,3 @@ ENVIRONMENTS_DIR="$PROJECT_ROOT/environments"
 
 DEFAULT_ENV="cbmf"
 MAMBA_INSTALL_URL="https://micro.mamba.pm/api/micromamba"
-
-setup_micromamba_env() {
-    MAMBA_ROOT_PREFIX="$1"
-    MAMBA_EXE="$2"
-    DETECTED_SHELL=$(detect_shell)
-
-    export MAMBA_ROOT_PREFIX
-
-    eval "$("$MAMBA_EXE" shell hook -s "$DETECTED_SHELL")" || err_exit "Failed to set up micromamba shell hook"
-
-    echo "Micromamba environment set up successfully"
-}
