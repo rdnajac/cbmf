@@ -1,7 +1,7 @@
 import argparse
 import logging
 from pathlib import Path
-from config import FILES
+from ..config import FILES
 
 
 def create_parser() -> argparse.ArgumentParser:
