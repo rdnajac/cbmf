@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Clean the main repository
+# git clean -dfx
+
+# Clean all submodules recursively
+git submodule foreach --recursive 'git clean -dfx; git reset --hard'
+
+# Update all submodules to their tracked commits
+git submodule update --init --recursive
