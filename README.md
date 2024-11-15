@@ -26,6 +26,10 @@ scalable and reliable solution for comprehensive bioinformatics analysis,
 representing an important advancement in making high-throughput sequencing
 data more accessible and manageable for the broader research community.
 
+## 📚 Documentation
+
+The wiki is no longer maintained and has been migrated [here](https://palomerolab.org/how-to/).
+
 ## 🚀 Quick Start
 
 Clone the repository.
