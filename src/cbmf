@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+# set -eu # Safety first!
+# # This is the same invoking both `set -o errexit` and `set -o nounset`.
+# # It causes the script to exit immediately if a command exits with a
+# # non-zero status, and treats unset variables error.
+
+# set -x
+# # Uncomment to print each command before it is executed. Useful for debugging.
+# # This is the same as `set -o xtrace` or invoking the script with `bash -x`.
+
+# # ==============================================================================
+# # Constants
+# # ==============================================================================
+# CBMF_DIR=$(cd "$(dirname "$0")" && pwd)
+# # The 0th positional parameter is the name of the script itself
+# # the cd && pwd ensure that the script works even if it is called
+# # from a relative directory, symlink, or over ssh
+# # export BIN_DIR="${HOME}/bin"
+# # export DEV_DIR="${HOME}/dev"
+# export GENOMES_DIR="${HOME}/genomes"
+# export SCRIPTS_DIR="${CBMF_DIR}/scripts"
+
+# # mkdir -p "$BIN_DIR" "$GENOMES_DIR" "$SCRIPTS_DIR"
+
+# # export MAMBA_ROOT_PREFIX="${HOME}/cbmf/micromamba"
+# # export MAMBA_EXE="${HOME}/bin/micromamba"
+
+# # This is only env variable relevant if you are using R with reticulate,
+# # an R package that allows you to run Python code in R.
+# export RETICULATE_MINICONDA_ENABLED=FALSE
+# # Entering the following commands in R should NOT prompt you to install miniconda:
+# # > library(reticulate)
+# # > os <- import("os")
+
+# # Shell hook
+# . "$SCRIPTS_DIR/init.sh"
+
+# main() {
+# 	# parse_args "$@"
+# 	# execute_command "$@"
+# 	# if the second arg is -- , exit 0
+# 	[ "$2" = "--" ] && err_exit "got --"
+# }
+# main
+
+# python3 << EOF
+import sys
+# sys.path.insert(0, '$THIS_DIR')
+#insert this directory into the path
+
+from a_series_of_tubes.main import main
+if __name__ == '__main__':
+    sys.exit(main())
+EOF

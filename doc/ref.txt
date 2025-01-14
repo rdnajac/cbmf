@@ -1,0 +1,9 @@
+1. Gentleman, R. C., Carey, V. J., Bates, D. M., Bolstad, B., Dettling, M., Dudoit, S., ... & Zhang, J. (2004). Bioconductor: open software development for computational biology and bioinformatics. Genome Biology, 5(10), R80.
+
+2. Grüning, B., Dale, R., Sjödin, A., Chapman, B. A., Rowe, J., Tomkins-Tinch, C. H., ... & Köster, J. (2018). Bioconda: sustainable and comprehensive software distribution for the life sciences. Nature Methods, 15(7), 475-476.
+
+3. Bedő, J., Di Stefano, L., & Papenfuss, A. T. (2020). Unifying package managers, workflow engines, and containers: Computational reproducibility with BioNix. GigaScience, 9(11), giaa121.
+
+4. Grüning, B., Chilton, J., Köster, J., Dale, R., Soranzo, N., van den Beek, M., ... & Taylor, J. (2018). Practical computational reproducibility in the life sciences. Cell Systems, 6(6), 631-635.
+
+5. Jalili, V., Clements, D., Grüning, B., Blankenberg, D., & Goecks, J. (2020). Adding software to package management systems can increase their citation by 280%. bioRxiv.
