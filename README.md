@@ -32,7 +32,7 @@ The wiki is no longer maintained and has been migrated [here](https://palomerola
 
 ## 🚀 Quick Start
 
-Clone the repository.
+Clone the repository...
 
 ```sh
 git clone https://github.com/rdnajac/cbmf
@@ -111,7 +111,7 @@ contamination, and over-representation of certain sequences.
 | [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)[^fastqc] | Generates html reports containing straightforward metrics | [GitHub](https://github.com/s-andrews/FastQC)                                                                          |
 | [GATK](https://gatk.broadinstitute.org/hc/en-us)[^gatk]                       | Analyzes high-throughput sequencing data                  | [GitHub](https://github.com/broadinstitute/gatk)                                                                       |
 | [Picard Tools](https://broadinstitute.github.io/picard/)                      | Manipulates high-throughput sequencing data               | Comes packaged with [GATK4](https://gatk.broadinstitute.org/hc/en-us/articles/360036194592-Getting-started-with-GATK4) |
-| [MultiQC](https://multiqc.info/)[^4]                                          | Aggregates results from bioinformatics analyses           | [GitHub](https://github.com/ewels/MultiQC)                                                                             |
+| [MultiQC](https://multiqc.info/)[^multiqc]                                    | Aggregates results from bioinformatics analyses           | [GitHub](https://github.com/ewels/MultiQC)                                                                             |
 
 To run these QC applications, you need a suitable Java Runtime Environment (JRE).
 Let `micromamba` handle the installation of the JRE and the tools from bioconda:
@@ -186,7 +186,7 @@ The manuscript for this project is currently in preparation (kinda) and uses the
 ### Oxford University Press (OUP) Bioinformatics
 
 Bioinformatics is an official journal of the
-International Society for Computational Biology ([ISCB](https://www.iscb.org/).
+International Society for Computational Biology ([ISCB](https://www.iscb.org/)).
 
 > Announcement: Bioinformatics flipped to become a fully open
 > access journal on 1st January 2023. Any new submissions or
@@ -230,17 +230,17 @@ Shout out to these awesome docs:
 Thank you to my labmates in the [Palomero Lab](http://palomerolab.org/)
 for their feedback and guidance.
 
-<!-- Refereneces -->
+<!-- References -->
 
 [^bioconda]:
     Grüning, B., Dale, R., Sjödin, A. et al. Bioconda: sustainable and comprehensive
     software distribution for the life sciences. Nat Methods 15, 475–476 (2018).
-    https://doi.org/10.1038/s41592-018-0046-7
+    <https://doi.org/10.1038/s41592-018-0046-7>
 
 [^bioconductor]:
     Gentleman, R.C., Carey, V.J., Bates, D.M. et al. Bioconductor: open software
     development for computational biology and bioinformatics.
-    Genome Biol 5, R80 (2004). https://doi.org/10.1186/gb-2004-5-10-r80
+    Genome Biol 5, R80 (2004). <https://doi.org/10.1186/gb-2004-5-10-r80>
 
 [^fastqc]:
     Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data.
@@ -250,6 +250,11 @@ for their feedback and guidance.
     McKenna A, Hanna M, Banks E, et al. The Genome Analysis Toolkit: a MapReduce
     framework for analyzing next-generation DNA sequencing data.
     Genome Res. 2010;20(9):1297-1303. [PMID: 20644199](https://pubmed.ncbi.nlm.nih.gov/20644199/)
+
+[^multiqc]:
+    Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC:
+    summarize analysis results for multiple tools and samples in a single report.
+    Bioinformatics, 32(1), 3047. <https://doi.org/10.1093/bioinformatics/btw354>
 
 [^bwa]:
     Li H. and Durbin R. (2009) Fast and accurate short read alignment with Burrows-Wheeler Transform.
