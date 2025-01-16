@@ -1,22 +1,14 @@
 #!/bin/bash
-#
 ## Wrapper script for paired-end read alignment using HISAT2.
 ## Takes input and output directories as arguments.
 
-set -o pipefail
-set -e
-set -x
+set -euo pipefail
 
-if [ "$#" -ne 2 ]; then
-	echo "Usage: $0 <input_folder> <output_folder>"
-	exit 1
-fi
-
-INPUT_FOLDER="$1"
-OUTPUT_FOLDER="$2"
+INPUT_FOLDER="20241029_Jurkat_PHF6-PHIP-KO_LQ/"
+OUTPUT_FOLDER="$HOME/aligned"
 mkdir -p "$OUTPUT_FOLDER"
 THREADS="$(nproc)"
-REFERENCE="/home/ubuntu/genomes/human/GCA_000001405.15_GRCh38_full_analysis_set"
+REFERENCE="/opt/genomes/human/GCA_000001405.15_GRCh38_full_analysis_set"
 
 cd "$INPUT_FOLDER" || {
 	echo "Error: $INPUT_FOLDER does not exist"
@@ -36,11 +28,11 @@ for r1_fastq in ./*_R1*.fastq.gz; do
 	sample_name="${sample_name/_R1_*/}"
 	bam_file="$OUTPUT_FOLDER/${sample_name}_sorted_markdup.bam"
 
-	hisat2 -p "$THREADS" --dta -x "$REFERENCE" -1 "$r1_fastq" -2 "$r2_fastq" |
-		samtools sort -n -@ "$THREADS" - |
-		samtools fixmate -@ "$THREADS" -m - - |
-		samtools sort -@ "$THREADS" - |
-		samtools markdup -@ "$THREADS" - "$bam_file"
+	hisat2 -p "$THREADS" --dta -x "$REFERENCE" -1 "$r1_fastq" -2 "$r2_fastq" \
+		| samtools sort -n -@ "$THREADS" - \
+		| samtools fixmate -@ "$THREADS" -m - - \
+		| samtools sort    -@ "$THREADS" - \
+		| samtools markdup -@ "$THREADS" - "$bam_file"
 
 	echo "Alignment completed for $r1_fastq and $r2_fastq. Output BAM: $bam_file"
 done

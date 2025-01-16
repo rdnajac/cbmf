@@ -1,0 +1,24 @@
+#!/bin/bash
+# Wrapper script to run another script over SSH and then list the contents
+
+HOST=my-ec2
+HOST_WORKING_DIR=/home/ubuntu/work/fastq
+SCRIPT_PATH="$1"
+
+# Check if the script path is provided
+if [ -z "$SCRIPT_PATH" ]; then
+    echo "Usage: $0 <script-path>"
+    exit 1
+fi
+
+# Check if the specified script exists
+if [ ! -f "$SCRIPT_PATH" ]; then
+    echo "Script $SCRIPT_PATH not found!"
+    exit 1
+fi
+
+# Read the script content and append 'ls' command to it
+# ssh "$HOST" "cd $HOST_WORKING_DIR && ls"
+#
+ssh "$HOST" "cd $HOST_WORKING_DIR && bash -s" < "$SCRIPT_PATH"
+
