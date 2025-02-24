@@ -7,12 +7,13 @@ import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from colorprinter import ColorPrinter as pr
+# from colorprinter import ColorPrinter as pr
 
 
 def bail(msg):
     """Print an error message and exit the program"""
-    pr.error(msg)
+    # pr.error(msg)
+    print(msg)
     sys.exit(1)
 
 
@@ -88,7 +89,8 @@ def process_bam_file(file):
         tuple: A tuple with the filename and the statistics
     """
     try:
-        pr.info(f"Processing {file}")
+        # pr.info(f"Processing {file}")
+        print(f"Processing {file}")
         subprocess.run("samtools --version", shell=True, check=True)
 
         flagstat_cmd = subprocess.run(
@@ -114,7 +116,8 @@ def process_bam_file(file):
         return os.path.basename(file), stats
 
     except subprocess.CalledProcessError as e:
-        pr.error(f"Error running samtools: {e}")
+        # pr.error(f"Error running samtools: {e}")
+        print(f"Error running samtools: {e}")
         raise RuntimeError(
             f"Failed to process file {file} due to samtools error."
         ) from e
@@ -214,9 +217,11 @@ def main():
     try:
         results_dict = collect_bam_stats(args.directory, args.nproc)
         write_csv(results_dict, args.output)
-        pr.success(f"Results written to {args.output}")
+        # pr.success(f"Results written to {args.output}")
+        print(f"Results written to {args.output}")
     except Exception as e:
-        pr.error(f"Error processing BAM files: {e}")
+        # pr.error(f"Error processing BAM files: {e}")
+        print(f"Error processing BAM files: {e}")
         sys.exit(1)
 
 
