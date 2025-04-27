@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../src" && pwd)"
+
+# PYTHONPATH="$PROJECT_ROOT" exec python3 -m ec2manager.cli "$@"
+micromamba run -n base --env PYTHONPATH="$PROJECT_ROOT" python3 -m ec2manager.cli "$@"
