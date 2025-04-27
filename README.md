@@ -1,6 +1,6 @@
 # 🧬 Combinatorial Bioinformatic Meta-Framework
 
-Efficient Bioinformatics Workflows for High-Throughput Sequence Analysis
+*Efficient* Bioinformatics Workflows for High-Throughput Sequence Analysis
 
 ## 🔭 Overview
 
@@ -132,42 +132,6 @@ micromamba activate qc
 > After aligning the reads to the reference genome, these tools can be re-ran on the
 > resulting SAM/BAM files to ensure that the alignment was successful or to consolidate
 > the results from paired-end sequencing.
-
-### 🏗️ Alignment
-
-Before we can analyze the data, we need to align the reads to a reference genome.
-Before aligning the reads, we need download the reference genome and build the index files.
-The most recent major releases from [NCBI Datasets](https://www.ncbi.nlm.nih.gov/datasets)
-can be found on the [Genome Reference Consortium](https://www.ncbi.nlm.nih.gov/grc) page.
-
-#### Reference Genomes
-
-<!-- TODO: add dates -->
-
-| species                                         | assembly | release date | accession        | ftp link                                                                                 |
-| ----------------------------------------------- | -------- | ------------ | ---------------- | ---------------------------------------------------------------------------------------- |
-| [human](https://www.ncbi.nlm.nih.gov/grc/human) | GRCh38   | xxxx-xx-xx   | GCA_000001405.15 | [ftp](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/) |
-| [mouse](https://www.ncbi.nlm.nih.gov/grc/mouse) | GRCm39   | xxxx-xx-xx   | GCA_000001635.9  | [ftp](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/635/GCA_000001635.9_GRCm39/)  |
-
-> [!TIP]
-> Skip building indexes from scratch and use the pre-built indexes for `bowtie2`,
-> `bwa`, and `hisat2` and `samtools` in the `seqs_for_alignment_pipelines.ucsc_ids`
-> folder. (It even has the 'GTT' and 'GFF' annotation files we'll need later).
-
-#### Aligners
-
-| Tool                                                                       | Description                                           | Key Features                                                                                                         | Best For                                        | Source                                                     |
-| -------------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------- |
-| [BWA](https://bio-bwa.sourceforge.net/)[^bwa]                              | Maps short DNA sequences to reference genome          | - Uses Burrows-Wheeler Transform (BWT) for indexing<br>- Efficient for short reads<br>- Supports paired-end reads    | Whole Genome Sequencing (WGS), Exome Sequencing | [GitHub](https://github.com/lh3/bwa)                       |
-| [STAR](https://github.com/alexdobin/STAR)[^star]                           | Specialized for RNA-Seq alignment                     | - Uses seed-extension search<br>- Detects novel splice junctions<br>- Fast and accurate for long reads               | RNA-Seq, especially with long reads             | [GitHub](https://github.com/alexdobin/STAR)                |
-| [HISAT2](https://daehwankimlab.github.io/hisat2/)[^hisat2]                 | Splice-aware aligner for DNA and RNA sequences        | - Uses graph-based alignment<br>- Memory-efficient<br>- Supports both DNA and RNA alignment                          | RNA-Seq, WGS, particularly for large genomes    | [GitHub](https://github.com/DaehwanKimLab/hisat2)          |
-| [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)[^bowtie2] | Efficient short read aligner                          | - Uses FM-index (similar to BWT)<br>- Supports gapped, local, and paired-end alignment<br>- Memory-efficient         | ChIP-seq, WGS                                   | [GitHub](https://github.com/BenLangmead/bowtie2)           |
-| [Subread](https://subread.sourceforge.net/)[^subread]                      | Seed-and-vote algorithm-based aligner                 | - Fast and accurate<br>- Supports indel detection<br>- Includes read counting functionality (featureCounts)          | RNA-Seq, DNA-Seq                                | [GitHub](https://github.com/ShiLab-Bioinformatics/subread) |
-| [Subjunc](https://subread.sourceforge.net/subjunc.html)[^subjunc]          | Exon-exon junction detector (part of Subread package) | - Detects novel exon-exon junctions<br>- Uses seed-and-vote algorithm<br>- Can be used independently or with Subread | RNA-Seq, specifically for junction detection    | [GitHub](https://github.com/ShiLab-Bioinformatics/subread) |
-
-#### FASTQ to BAM/CRAM
-
-(Work in progress)
 
 ### 🔬 Assembly and Quantification
 
