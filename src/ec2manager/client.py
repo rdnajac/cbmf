@@ -3,7 +3,8 @@ import boto3
 from pathlib import Path
 
 from .instance import EC2Instance
-from mypyfzf import pick
+from mypyfzf import FzfPicker
+
 
 class EC2Helper:
     """Encapsulation of AWS EC2 operations"""
@@ -12,6 +13,7 @@ class EC2Helper:
         self.ssh_config = os.path.expanduser("~/.ssh/config")
         self.ec2 = boto3.client("ec2")
         self.instances = self._load_instances()
+        self.fzf = FzfPicker()
 
     def _load_instances(self):
         instances = []
@@ -34,7 +36,7 @@ class EC2Helper:
         return instances
 
     def pick_instance(self):
-        result = pick(self.instances, header="Select an instance")
+        result = self.fzf.pick(self.instances, header="Select an instance")
         if not result:
             raise SystemExit("Nothing picked")
         return self.find_by_id(result.split()[1])
@@ -44,7 +46,7 @@ class EC2Helper:
         header = (
             f"Select action for {instance.name} ({instance.id})" if instance else None
         )
-        result = pick(actions, header=header)
+        result = self.fzf.pick(actions, header=header)
         if result == "cancel" or not result:
             raise SystemExit(f"No action selected for instance:\n{instance}\n")
         return result
@@ -105,4 +107,4 @@ class EC2Helper:
     def ssh(self, instance):
         host = instance.name.replace(" ", "_")
         print(f"Connecting to: {host}\n")
-        os.execvp("ssh", ["ssh", "-t", host, 'tmux new-session -A -s main'])
+        os.execvp("ssh", ["ssh", "-t", host, "tmux new-session -A -s main"])
