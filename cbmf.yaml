@@ -1,0 +1,10 @@
+name: cbmf
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.8
+  - pip
+  - pip:
+      - boto3
+      - paramiko
+      - argcomplete

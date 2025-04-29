@@ -1,14 +1,14 @@
 [project]
 name = "cbmf"
 version = "0.1.0"
-description = "Cloud Bioinformatics Management Framework"
+description = "Combinatorial Bioinformatics Meta-Framework"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.8"
-dependencies = ["boto3"]
+dependencies = ["boto3", "paramiko"]
 
 [project.scripts]
-ec2manager = "ec2manager.cli:main"
+cbmf = "cbmf.cli:main"
 
 [build-system]
 requires = ["setuptools>=61", "wheel"]

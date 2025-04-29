@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-from ec2manager.client import EC2Helper
+from a_series_of_tubes.ec2manager.client import EC2Helper
 
 
 def main():

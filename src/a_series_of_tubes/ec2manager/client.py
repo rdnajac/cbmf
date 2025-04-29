@@ -3,7 +3,7 @@ import boto3
 from pathlib import Path
 
 from .instance import EC2Instance
-from mypyfzf import FzfPicker
+from a_series_of_tubes.utils.mypyfzf import FzfPicker
 
 
 class EC2Helper:

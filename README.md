@@ -1,6 +1,6 @@
 # 🧬 Combinatorial Bioinformatic Meta-Framework
 
-*Efficient* Bioinformatics Workflows for High-Throughput Sequence Analysis
+_Efficient_ Bioinformatics Workflows for High-Throughput Sequence Analysis
 
 ## 🔭 Overview
 
@@ -26,17 +26,52 @@ scalable and reliable solution for comprehensive bioinformatics analysis,
 representing an important advancement in making high-throughput sequencing
 data more accessible and manageable for the broader research community.
 
+## 🧠 Design philosophy
+
+- use python to make things typed or iterable
+- rely on ultra-portable shell scripts for the tools we interface with
+
 ## 📚 Documentation
 
 The wiki is no longer maintained and has been migrated [here](https://palomerolab.org/how-to/).
 
 ## 🚀 Quick Start
 
+Install pre-requisites:
+
+```sh
+"${SHELL}" <(curl -L micro.mamba.pm/install.sh)
+```
+
 Clone the repository...
 
 ```sh
 git clone https://github.com/rdnajac/cbmf
 ```
+
+Create the environment:
+
+```sh
+micromamba create -f cbmf.yml -y
+```
+
+Activate the environment and install the project:
+
+```sh
+micromamba activate cbmf && pip install -e .
+```
+
+### <Tab> Completion
+
+Optionally, set up tab completion for the `cbmf` command:
+
+```sh
+# add this to your .bashrc or .zshrc
+# uncomment these lines if using zsh
+# autoload -U bashcompinit
+# bashcompinit
+eval "$(register-python-argcomplete cbmf)"
+``` 
 
 ## 📦 Package Management
 
