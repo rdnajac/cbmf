@@ -5,7 +5,10 @@ description = "Combinatorial Bioinformatics Meta-Framework"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.8"
-dependencies = ["boto3", "paramiko"]
+dependencies = ["argcomplete", "boto3", "paramiko"]
+
+[project.optional-dependencies]
+dev = ["ruff"]
 
 [project.scripts]
 cbmf = "cbmf.cli:main"

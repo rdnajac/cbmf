@@ -1,4 +1,5 @@
-from ..utils.progressbar import ProgressBar
+from a_series_of_tubes.utils.progressbar import ProgressBar
+
 import time
 
 
@@ -13,10 +14,6 @@ def test_progressbar():
     bar.finish()
 
 
-# if __name__ == "__main__":
-#     test_progressbar()
-
-
 def test_two_progressbars():
     total = 100
     bar1 = ProgressBar(total, prefix="Progress 1:", suffix="Complete", length=40)
@@ -29,3 +26,11 @@ def test_two_progressbars():
 
     bar1.finish()
     bar2.finish()
+
+
+if __name__ == "__main__":
+    test_progressbar()
+    # clear screen
+    print("\033[H\033[J", end="")
+    # print("\n")
+    test_two_progressbars()

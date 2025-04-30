@@ -1,9 +1,0 @@
-#!/bin/sh
-## Thin wrapper to launch cbmf Python CLI
-
-set -eu
-
-ENV_NAME="cbmf"
-PROJECT_ROOT="$(cd -P -- "$(dirname -- "$0")/../src" && pwd -P)"
-
-micromamba run -n "$ENV_NAME" --env PYTHONPATH="$PROJECT_ROOT" python3 -m cbmf.cli "$@"
