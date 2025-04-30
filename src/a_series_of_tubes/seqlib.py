@@ -2,9 +2,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
+
 class IndexType(Enum):
     I5 = "i5"
     I7 = "i7"
+
 
 class Index:
     def __init__(self, index_type: IndexType, sequence: str):
@@ -12,9 +14,11 @@ class Index:
         self.sequence = sequence
         self.length = len(sequence)
 
+
 class LibraryType(Enum):
     PAIRED_END = "paired-end"
     SINGLE_END = "single-end"
+
 
 class SequencingLibrary:
     def __init__(
@@ -23,7 +27,7 @@ class SequencingLibrary:
         r1_fastq: Path,
         r2_fastq: Optional[Path] = None,
         i5_index: Optional[Index] = None,
-        i7_index: Optional[Index] = None
+        i7_index: Optional[Index] = None,
     ):
         self.library_type = library_type
         self.r1_fastq = r1_fastq
@@ -41,12 +45,13 @@ class SequencingLibrary:
     def to_cram(self, output_path: Path):
         pass
 
+
 def create_seqlib(
     library_type: LibraryType,
     r1_fastq: str,
     r2_fastq: Optional[str] = None,
     i5_sequence: Optional[str] = None,
-    i7_sequence: Optional[str] = None
+    i7_sequence: Optional[str] = None,
 ) -> SequencingLibrary:
     r1_path = Path(r1_fastq)
     r2_path = Path(r2_fastq) if r2_fastq else None

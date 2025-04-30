@@ -3,7 +3,7 @@ import pathlib
 import shlex
 import os
 from typing import Union, Optional
-from .logger import logger
+from .utils.logger import logger
 
 
 def run_script(

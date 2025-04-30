@@ -4,9 +4,9 @@ import urllib.request
 import threading
 from pathlib import Path
 from typing import Union, List
-from ..utils.logger import logger
-from ..utils import ProgressBar
-from ..config import GENOMES_MIRROR, REFERENCE, FILES
+from .utils.logger import logger
+from .utils.progressbar import ProgressBar
+from .config import GENOMES_MIRROR, REFERENCE, FILES
 
 
 class GenomeManager:

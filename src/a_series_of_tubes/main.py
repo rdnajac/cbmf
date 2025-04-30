@@ -19,8 +19,8 @@ def test() -> int:
 def download(args) -> None:
     """Handle the download command."""
     manager = GenomeManager()
-    if args.files == ['ALL']:
-        files = 'ALL'
+    if args.files == ["ALL"]:
+        files = "ALL"
     else:
         files = args.files
 

@@ -47,7 +47,7 @@ def create_parser() -> argparse.ArgumentParser:
     # Create subparsers for each command and add them to the main parser
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-# Download a specific genome file from the NCBI seqs for pipelines
+    # Download a specific genome file from the NCBI seqs for pipelines
     subparser_download = subparsers.add_parser(
         "download",
         aliases=["dl"],

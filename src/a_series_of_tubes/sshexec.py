@@ -86,6 +86,7 @@ def ssh_exec_from_config(alias, command):
     finally:
         client.close()
 
+
 if __name__ == "__main__":
     import tkinter as tk
     from tkinter import simpledialog
@@ -94,9 +95,15 @@ if __name__ == "__main__":
     root.withdraw()
 
     host_alias = "GPU-PC"
-    remote_script = simpledialog.askstring("Remote Script Path", "Enter path to remote script (e.g., ~/filter_bam.sh):")
-    input_dir = simpledialog.askstring("Remote Input Dir", "Enter remote input directory path:")
-    output_dir = simpledialog.askstring("Remote Output Dir", "Enter remote output directory path:")
+    remote_script = simpledialog.askstring(
+        "Remote Script Path", "Enter path to remote script (e.g., ~/filter_bam.sh):"
+    )
+    input_dir = simpledialog.askstring(
+        "Remote Input Dir", "Enter remote input directory path:"
+    )
+    output_dir = simpledialog.askstring(
+        "Remote Output Dir", "Enter remote output directory path:"
+    )
 
     # Build and execute command remotely
     command = f"ls '{input_dir}' '{output_dir}'"

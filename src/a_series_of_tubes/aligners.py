@@ -39,7 +39,6 @@ def align_reads(aligner, input_dir, PE=True, reference=None, species=None, threa
 
 
 def align_PE_reads_from_dir(aligner, input_dir, reference, threads):
-
     # Find all *_R1.fastq.gz files and their matching *_R2.fastq.gz files
     r1fastqs = sorted(input_dir.glob("*_R1.fastq.gz"))
     paired_files = []

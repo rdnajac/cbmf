@@ -1,10 +1,17 @@
+#!/usr/bin/env python3
 # PYTHON_ARGCOMPLETE_OK
-import sys
+
 import argparse
 import argcomplete
 
-# import project command-line interfaces
 from a_series_of_tubes.ec2manager import cli as ec2cli
+from a_series_of_tubes.s3manager import cli as s3cli
+
+
+dispatch = {
+    "ec2": ec2cli.main,
+    "s3": s3cli.main,
+}
 
 
 def main():
@@ -12,17 +19,16 @@ def main():
         description="Combinatorial Bioinformatics Meta-Framework (cbmf)"
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+    for name, func in dispatch.items():
+        sp = subparsers.add_parser(name, add_help=False)  # suppress dummy -h
+        sp.set_defaults(func=func)
 
-    ec2manager_parser = subparsers.add_parser("ec2", help="Manage EC2 instances")
-    ec2manager_parser.set_defaults(func=dispatch_ec2manager)
-
-    # enable tab completion
     argcomplete.autocomplete(parser)
-
     args, unknown = parser.parse_known_args()
+    if "-h" in unknown or "--help" in unknown:
+        unknown.append("--help")  # ensure forwarded
     args.func(unknown)
 
 
-def dispatch_ec2manager(argv):
-    sys.argv = [sys.argv[0]] + argv
-    ec2cli.main()
+if __name__ == "__main__":
+    main()
